@@ -1,0 +1,13 @@
+language: php
+
+php:
+  - '7.2'
+  - '7.3'
+
+script:
+  - composer install
+  - composer phpstan
+  - composer ecs
+  - composer phpmd
+  - composer phpunit
+  - composer victor show

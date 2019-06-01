@@ -1,0 +1,9 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    WernerDweight\DoctrineCrudApiBundle\:
+        resource: '../src/*'
+        exclude: '../src/{DependencyInjection,Exception}'

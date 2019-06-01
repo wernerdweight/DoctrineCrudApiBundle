@@ -1,0 +1,56 @@
+{
+    "name": "wernerdweight/doctrine-crud-api-bundle",
+    "type": "symfony-bundle",
+    "description": "Symfony bundle for CRUD API powered by Doctrine mapping.",
+    "keywords": [
+        "doctrine",
+        "crud",
+        "api",
+        "bundle"
+    ],
+    "homepage": "https://github.com/wernerdweight/DoctrineCrudApiBundle",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Werner Dweight Solutions",
+            "email": "info@wds.blue"
+        }
+    ],
+    "require": {
+        "php": ">=7.2.0",
+        "symfony/framework-bundle": "^4.0",
+        "symfony/orm-pack": "^1.0",
+        "wernerdweight/ra": "^0.3",
+        "thecodingmachine/safe": "^0.1.13"
+    },
+    "require-dev": {
+        "wernerdweight/cs": "^1.2.1",
+        "thecodingmachine/phpstan-safe-rule": "^0.1.2"
+    },
+    "suggest": {},
+    "autoload": {
+        "psr-4": {
+            "WernerDweight\\DoctrineCrudApiBundle\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "WernerDweight\\DoctrineCrudApiBundle\\Tests\\": "Tests"
+        }
+    },
+    "scripts": {
+        "fix": "ecs check ./src/ ./tests/ --config vendor/wernerdweight/cs/WernerDweight/CS/src/ecs.yaml --fix",
+        "phpstan": "phpstan analyse ./src/ ./tests/ --level max",
+        "phpmd": "phpmd ./src/ text vendor/wernerdweight/cs/WernerDweight/CS/phpmd.xml",
+        "ecs": "ecs check ./src/ ./tests/ --config vendor/wernerdweight/cs/WernerDweight/CS/src/ecs.yaml",
+        "ecs-fix": "ecs check ./src/ ./tests/ --config vendor/wernerdweight/cs/WernerDweight/CS/src/ecs.yaml --fix",
+        "phpunit": "phpunit",
+        "victor": "victor"
+    },
+    "extra": {
+        "symfony": {
+            "allow-contrib": false,
+            "require": "^4.2"
+        }
+    }
+}
