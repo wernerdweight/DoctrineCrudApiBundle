@@ -21,7 +21,8 @@
         "symfony/framework-bundle": "^4.0",
         "symfony/orm-pack": "^1.0",
         "wernerdweight/ra": "^0.3",
-        "thecodingmachine/safe": "^0.1.13"
+        "thecodingmachine/safe": "^0.1.13",
+        "wernerdweight/enhanced-exception": "^1.0"
     },
     "require-dev": {
         "wernerdweight/cs": "^1.2.1",
@@ -50,7 +51,7 @@
     "extra": {
         "symfony": {
             "allow-contrib": false,
-            "require": "^4.2"
+            "require": "^4.3"
         }
     }
 }

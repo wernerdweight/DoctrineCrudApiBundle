@@ -1,0 +1,13 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    WernerDweight\DoctrineCrudApiBundle\:
+        resource: '../../*'
+        exclude: '../../{DependencyInjection,Exception}'
+
+    WernerDweight\DoctrineCrudApiBundle\Controller\:
+        resource: '../../Controller'
+        tags: ['controller.service_arguments']

@@ -1,0 +1,42 @@
+create:
+    path:     /{entityName}/create/
+    methods:  [ OPTIONS, POST ]
+    controller: WernerDweight\DoctrineCrudApiBundle\Controller\CreateController::index
+    defaults:
+        _format: json
+
+delete:
+    path:     /{entityName}/delete/{id}
+    methods:  [ OPTIONS, DELETE ]
+    controller: WernerDweight\DoctrineCrudApiBundle\Controller\DeleteController::index
+    defaults:
+        _format: json
+
+detail:
+    path:     /{entityName}/detail/{id}
+    methods:  [ OPTIONS, GET ]
+    controller: WernerDweight\DoctrineCrudApiBundle\Controller\DetailController::index
+    defaults:
+        _format: json
+
+length:
+    path:     /{entityName}/length/
+    methods:  [ OPTIONS, GET ]
+    controller: WernerDweight\DoctrineCrudApiBundle\Controller\LengthController::index
+    defaults:
+        _format: json
+
+list:
+    path:     /{entityName}/list/
+    methods:  [ OPTIONS, GET ]
+    controller: WernerDweight\DoctrineCrudApiBundle\Controller\ListController::index
+    defaults:
+        _format: json
+
+update:
+    path:     /{entityName}/update/{id}
+    methods:  [ OPTIONS, POST ]
+    controller: WernerDweight\DoctrineCrudApiBundle\Controller\UpdateController::index
+    defaults:
+        _format: json
+
