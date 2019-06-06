@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use WernerDweight\DoctrineCrudApiBundle\Exception\InvalidRequestException;
 use WernerDweight\RA\RA;
+use WernerDweight\Stringy\Stringy;
 
 class ParameterResolver
 {
@@ -253,8 +254,30 @@ class ParameterResolver
         return clone $this->parameters;
     }
 
+    /**
+     * @return ParameterResolver
+     */
+    private function resolveCommon(): self
+    {
+        $entityName = $this->request->attributes->getAlpha(ParameterEnum::ENTITY_NAME);
+        if (true === empty($entityName)) {
+            throw new InvalidRequestException(InvalidRequestException::EXCEPTION_NO_ENTITY_NAME);
+        }
+
+        $entityName = (new Stringy($entityName))->convertCase(Stringy::CASE_KEBAB, Stringy::CASE_PASCAL);
+
+        $this->parameters->set(ParameterEnum::ENTITY_NAME, $entityName);
+
+        return $this;
+    }
+
+    /**
+     * @return ParameterResolver
+     */
     public function resolveList(): self
     {
+        $this->resolveCommon();
+
         $query = $this->request->query;
         $this->parameters
             ->set(ParameterEnum::OFFSET, $query->getInt(ParameterEnum::OFFSET, 0))

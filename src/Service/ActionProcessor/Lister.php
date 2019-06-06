@@ -32,8 +32,8 @@ class Lister
         $arguments = new RA([
             $this->parameterResolver->getInt(ParameterEnum::OFFSET),
             $this->parameterResolver->getInt(ParameterEnum::LIMIT),
-            $this->parameterResolver->getInt(ParameterEnum::ORDER_BY),
-            $this->parameterResolver->getInt(ParameterEnum::FILTER),
+            $this->parameterResolver->getRA(ParameterEnum::ORDER_BY),
+            $this->parameterResolver->getRA(ParameterEnum::FILTER),
         ]);
 
         $groupByParameter = $this->parameterResolver->getRAOrNull(ParameterEnum::GROUP_BY);

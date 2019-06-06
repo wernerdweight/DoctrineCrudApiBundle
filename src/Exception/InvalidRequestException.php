@@ -9,9 +9,12 @@ class InvalidRequestException extends AbstractEnhancedException
 {
     /** @var int */
     public const EXCEPTION_NO_REQUEST = 1;
+    /** @var int */
+    public const EXCEPTION_NO_ENTITY_NAME = 2;
 
     /** @var string[] */
     protected static $messages = [
         self::EXCEPTION_NO_REQUEST => 'No request has been recieved!',
+        self::EXCEPTION_NO_ENTITY_NAME => 'No entity name specified in request!',
     ];
 }

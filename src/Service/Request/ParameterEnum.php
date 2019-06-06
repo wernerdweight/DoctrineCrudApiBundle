@@ -17,4 +17,6 @@ class ParameterEnum
     public const GROUP_BY = 'groupBy';
     /** @var string */
     public const RESPONSE_STRUCTURE = 'responseStructure';
+    /** @var string */
+    public const ENTITY_NAME = 'entityName';
 }
