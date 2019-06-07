@@ -21,6 +21,11 @@ class ParameterEnum
     public const FILTER_LOGIC_AND = 'and';
     /** @var string */
     public const FILTER_LOGIC_OR = 'or';
+    /** @var string[] */
+    public const AVAILABLE_FILTERING_LOGICS = [
+        ParameterEnum::FILTER_LOGIC_AND,
+        ParameterEnum::FILTER_LOGIC_OR,
+    ];
     /** @var string */
     public const FILTER_FIELD = 'field';
     /** @var string */
@@ -59,6 +64,25 @@ class ParameterEnum
     public const FILTER_OPERATOR_IS_NOT_EMPTY = 'not-empty';
     /** @var string */
     public const FILTER_OPERATOR_IN = 'in';
+    /** @var string[] */
+    public const AVAILABLE_FILTERING_OPERATORS = [
+        ParameterEnum::FILTER_OPERATOR_EQUAL,
+        ParameterEnum::FILTER_OPERATOR_NOT_EQUAL,
+        ParameterEnum::FILTER_OPERATOR_GREATER_THAN,
+        ParameterEnum::FILTER_OPERATOR_GREATER_THAN_OR_EQUAL,
+        ParameterEnum::FILTER_OPERATOR_GREATER_THAN_OR_EQUAL_OR_NULL,
+        ParameterEnum::FILTER_OPERATOR_LOWER_THAN,
+        ParameterEnum::FILTER_OPERATOR_LOWER_THAN_OR_EQUAL,
+        ParameterEnum::FILTER_OPERATOR_BEGINS_WITH,
+        ParameterEnum::FILTER_OPERATOR_CONTAINS,
+        ParameterEnum::FILTER_OPERATOR_CONTAINS_NOT,
+        ParameterEnum::FILTER_OPERATOR_ENDS_WITH,
+        ParameterEnum::FILTER_OPERATOR_IS_NULL,
+        ParameterEnum::FILTER_OPERATOR_IS_NOT_NULL,
+        ParameterEnum::FILTER_OPERATOR_IS_EMPTY,
+        ParameterEnum::FILTER_OPERATOR_IS_NOT_EMPTY,
+        ParameterEnum::FILTER_OPERATOR_IN,
+    ];
     /** @var string */
     public const FILTER_VALUE = 'value';
     /** @var string */
@@ -74,6 +98,11 @@ class ParameterEnum
     public const ORDER_BY_DIRECTION_ASC = 'asc';
     /** @var string */
     public const ORDER_BY_DIRECTION_DESC = 'desc';
+    /** @var string[] */
+    public const AVAILABLE_ORDERING_DIRECTIONS = [
+        ParameterEnum::ORDER_BY_DIRECTION_ASC,
+        ParameterEnum::ORDER_BY_DIRECTION_DESC,
+    ];
 
     /** @var string */
     public const GROUP_BY = 'groupBy';

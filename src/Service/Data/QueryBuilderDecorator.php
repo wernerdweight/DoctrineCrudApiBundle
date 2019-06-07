@@ -14,30 +14,6 @@ use WernerDweight\Stringy\Stringy;
 class QueryBuilderDecorator
 {
     /** @var string[] */
-    private const AVAILABLE_FILTERING_LOGICS = [
-        ParameterEnum::FILTER_LOGIC_AND,
-        ParameterEnum::FILTER_LOGIC_OR,
-    ];
-    /** @var string[] */
-    private const AVAILABLE_FILTERING_OPERATORS = [
-        ParameterEnum::FILTER_OPERATOR_EQUAL,
-        ParameterEnum::FILTER_OPERATOR_NOT_EQUAL,
-        ParameterEnum::FILTER_OPERATOR_GREATER_THAN,
-        ParameterEnum::FILTER_OPERATOR_GREATER_THAN_OR_EQUAL,
-        ParameterEnum::FILTER_OPERATOR_GREATER_THAN_OR_EQUAL_OR_NULL,
-        ParameterEnum::FILTER_OPERATOR_LOWER_THAN,
-        ParameterEnum::FILTER_OPERATOR_LOWER_THAN_OR_EQUAL,
-        ParameterEnum::FILTER_OPERATOR_BEGINS_WITH,
-        ParameterEnum::FILTER_OPERATOR_CONTAINS,
-        ParameterEnum::FILTER_OPERATOR_CONTAINS_NOT,
-        ParameterEnum::FILTER_OPERATOR_ENDS_WITH,
-        ParameterEnum::FILTER_OPERATOR_IS_NULL,
-        ParameterEnum::FILTER_OPERATOR_IS_NOT_NULL,
-        ParameterEnum::FILTER_OPERATOR_IS_EMPTY,
-        ParameterEnum::FILTER_OPERATOR_IS_NOT_EMPTY,
-        ParameterEnum::FILTER_OPERATOR_IN,
-    ];
-    /** @var string[] */
     private const BINARY_OPERATORS = [
         ParameterEnum::FILTER_OPERATOR_EQUAL,
         ParameterEnum::FILTER_OPERATOR_NOT_EQUAL,
@@ -54,13 +30,8 @@ class QueryBuilderDecorator
         ParameterEnum::FILTER_OPERATOR_IS_NOT_EMPTY,
         ParameterEnum::FILTER_OPERATOR_IN,
     ];
-    /** @var string[] */
-    private const AVAILABLE_ORDERING_DIRECTIONS = [
-        ParameterEnum::ORDER_BY_DIRECTION_ASC,
-        ParameterEnum::ORDER_BY_DIRECTION_DESC,
-    ];
     /** @var string */
-    private const SQL_WILDCARD = '%';
+    public const SQL_WILDCARD = '%';
     /** @var string */
     private const PARAM_NAME_SEPARATOR = '_';
     /** @var string */
@@ -91,10 +62,10 @@ class QueryBuilderDecorator
     {
         $logic = strtolower($filterData->getStringOrNull(ParameterEnum::FILTER_LOGIC))
             ?? ParameterEnum::FILTER_LOGIC_AND;
-        if (true !== in_array($logic, self::AVAILABLE_FILTERING_LOGICS, true)) {
+        if (true !== in_array($logic, ParameterEnum::AVAILABLE_FILTERING_LOGICS, true)) {
             throw new FilteringException(
                 FilteringException::EXCEPTION_INVALID_FILTER_LOGIC,
-                [$logic, implode(', ', self::AVAILABLE_FILTERING_LOGICS)]
+                [$logic, implode(', ', ParameterEnum::AVAILABLE_FILTERING_LOGICS)]
             );
         }
         return $logic;
@@ -122,10 +93,10 @@ class QueryBuilderDecorator
     {
         $operator = strtolower($filterData->getStringOrNull(ParameterEnum::FILTER_OPERATOR))
             ?? ParameterEnum::FILTER_OPERATOR_EQUAL;
-        if (true !== in_array($operator, self::AVAILABLE_FILTERING_OPERATORS, true)) {
+        if (true !== in_array($operator, ParameterEnum::AVAILABLE_FILTERING_OPERATORS, true)) {
             throw new FilteringException(
                 FilteringException::EXCEPTION_INVALID_FILTER_OPERATOR,
-                [$operator, implode(', ', self::AVAILABLE_FILTERING_OPERATORS)]
+                [$operator, implode(', ', ParameterEnum::AVAILABLE_FILTERING_OPERATORS)]
             );
         }
         return $operator;
@@ -272,7 +243,7 @@ class QueryBuilderDecorator
         }
         throw new FilteringException(
             FilteringException::EXCEPTION_INVALID_FILTER_OPERATOR,
-            [$operator, implode(', ', self::AVAILABLE_FILTERING_OPERATORS)]
+            [$operator, implode(', ', ParameterEnum::AVAILABLE_FILTERING_OPERATORS)]
         );
     }
 
@@ -451,10 +422,10 @@ class QueryBuilderDecorator
             $field = new Stringy($orderData->getString(ParameterEnum::ORDER_BY_FIELD));
             $direction = $orderData->getString(ParameterEnum::ORDER_BY_DIRECTION);
 
-            if (true !== in_array($direction, self::AVAILABLE_ORDERING_DIRECTIONS, true)) {
+            if (true !== in_array($direction, ParameterEnum::AVAILABLE_ORDERING_DIRECTIONS, true)) {
                 throw new FilteringException(
                     FilteringException::EXCEPTION_INVALID_ORDERING_DIRECTION,
-                    [$direction, implode(', ', self::AVAILABLE_ORDERING_DIRECTIONS)]
+                    [$direction, implode(', ', ParameterEnum::AVAILABLE_ORDERING_DIRECTIONS)]
                 );
             }
 

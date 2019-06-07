@@ -7,7 +7,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use WernerDweight\DoctrineCrudApiBundle\Service\ActionProcessor\Lister;
 
-class ListController extends AbstractController implements DoctrineCrudApiControllerInterface
+class LengthController extends AbstractController implements DoctrineCrudApiControllerInterface
 {
     /**
      * @param Lister $lister
@@ -15,7 +15,7 @@ class ListController extends AbstractController implements DoctrineCrudApiContro
      */
     public function index(Lister $lister): JsonResponse
     {
-        $items = $lister->getItems();
-        return $this->json($items->toArray());
+        $length = $lister->getItemCount();
+        return $this->json(compact('length'));
     }
 }
