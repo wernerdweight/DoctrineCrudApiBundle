@@ -50,9 +50,56 @@ class DataManager
             ->getQuery()
             ->getResult();
     }
-    
+
+    /**
+     * @param int $offset
+     * @param int $limit
+     * @param RA $orderBy
+     * @param RA $filter
+     * @param RA $groupBy
+     * @return RA
+     * @throws \Safe\Exceptions\PcreException
+     * @throws \Safe\Exceptions\StringsException
+     * @throws \WernerDweight\RA\Exception\RAException
+     */
     public function getGroupedPortion(int $offset, int $limit, RA $orderBy, RA $filter, RA $groupBy): RA
     {
-        // TODO: get current repo, apply filters, fetch groups, apply ordering and pagination, return results
+        /** @var RA $primaryGroup */
+        $primaryGroup = $groupBy->shift();
+        $field = $primaryGroup->getString(ParameterEnum::GROUP_BY_FIELD);
+        $direction = $primaryGroup->getString(ParameterEnum::GROUP_BY_DIRECTION);
+        $aggregates = $primaryGroup->getRA(ParameterEnum::GROUP_BY_AGGREGATES);
+
+        $queryBuilder = $this->repositoryManager->getCurrentRepository()
+            ->createQueryBuilder(self::ROOT_ALIAS)
+            ->select(\Safe\sprintf('%s AS value', $field));
+        $this->queryBuilderDecorator
+            ->applyGroupping($queryBuilder, $field)
+            ->applyAggregates($queryBuilder, $aggregates)
+            ->applyOrdering($queryBuilder, $primaryGroup)
+            ->applyPagination($queryBuilder, $offset, $limit);
+
+        $groups = new RA($queryBuilder->getQuery()->getResult(), RA::RECURSIVE);
+
+        return $groups->map(function (RA $group) use ($groupBy, $filter, $field, $limit, $orderBy): RA {
+            $groupConditions = (new RA())
+                ->set(ParameterEnum::FILTER_LOGIC, ParameterEnum::FILTER_LOGIC_AND)
+                ->set(ParameterEnum::FILTER, (new RA())
+                    ->set(ParameterEnum::FILTER_FIELD, $field)
+                    ->set(ParameterEnum::FILTER_VALUE, $group->get(ParameterEnum::FILTER_VALUE))
+                    ->set(
+                        ParameterEnum::FILTER_OPERATOR,
+                        null === $group->get(ParameterEnum::FILTER_VALUE)
+                            ? ParameterEnum::FILTER_OPERATOR_IS_NULL
+                            : ParameterEnum::FILTER_OPERATOR_EQUAL
+                    )
+                );
+            return $group->set(
+                ParameterEnum::GROUP_BY_ITEMS,
+                $groupBy->length() > 0
+                    ? $this->getGroupedPortion(0, $limit, $groupBy, $orderBy, $groupConditions)
+                    : $this->getPortion(0, $limit, $orderBy, $groupConditions)
+            );
+        });
     }
 }

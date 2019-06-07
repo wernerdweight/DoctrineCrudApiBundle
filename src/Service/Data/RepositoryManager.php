@@ -3,12 +3,12 @@ declare(strict_types=1);
 
 namespace WernerDweight\DoctrineCrudApiBundle\Service\Data;
 
-use Doctrine\Bundle\DoctrineBundle\Repository\ContainerRepositoryFactory;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use WernerDweight\DoctrineCrudApiBundle\Service\Request\ParameterEnum;
 use WernerDweight\DoctrineCrudApiBundle\Service\Request\ParameterResolver;
+use WernerDweight\RA\Exception\RAException;
 
 class RepositoryManager
 {
@@ -18,25 +18,31 @@ class RepositoryManager
     /** @var EntityManagerInterface */
     private $entityManager;
 
-    /** @var ContainerRepositoryFactory */
-    private $containerRepositoryFactory;
+    /** @var ServiceEntityRepositoryFactory */
+    private $repositoryFactory;
 
     /** @var ParameterResolver */
     private $parameterResolver;
 
+    /**
+     * RepositoryManager constructor.
+     * @param EntityManagerInterface $entityManager
+     * @param ServiceEntityRepositoryFactory $repositoryFactory
+     * @param ParameterResolver $parameterResolver
+     */
     public function __construct(
         EntityManagerInterface $entityManager,
-        ContainerRepositoryFactory $containerRepositoryFactory,
+        ServiceEntityRepositoryFactory $repositoryFactory,
         ParameterResolver $parameterResolver
     ) {
         $this->entityManager = $entityManager;
         $this->parameterResolver = $parameterResolver;
-        $this->containerRepositoryFactory = $containerRepositoryFactory;
+        $this->repositoryFactory = $repositoryFactory;
     }
 
     /**
      * @return ServiceEntityRepository
-     * @throws \WernerDweight\RA\Exception\RAException
+     * @throws RAException
      */
     public function getCurrentRepository(): ServiceEntityRepository
     {

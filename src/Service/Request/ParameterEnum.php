@@ -67,7 +67,7 @@ class ParameterEnum
     /** @var string */
     public const ORDER_BY = 'orderBy';
     /** @var string */
-    public const ORDER_BY_FIELD = 'field'
+    public const ORDER_BY_FIELD = 'field';
     /** @var string */
     public const ORDER_BY_DIRECTION = 'direction';
     /** @var string */
@@ -77,6 +77,22 @@ class ParameterEnum
 
     /** @var string */
     public const GROUP_BY = 'groupBy';
+    /** @var string */
+    public const GROUP_BY_FIELD = 'field';
+    /** @var string */
+    public const GROUP_BY_DIRECTION = 'direction';
+    /** @var string */
+    public const GROUP_BY_DIRECTION_ASC = 'asc';
+    /** @var string */
+    public const GROUP_BY_DIRECTION_DESC = 'desc';
+    /** @var string */
+    public const GROUP_BY_AGGREGATES = 'aggregates';
+    /** @var string */
+    public const GROUP_BY_AGGREGATE_FUNCTION = 'function';
+    /** @var string */
+    public const GROUP_BY_AGGREGATE_FIELD = 'field';
+    /** @var string */
+    public const GROUP_BY_ITEMS = 'items';
 
     /** @var string */
     public const RESPONSE_STRUCTURE = 'responseStructure';

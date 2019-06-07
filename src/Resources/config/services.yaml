@@ -11,3 +11,7 @@ services:
     WernerDweight\DoctrineCrudApiBundle\Controller\:
         resource: '../../Controller'
         tags: ['controller.service_arguments']
+
+    WernerDweight\DoctrineCrudApiBundle\Service\Data\ServiceEntityRepositoryFactory:
+        arguments:
+            $repositories: !tagged doctrine.repository_service

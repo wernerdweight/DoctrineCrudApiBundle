@@ -67,6 +67,8 @@ class QueryBuilderDecorator
     private const DOCTRINE_ASSOCIATION_TYPE = 'type';
     /** @var string */
     private const IDENTIFIER_FIELD_NAME = 'id';
+    /** @var string */
+    private const AGGREGATE_PREFIX = 'aggregate';
 
     /** @var RepositoryManager */
     private $repositoryManager;
@@ -401,7 +403,7 @@ class QueryBuilderDecorator
      */
     private function prepareFilteringConditions(QueryBuilder $queryBuilder, RA $conditions, int $filteringKey): RA
     {
-        return $conditions->map(function (RA $conditionData, int $key) use ($queryBuilder, $filteringKey): void {
+        return $conditions->map(function (RA $conditionData, int $key) use ($queryBuilder, $filteringKey): string {
             if (true === $conditionData->hasKey(ParameterEnum::FILTER_CONDITIONS)) {
                 $logic = $this->getFilteringLogic($conditionData);
                 $conditions = $this->prepareFilteringConditions(
@@ -478,6 +480,47 @@ class QueryBuilderDecorator
         $queryBuilder
             ->setFirstResult($offset)
             ->setMaxResults($limit);
+        return $this;
+    }
+
+    /**
+     * @param QueryBuilder $queryBuilder
+     * @param string $field
+     * @return QueryBuilderDecorator
+     * @throws \Safe\Exceptions\PcreException
+     * @throws \Safe\Exceptions\StringsException
+     */
+    public function applyGroupping(QueryBuilder $queryBuilder, string $field): self
+    {
+        if (true === $this->isEmbed($field)) {
+            $queryBuilder->groupBy(\Safe\sprintf('%s.%s', DataManager::ROOT_ALIAS, $field));
+            return $this;
+        }
+        $this->joinRequiredFilteringRelations($queryBuilder, new Stringy($field));
+        $queryBuilder->groupBy($this->getFilteringPathForField($field));
+        return $this;
+    }
+
+    /**
+     * @param QueryBuilder $queryBuilder
+     * @param RA $aggregates
+     * @return QueryBuilderDecorator
+     */
+    public function applyAggregates(QueryBuilder $queryBuilder, RA $aggregates): self
+    {
+        $aggregates->walk(function (RA $aggregateData) use ($queryBuilder): void {
+            $function = $aggregateData->getString(ParameterEnum::GROUP_BY_AGGREGATE_FUNCTION);
+            $field = $aggregateData->getString(ParameterEnum::GROUP_BY_AGGREGATE_FIELD);
+            $queryBuilder->addSelect(\Safe\sprintf(
+                '%s(DISTINCT(%s.%s)) AS %s_%s_%s',
+                $function,
+                DataManager::ROOT_ALIAS,
+                $field,
+                self::AGGREGATE_PREFIX,
+                $function,
+                $field
+            ));
+        });
         return $this;
     }
 }
