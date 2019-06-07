@@ -18,9 +18,13 @@ class DataManager
     /** @var RepositoryManager */
     private $repositoryManager;
 
-    public function __construct(RepositoryManager $repositoryManager)
+    /** @var QueryBuilderDecorator */
+    private $queryBuilderDecorator;
+
+    public function __construct(RepositoryManager $repositoryManager, QueryBuilderDecorator $queryBuilderDecorator)
     {
         $this->repositoryManager = $repositoryManager;
+        $this->queryBuilderDecorator = $queryBuilderDecorator;
     }
 
     /**
@@ -36,7 +40,7 @@ class DataManager
     {
         $queryBuilder = $this->repositoryManager->getCurrentRepository()->createQueryBuilder(self::ROOT_ALIAS);
 
-        $this
+        $this->queryBuilderDecorator
             ->applyFiltering($queryBuilder, $filters)
             ->applyOrdering($queryBuilder, $orderBy)
             ->applyPagination($queryBuilder, $offset, $limit);

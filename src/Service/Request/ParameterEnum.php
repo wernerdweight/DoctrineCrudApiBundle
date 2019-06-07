@@ -66,6 +66,14 @@ class ParameterEnum
 
     /** @var string */
     public const ORDER_BY = 'orderBy';
+    /** @var string */
+    public const ORDER_BY_FIELD = 'field'
+    /** @var string */
+    public const ORDER_BY_DIRECTION = 'direction';
+    /** @var string */
+    public const ORDER_BY_DIRECTION_ASC = 'asc';
+    /** @var string */
+    public const ORDER_BY_DIRECTION_DESC = 'desc';
 
     /** @var string */
     public const GROUP_BY = 'groupBy';

@@ -3,8 +3,9 @@ declare(strict_types=1);
 
 namespace WernerDweight\DoctrineCrudApiBundle\Service\Data;
 
-use Doctrine\DBAL\Query\QueryBuilder;
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
+use Doctrine\ORM\Query\Expr;
+use Doctrine\ORM\QueryBuilder;
 use WernerDweight\DoctrineCrudApiBundle\Exception\FilteringException;
 use WernerDweight\DoctrineCrudApiBundle\Service\Request\ParameterEnum;
 use WernerDweight\RA\RA;
@@ -52,6 +53,11 @@ class QueryBuilderDecorator
         ParameterEnum::FILTER_OPERATOR_IS_EMPTY,
         ParameterEnum::FILTER_OPERATOR_IS_NOT_EMPTY,
         ParameterEnum::FILTER_OPERATOR_IN,
+    ];
+    /** @var string[] */
+    private const AVAILABLE_ORDERING_DIRECTIONS = [
+        ParameterEnum::ORDER_BY_DIRECTION_ASC,
+        ParameterEnum::ORDER_BY_DIRECTION_DESC,
     ];
     /** @var string */
     private const SQL_WILDCARD = '%';
@@ -192,11 +198,80 @@ class QueryBuilderDecorator
         return $field;
     }
 
+    /**
+     * @param Stringy $field
+     * @param string $operator
+     * @param string $parameterName
+     * @return string
+     * @throws \Safe\Exceptions\PcreException
+     * @throws \Safe\Exceptions\StringsException
+     */
     private function createCondition(Stringy $field, string $operator, string $parameterName): string
     {
-        $field = $this->resolveFilteringConditionFieldName($field);
+        $field = (string)($this->resolveFilteringConditionFieldName($field));
 
-        // TODO:
+        $expression = new Expr();
+        if ($operator === ParameterEnum::FILTER_OPERATOR_EQUAL) {
+            return (string)($expression->eq($field, $parameterName));
+        }
+        if ($operator === ParameterEnum::FILTER_OPERATOR_NOT_EQUAL) {
+            return (string)($expression->neq($field, $parameterName));
+        }
+        if ($operator === ParameterEnum::FILTER_OPERATOR_GREATER_THAN) {
+            return (string)($expression->gt($field, $parameterName));
+        }
+        if ($operator === ParameterEnum::FILTER_OPERATOR_GREATER_THAN_OR_EQUAL) {
+            return (string)($expression->gte($field, $parameterName));
+        }
+        if ($operator === ParameterEnum::FILTER_OPERATOR_GREATER_THAN_OR_EQUAL_OR_NULL) {
+            return (string)($expression->orX(
+                $expression->gte($field, $parameterName),
+                $expression->isNull($field)
+            ));
+        }
+        if ($operator === ParameterEnum::FILTER_OPERATOR_LOWER_THAN) {
+            return (string)($expression->lt($field, $parameterName));
+        }
+        if ($operator === ParameterEnum::FILTER_OPERATOR_LOWER_THAN_OR_EQUAL) {
+            return (string)($expression->lte($field, $parameterName));
+        }
+        if ($operator === ParameterEnum::FILTER_OPERATOR_BEGINS_WITH) {
+            return (string)($expression->like($field, $parameterName));
+        }
+        if ($operator === ParameterEnum::FILTER_OPERATOR_CONTAINS) {
+            return (string)($expression->like($field, $parameterName));
+        }
+        if ($operator === ParameterEnum::FILTER_OPERATOR_CONTAINS_NOT) {
+            return (string)($expression->notLike($field, $parameterName));
+        }
+        if ($operator === ParameterEnum::FILTER_OPERATOR_ENDS_WITH) {
+            return (string)($expression->like($field, $parameterName));
+        }
+        if ($operator === ParameterEnum::FILTER_OPERATOR_IS_NULL) {
+            return (string)($expression->isNull($field));
+        }
+        if ($operator === ParameterEnum::FILTER_OPERATOR_IS_NOT_NULL) {
+            return (string)($expression->isNotNull($field));
+        }
+        if ($operator === ParameterEnum::FILTER_OPERATOR_IS_EMPTY) {
+            return (string)($expression->orX(
+                $expression->isNull($field),
+                $expression->eq($field, $parameterName)
+            ));
+        }
+        if ($operator === ParameterEnum::FILTER_OPERATOR_IS_NOT_EMPTY) {
+            return (string)($expression->andX(
+                $expression->isNotNull($field),
+                $expression->neq($field, $parameterName)
+            ));
+        }
+        if ($operator === ParameterEnum::FILTER_OPERATOR_IN) {
+            return (string)($expression->in($field, $parameterName));
+        }
+        throw new FilteringException(
+            FilteringException::EXCEPTION_INVALID_FILTER_OPERATOR,
+            [$operator, implode(', ', self::AVAILABLE_FILTERING_OPERATORS)]
+        );
     }
 
     /**
@@ -212,9 +287,51 @@ class QueryBuilderDecorator
         return false;
     }
 
+    /**
+     * @param QueryBuilder $queryBuilder
+     * @param Stringy $field
+     * @return QueryBuilderDecorator
+     * @throws \Safe\Exceptions\PcreException
+     * @throws \Safe\Exceptions\StringsException
+     */
     private function joinRequiredFilteringRelations(QueryBuilder $queryBuilder, Stringy $field): self
     {
-        // TODO:
+        if (true === $field->pregMatch('/^[a-z\.]+$/i')) {
+            $currentPrefix = clone $field;
+            $firstSeparatorPosition = $field->getPositionOfSubstring(ParameterEnum::FILTER_FIELD_SEPARATOR);
+            if (null !== $firstSeparatorPosition) {
+                $currentPrefix = $currentPrefix->substring(0, $firstSeparatorPosition);
+            }
+
+            if ($currentPrefix !== DataManager::ROOT_ALIAS) {
+                $previousPrefix = DataManager::ROOT_ALIAS;
+                $currentField = (clone $field)->substring($currentPrefix->length() + 1);
+                while (true !== $currentPrefix->sameAs($previousPrefix)) {
+                    if (true !== in_array((string)$currentPrefix, $queryBuilder->getAllAliases(), true)) {
+                        $queryBuilder->leftJoin(
+                            \Safe\sprintf('%s.%s', $previousPrefix, $currentPrefix),
+                            (string)$currentPrefix
+                        );
+                    }
+                    $previousPrefix = clone $currentPrefix;
+                    $nextSeparatorPosition = $currentField
+                        ->getPositionOfSubstring(ParameterEnum::FILTER_FIELD_SEPARATOR);
+                    if (null !== $nextSeparatorPosition) {
+                        $currentPrefix = (clone $currentField)->substring(0, $nextSeparatorPosition);
+                        $currentField = $currentField->substring($nextSeparatorPosition + 1);
+                    }
+                }
+                return $this;
+            }
+
+            $currentField = (clone $field)
+                ->replace(\Safe\sprintf('%s%s', DataManager::ROOT_ALIAS, ParameterEnum::FILTER_FIELD_SEPARATOR), '');
+            if (true === $this->isManyToManyField($currentField) &&
+                true !== in_array((string)$currentField, $queryBuilder->getAllAliases(), true)
+            ) {
+                $queryBuilder->leftJoin(\Safe\sprintf('%s.%s', DataManager::ROOT_ALIAS, $currentField), $currentField);
+            }
+        }
         return $this;
     }
 
@@ -321,9 +438,32 @@ class QueryBuilderDecorator
         return $this;
     }
 
-    public function applyOrdering(QueryBuilder $queryBuilder, RA $filters): self
+    /**
+     * @param QueryBuilder $queryBuilder
+     * @param RA $orderings
+     * @return QueryBuilderDecorator
+     */
+    public function applyOrdering(QueryBuilder $queryBuilder, RA $orderings): self
     {
-        // TODO:
+        $orderings->walk(function (RA $orderData) use ($queryBuilder): void {
+            $field = new Stringy($orderData->getString(ParameterEnum::ORDER_BY_FIELD));
+            $direction = $orderData->getString(ParameterEnum::ORDER_BY_DIRECTION);
+
+            if (true !== in_array($direction, self::AVAILABLE_ORDERING_DIRECTIONS, true)) {
+                throw new FilteringException(
+                    FilteringException::EXCEPTION_INVALID_ORDERING_DIRECTION,
+                    [$direction, implode(', ', self::AVAILABLE_ORDERING_DIRECTIONS)]
+                );
+            }
+
+            if (true === $this->isEmbed($field)) {
+                $queryBuilder->addOrderBy($field, $direction);
+                return;
+            }
+
+            $this->joinRequiredFilteringRelations($queryBuilder, $field);
+            $queryBuilder->addOrderBy($this->getFilteringPathForField($field), $direction);
+        });
         return $this;
     }
 
