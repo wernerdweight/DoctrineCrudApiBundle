@@ -128,4 +128,11 @@ class ParameterEnum
 
     /** @var string */
     public const ENTITY_NAME = 'entityName';
+
+    /** @var string */
+    public const NULL_VALUE = 'null';
+    /** @var string */
+    public const EMPTY_VALUE = '';
+    /** @var string */
+    public const TRUE_VALUE = 'true';
 }

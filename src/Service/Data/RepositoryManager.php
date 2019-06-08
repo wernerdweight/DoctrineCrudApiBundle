@@ -6,8 +6,8 @@ namespace WernerDweight\DoctrineCrudApiBundle\Service\Data;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
+use WernerDweight\DoctrineCrudApiBundle\Service\Request\CurrentEntityResolver;
 use WernerDweight\DoctrineCrudApiBundle\Service\Request\ParameterEnum;
-use WernerDweight\DoctrineCrudApiBundle\Service\Request\ParameterResolver;
 use WernerDweight\RA\Exception\RAException;
 use WernerDweight\RA\RA;
 use WernerDweight\Stringy\Stringy;
@@ -32,22 +32,22 @@ class RepositoryManager
     /** @var ServiceEntityRepositoryFactory */
     private $repositoryFactory;
 
-    /** @var ParameterResolver */
-    private $parameterResolver;
+    /** @var CurrentEntityResolver */
+    private $currentEntityResolver;
 
     /**
      * RepositoryManager constructor.
      * @param EntityManagerInterface $entityManager
      * @param ServiceEntityRepositoryFactory $repositoryFactory
-     * @param ParameterResolver $parameterResolver
+     * @param CurrentEntityResolver $currentEntityResolver
      */
     public function __construct(
         EntityManagerInterface $entityManager,
         ServiceEntityRepositoryFactory $repositoryFactory,
-        ParameterResolver $parameterResolver
+        CurrentEntityResolver $currentEntityResolver
     ) {
         $this->entityManager = $entityManager;
-        $this->parameterResolver = $parameterResolver;
+        $this->currentEntityResolver = $currentEntityResolver;
         $this->repositoryFactory = $repositoryFactory;
     }
 
@@ -58,7 +58,7 @@ class RepositoryManager
     public function getCurrentEntityName(): string
     {
         if (null === $this->currentEntityName) {
-            $this->currentEntityName = $this->parameterResolver->getString(ParameterEnum::ENTITY_NAME);
+            $this->currentEntityName = $this->currentEntityResolver->getCurrentEntity();
         }
         return $this->currentEntityName;
     }

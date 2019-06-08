@@ -46,6 +46,21 @@ class ParameterValidator
     }
 
     /**
+     * @param string $direction
+     * @return string
+     */
+    private function validateDirection(string $direction): string
+    {
+        if (true !== in_array($direction, ParameterEnum::AVAILABLE_ORDERING_DIRECTIONS, true)) {
+            throw new FilteringException(
+                FilteringException::EXCEPTION_INVALID_ORDERING_DIRECTION,
+                [$direction, implode(', ', ParameterEnum::AVAILABLE_ORDERING_DIRECTIONS)]
+            );
+        }
+        return $direction;
+    }
+
+    /**
      * @param Stringy $field
      * @return bool
      * @throws \Safe\Exceptions\StringsException
@@ -188,7 +203,19 @@ class ParameterValidator
             return new RA();
         }
 
-        return ;
+        $orderBy = new RA($orderBy, RA::RECURSIVE);
+        return $orderBy->map(function (RA $entry): RA {
+            $direction = $this->validateDirection(
+                $entry->getStringOrNull(ParameterEnum::ORDER_BY_DIRECTION) ?? ParameterEnum::ORDER_BY_DIRECTION_ASC
+            );
+            $field = new Stringy($entry->getString(ParameterEnum::ORDER_BY_FIELD));
+            if (null === $field->getPositionOfSubstring(ParameterEnum::FILTER_FIELD_SEPARATOR)) {
+                $field = new Stringy(
+                    \Safe\sprintf('%s%s%s', DataManager::ROOT_ALIAS, ParameterEnum::FILTER_FIELD_SEPARATOR, $field)
+                );
+            }
+            return new RA([$field => $direction]);
+        });
     }
 
     /**
@@ -201,6 +228,19 @@ class ParameterValidator
             return new RA();
         }
 
-        return ;
+        $groupBy = new RA($groupBy, RA::RECURSIVE);
+        return $groupBy->map(function (RA $entry): RA {
+            $direction = $this->validateDirection(
+                $entry->getStringOrNull(ParameterEnum::GROUP_BY_DIRECTION) ?? ParameterEnum::GROUP_BY_DIRECTION_ASC
+            );
+            $field = new Stringy($entry->getString(ParameterEnum::GROUP_BY_FIELD));
+            if (null === $field->getPositionOfSubstring(ParameterEnum::FILTER_FIELD_SEPARATOR)) {
+                $field = new Stringy(
+                    \Safe\sprintf('%s%s%s', DataManager::ROOT_ALIAS, ParameterEnum::FILTER_FIELD_SEPARATOR, $field)
+                );
+            }
+            $aggregates = $entry->getRAOrNull(ParameterEnum::GROUP_BY_AGGREGATES) ?? new RA();
+            return new RA(compact('field', 'direction', 'aggregates'));
+        });
     }
 }

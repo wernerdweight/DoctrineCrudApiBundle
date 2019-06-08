@@ -35,9 +35,11 @@ class QueryBuilderDecorator
     /** @var string */
     private const PARAM_NAME_SEPARATOR = '_';
     /** @var string */
-    private const DOCTRINE_ASSOCIATION_TYPE = 'type';
+    public const DOCTRINE_ASSOCIATION_TYPE = 'type';
     /** @var string */
-    private const IDENTIFIER_FIELD_NAME = 'id';
+    public const DOCTRINE_TARGET_ENTITY = 'targetEntity';
+    /** @var string */
+    public const IDENTIFIER_FIELD_NAME = 'id';
     /** @var string */
     private const AGGREGATE_PREFIX = 'aggregate';
 

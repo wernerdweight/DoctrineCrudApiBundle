@@ -20,8 +20,20 @@ class ParameterResolver
     /** @var ParameterValidator */
     private $parameterValidator;
 
-    public function __construct(RequestStack $requestStack, ParameterValidator $parameterValidator)
-    {
+    /** @var CurrentEntityResolver */
+    private $currentEntityResolver;
+
+    /**
+     * ParameterResolver constructor.
+     * @param RequestStack $requestStack
+     * @param ParameterValidator $parameterValidator
+     * @param CurrentEntityResolver $currentEntityResolver
+     */
+    public function __construct(
+        RequestStack $requestStack,
+        ParameterValidator $parameterValidator,
+        CurrentEntityResolver $currentEntityResolver
+    ) {
         $this->parameters = new RA();
 
         $request = $requestStack->getCurrentRequest();
@@ -31,6 +43,7 @@ class ParameterResolver
         $this->request = $request;
 
         $this->parameterValidator = $parameterValidator;
+        $this->currentEntityResolver = $currentEntityResolver;
     }
 
     /**
@@ -259,15 +272,7 @@ class ParameterResolver
      */
     private function resolveCommon(): self
     {
-        $entityName = $this->request->attributes->getAlpha(ParameterEnum::ENTITY_NAME);
-        if (true === empty($entityName)) {
-            throw new InvalidRequestException(InvalidRequestException::EXCEPTION_NO_ENTITY_NAME);
-        }
-
-        $entityName = (new Stringy($entityName))->convertCase(Stringy::CASE_KEBAB, Stringy::CASE_PASCAL);
-
-        $this->parameters->set(ParameterEnum::ENTITY_NAME, $entityName);
-
+        $this->parameters->set(ParameterEnum::ENTITY_NAME, $this->currentEntityResolver->getCurrentEntity());
         return $this;
     }
 
