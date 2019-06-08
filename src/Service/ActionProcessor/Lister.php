@@ -20,6 +20,12 @@ class Lister
     /** @var Formatter */
     private $formatter;
 
+    /**
+     * Lister constructor.
+     * @param ParameterResolver $parameterResolver
+     * @param DataManager $dataManager
+     * @param Formatter $formatter
+     */
     public function __construct(ParameterResolver $parameterResolver, DataManager $dataManager, Formatter $formatter)
     {
         $this->parameterResolver = $parameterResolver;
@@ -27,6 +33,12 @@ class Lister
         $this->formatter = $formatter;
     }
 
+    /**
+     * @return RA
+     * @throws \Safe\Exceptions\PcreException
+     * @throws \Safe\Exceptions\StringsException
+     * @throws \WernerDweight\RA\Exception\RAException
+     */
     private function fetch(): RA
     {
         $arguments = new RA([
@@ -42,11 +54,17 @@ class Lister
         }
         return $this->dataManager->getGroupedPortion(...$arguments->push($groupByParameter));
     }
-    
+
+    /**
+     * @return RA
+     * @throws \Safe\Exceptions\PcreException
+     * @throws \Safe\Exceptions\StringsException
+     * @throws \WernerDweight\RA\Exception\RAException
+     */
     public function getItems(): RA
     {
         $this->parameterResolver->resolveList();
         $items = $this->fetch();
-        return $this->formatter->formatMany($items);
+        return $this->formatter->formatListing($items);
     }
 }

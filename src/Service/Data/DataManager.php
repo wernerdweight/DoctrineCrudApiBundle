@@ -45,10 +45,13 @@ class DataManager
             ->applyOrdering($queryBuilder, $orderBy)
             ->applyPagination($queryBuilder, $offset, $limit);
 
-        return $queryBuilder
-            ->select(\Safe\sprintf('DISTINCT %s', self::ROOT_ALIAS))
-            ->getQuery()
-            ->getResult();
+        return new RA(
+            $queryBuilder
+                ->select(\Safe\sprintf('DISTINCT %s', self::ROOT_ALIAS))
+                ->getQuery()
+                ->getResult(),
+            RA::RECURSIVE
+        );
     }
 
     /**

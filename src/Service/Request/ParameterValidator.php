@@ -220,12 +220,12 @@ class ParameterValidator
 
     /**
      * @param array|null $groupBy
-     * @return RA
+     * @return RA|null
      */
-    public function validateGroupBy(?array $groupBy): RA
+    public function validateGroupBy(?array $groupBy): ?RA
     {
         if (null === $groupBy) {
-            return new RA();
+            return null;
         }
 
         $groupBy = new RA($groupBy, RA::RECURSIVE);

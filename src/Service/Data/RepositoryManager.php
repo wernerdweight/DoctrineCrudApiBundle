@@ -14,7 +14,7 @@ use WernerDweight\Stringy\Stringy;
 
 class RepositoryManager
 {
-    /** @var string */
+    /** @var Stringy */
     private $currentEntityName;
 
     /** @var ServiceEntityRepository|null */
@@ -52,10 +52,10 @@ class RepositoryManager
     }
 
     /**
-     * @return string
+     * @return Stringy
      * @throws RAException
      */
-    public function getCurrentEntityName(): string
+    public function getCurrentEntityName(): Stringy
     {
         if (null === $this->currentEntityName) {
             $this->currentEntityName = $this->currentEntityResolver->getCurrentEntity();
@@ -70,10 +70,7 @@ class RepositoryManager
     public function getCurrentRepository(): ServiceEntityRepository
     {
         if (null === $this->currentRepository) {
-            $this->currentRepository = $this->containerRepositoryFactory->getRepository(
-                $this->entityManager,
-                $this->getCurrentEntityName()
-            );
+            $this->currentRepository = $this->repositoryFactory->get((string)$this->getCurrentEntityName());
         }
         return $this->currentRepository;
     }

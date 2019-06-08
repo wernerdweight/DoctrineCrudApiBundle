@@ -30,9 +30,9 @@ class CurrentEntityResolver
     }
 
     /**
-     * @return string
+     * @return Stringy
      */
-    public function getCurrentEntity(): string
+    public function getCurrentEntity(): Stringy
     {
         if (null === $this->currentEntity) {
             $entityName = $this->request->attributes->getAlpha(ParameterEnum::ENTITY_NAME);

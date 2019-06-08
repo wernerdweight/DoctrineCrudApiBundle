@@ -8,6 +8,7 @@ use Symfony\Component\DependencyInjection\Argument\RewindableGenerator;
 use WernerDweight\DoctrineCrudApiBundle\Exception\ServiceEntityRepositoryFactoryException;
 use WernerDweight\RA\Exception\RAException;
 use WernerDweight\RA\RA;
+use WernerDweight\Stringy\Stringy;
 
 class ServiceEntityRepositoryFactory
 {
@@ -27,7 +28,12 @@ class ServiceEntityRepositoryFactory
         while ($iterator->valid()) {
             /** @var ServiceEntityRepository $repository */
             $repository = $iterator->current();
-            $this->repositories->set($repository->getClassName(), $repository);
+            $entityName = (new Stringy($repository->getClassName()))->pregReplace('/Repository$/', '');
+            $lastBackslashPosition = $entityName->getPositionOfLastSubstring('\\');
+            if (null !== $lastBackslashPosition) {
+                $entityName = $entityName->substring($lastBackslashPosition + 1);
+            }
+            $this->repositories->set((string)$entityName, $repository);
             $iterator->next();
         }
     }
@@ -45,7 +51,7 @@ class ServiceEntityRepositoryFactory
         if (true !== $this->repositories->hasKey($className)) {
             throw new ServiceEntityRepositoryFactoryException(
                 ServiceEntityRepositoryFactoryException::INVALID_ENTITY_CLASS,
-                $className
+                [$className]
             );
         }
         /** @var ServiceEntityRepository $repository */
