@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
+use WernerDweight\DoctrineCrudApiBundle\Entity\ApiEntityInterface;
 use WernerDweight\DoctrineCrudApiBundle\Exception\MappingResolverException;
 use WernerDweight\DoctrineCrudApiBundle\Service\Request\ParameterEnum;
 use WernerDweight\RA\RA;
@@ -29,12 +30,13 @@ class MappingResolver
     /**
      * @param RA $itemData
      * @param string $className
-     * @return object
+     * @return ApiEntityInterface
      * @throws \WernerDweight\RA\Exception\RAException
      */
-    private function resolveEntity(RA $itemData, string $className): object
+    private function resolveEntity(RA $itemData, string $className): ApiEntityInterface
     {
         $id = $itemData->get(QueryBuilderDecorator::IDENTIFIER_FIELD_NAME);
+        /** @var ApiEntityInterface $item */
         $item = $this->entityManager->find($className, $id);
         if (null === $item) {
             throw new MappingResolverException(
@@ -54,19 +56,19 @@ class MappingResolver
     {
         return new ArrayCollection(
             $value
-                ->map(function (RA $itemData) use ($className): ?object {
+                ->map(function (RA $itemData) use ($className): ApiEntityInterface {
                     return $this->resolveEntity($itemData, $className);
                 })
                 ->toArray()
         );
     }
-    
+
     /**
      * @param RA|string|int $value
      * @param string $className
-     * @return object|null
+     * @return ApiEntityInterface
      */
-    private function resolveToOne($value, string $className): ?object
+    private function resolveToOne($value, string $className): ApiEntityInterface
     {
         if ($value instanceof RA) {
             return $this->resolveEntity($value, $className);

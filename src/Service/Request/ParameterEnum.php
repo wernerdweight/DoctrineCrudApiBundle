@@ -122,6 +122,10 @@ class ParameterEnum
     public const GROUP_BY_AGGREGATE_FIELD = 'field';
     /** @var string */
     public const GROUP_BY_ITEMS = 'items';
+    /** @var string */
+    public const GROUP_BY_VALUE = 'value';
+    /** @var string */
+    public const GROUP_BY_HAS_GROUPS = 'hasGroups';
 
     /** @var string */
     public const RESPONSE_STRUCTURE = 'responseStructure';
@@ -135,4 +139,12 @@ class ParameterEnum
     public const EMPTY_VALUE = '';
     /** @var string */
     public const TRUE_VALUE = 'true';
+    /** @var string */
+    public const FALSE_VALUE = 'false';
+    /** @var string */
+    public const ARRAY_VALUE = 'array';
+    /** @var string */
+    public const OBJECT_VALUE = 'object';
+    /** @var string */
+    public const UNDEFINED_VALUE = 'undefined';
 }

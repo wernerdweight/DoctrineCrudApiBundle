@@ -3,9 +3,12 @@ declare(strict_types=1);
 
 namespace WernerDweight\DoctrineCrudApiBundle\Service\Response;
 
+use WernerDweight\DoctrineCrudApiBundle\Entity\ApiEntityInterface;
+use WernerDweight\DoctrineCrudApiBundle\Exception\FormatterException;
 use WernerDweight\DoctrineCrudApiBundle\Service\Data\QueryBuilderDecorator;
 use WernerDweight\DoctrineCrudApiBundle\Service\Request\ParameterEnum;
 use WernerDweight\DoctrineCrudApiBundle\Service\Request\ParameterResolver;
+use WernerDweight\RA\RA;
 use WernerDweight\Stringy\Stringy;
 
 class Formatter
@@ -21,17 +24,109 @@ class Formatter
     {
         $this->parameterResolver = $parameterResolver;
     }
-    
-    private function formatGroupped(): RA
+
+    /**
+     * @param mixed $value
+     * @return string
+     * @throws \Safe\Exceptions\PcreException
+     */
+    private function printValue($value): string
+    {
+        if ($value === null) {
+            return ParameterEnum::NULL_VALUE;
+        }
+        if ($value === true) {
+            return ParameterEnum::TRUE_VALUE;
+        }
+        if ($value === false) {
+            return ParameterEnum::FALSE_VALUE;
+        }
+        if (true === is_numeric($value)) {
+            return (string)$value;
+        }
+        if (true === is_array($value)) {
+            return ParameterEnum::ARRAY_VALUE;
+        }
+        if (true === is_object($value)) {
+            if ($value instanceof \DateTime) {
+                $formatedDateTime = new Stringy($value->format('c'));
+                return (string)($formatedDateTime->pregReplace('/:([\d]{2})$/', '$1'));
+            }
+            if (true === method_exists($value, '__toString')) {
+                return (string)$value;
+            }
+            return ParameterEnum::OBJECT_VALUE;
+        }
+        if (true === is_string($value)) {
+            return $value;
+        }
+        return ParameterEnum::UNDEFINED_VALUE;
+    }
+
+    public function formatOne(ApiEntityInterface $item, string $prefix = ParameterEnum::EMPTY_VALUE): RA
     {
         
     }
 
-    public function formatMany(): RA
+    /**
+     * @param RA $items
+     * @return RA
+     */
+    public function formatMany(RA $items): RA
     {
-
+        return $items->map(function (ApiEntityInterface $item): RA {
+            return $this->formatOne($item);
+        });
     }
 
+    /**
+     * @param RA $groups
+     * @param int $level
+     * @param string $groupingField
+     * @return RA
+     */
+    private function formatGroupped(RA $groups, int $level, string $groupingField): RA
+    {
+        return $groups->map(function (RA $group) use ($groupingField, $level): RA {
+            return (new RA())
+                ->set(ParameterEnum::GROUP_BY_AGGREGATES, $group->map(function ($value, string $field): RA {
+                    $field = new Stringy($field);
+                    if ($field->getPositionOfSubstring(QueryBuilderDecorator::AGGREGATE_PREFIX) !== 0) {
+                        return new RA();
+                    }
+                    $field = $field->substring((new Stringy(QueryBuilderDecorator::AGGREGATE_PREFIX))->length());
+                    $lastUnderscorePosition = $field
+                        ->getPositionOfLastSubstring(QueryBuilderDecorator::AGGREGATE_FUNCTION_SEPARATOR);
+                    if (null === $lastUnderscorePosition) {
+                        throw new FormatterException(
+                            FormatterException::EXCEPTION_INVALID_AGGREGATE_FIELD_NAME,
+                            [$field]
+                        );
+                    }
+                    $functionName = (clone $field)->substring(0, $lastUnderscorePosition);
+                    $field = $field->substring($lastUnderscorePosition + 1);
+                    return new RA([
+                        $field => [
+                            $functionName => $value,
+                        ],
+                    ], RA::RECURSIVE);
+                }))
+                ->set(ParameterEnum::GROUP_BY_FIELD, $groupingField)
+                ->set(ParameterEnum::GROUP_BY_VALUE, $this->printValue($group->get(ParameterEnum::GROUP_BY_VALUE)))
+                ->set(ParameterEnum::GROUP_BY_HAS_GROUPS, $level > 1)
+                ->set(
+                    ParameterEnum::GROUP_BY_ITEMS,
+                    $this->formatListing($group->getRA(ParameterEnum::GROUP_BY_ITEMS), $level - 1)
+                );
+        });
+    }
+
+    /**
+     * @param RA $items
+     * @param int|null $level
+     * @return RA
+     * @throws \WernerDweight\RA\Exception\RAException
+     */
     public function formatListing(RA $items, ?int $level = null): RA
     {
         $groupBy = $this->parameterResolver->getRAOrNull(ParameterEnum::GROUP_BY);
@@ -48,6 +143,6 @@ class Formatter
                 : QueryBuilderDecorator::IDENTIFIER_FIELD_NAME;
             return $this->formatGroupped($items, $level, $levelGroupingField);
         }
-        return $this->formatMany($result);
+        return $this->formatMany($items);
     }
 }

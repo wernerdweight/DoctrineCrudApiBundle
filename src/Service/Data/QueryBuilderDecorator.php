@@ -41,7 +41,9 @@ class QueryBuilderDecorator
     /** @var string */
     public const IDENTIFIER_FIELD_NAME = 'id';
     /** @var string */
-    private const AGGREGATE_PREFIX = 'aggregate';
+    public const AGGREGATE_PREFIX = 'aggregate';
+    /** @var string */
+    public const AGGREGATE_FUNCTION_SEPARATOR = '_';
 
     /** @var RepositoryManager */
     private $repositoryManager;
@@ -485,12 +487,14 @@ class QueryBuilderDecorator
             $function = $aggregateData->getString(ParameterEnum::GROUP_BY_AGGREGATE_FUNCTION);
             $field = $aggregateData->getString(ParameterEnum::GROUP_BY_AGGREGATE_FIELD);
             $queryBuilder->addSelect(\Safe\sprintf(
-                '%s(DISTINCT(%s.%s)) AS %s_%s_%s',
+                '%s(DISTINCT(%s.%s)) AS %s%s%s%s%s',
                 $function,
                 DataManager::ROOT_ALIAS,
                 $field,
                 self::AGGREGATE_PREFIX,
+                self::AGGREGATE_FUNCTION_SEPARATOR,
                 $function,
+                self::AGGREGATE_FUNCTION_SEPARATOR,
                 $field
             ));
         });
