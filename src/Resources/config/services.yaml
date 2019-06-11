@@ -6,7 +6,7 @@ services:
 
     WernerDweight\DoctrineCrudApiBundle\:
         resource: '../../*'
-        exclude: '../../{DependencyInjection,Exception}'
+        exclude: '../../{DependencyInjection,Exception,Mapping}'
 
     WernerDweight\DoctrineCrudApiBundle\Controller\:
         resource: '../../Controller'
@@ -15,3 +15,6 @@ services:
     WernerDweight\DoctrineCrudApiBundle\Service\Data\ServiceEntityRepositoryFactory:
         arguments:
             $repositories: !tagged doctrine.repository_service
+
+    WernerDweight\DoctrineCrudApiBundle\Mapping\DoctrineCrudApiEventSubscriber:
+        tags: ['doctrine.event_subscriber']

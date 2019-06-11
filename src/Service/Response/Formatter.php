@@ -5,6 +5,7 @@ namespace WernerDweight\DoctrineCrudApiBundle\Service\Response;
 
 use WernerDweight\DoctrineCrudApiBundle\Entity\ApiEntityInterface;
 use WernerDweight\DoctrineCrudApiBundle\Exception\FormatterException;
+use WernerDweight\DoctrineCrudApiBundle\Service\Data\ConfigurationManager;
 use WernerDweight\DoctrineCrudApiBundle\Service\Data\QueryBuilderDecorator;
 use WernerDweight\DoctrineCrudApiBundle\Service\Request\ParameterEnum;
 use WernerDweight\DoctrineCrudApiBundle\Service\Request\ParameterResolver;
@@ -16,13 +17,18 @@ class Formatter
     /** @var ParameterResolver */
     private $parameterResolver;
 
+    /** @var ConfigurationManager */
+    private $configurationManager;
+
     /**
      * Formatter constructor.
      * @param ParameterResolver $parameterResolver
+     * @param ConfigurationManager $configurationManager
      */
-    public function __construct(ParameterResolver $parameterResolver)
+    public function __construct(ParameterResolver $parameterResolver, ConfigurationManager $configurationManager)
     {
         $this->parameterResolver = $parameterResolver;
+        $this->configurationManager = $configurationManager;
     }
 
     /**
@@ -63,9 +69,27 @@ class Formatter
         return ParameterEnum::UNDEFINED_VALUE;
     }
 
+    /**
+     * @param ApiEntityInterface $item
+     * @param string $prefix
+     * @return RA
+     */
     public function formatOne(ApiEntityInterface $item, string $prefix = ParameterEnum::EMPTY_VALUE): RA
     {
-        
+        $configuration = $this->configurationManager->getConfigurationForEntity($item);
+        $result = new RA();
+        $configuration->getListableFields()->walk(function (string $field) use ($prefix, $result, $configuration): void {
+            if (true !== $this->isAllowedForOutput(\Safe\sprintf('%s%s', $prefix, $field))) {
+                return;
+            }
+            $metadata = $this->configurationManager->getFieldMetadata($configuration, $field);
+            if (null === $metadata) {
+                $result->set($field, $this->getEntityPropertyValue($item, $field));
+                return;
+            }
+            $result->set($field, $this->getEntityPropertyValueBasedOnMetadata($item, $field, $metadata, $prefix));
+        });
+        return $result;
     }
 
     /**

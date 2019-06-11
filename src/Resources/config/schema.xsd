@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="https://schemas.wds.blue/orm/doctrine-api-crud-bundle-mapping"
+    xmlns:crud-api="https://schemas.wds.blue/orm/doctrine-api-crud-bundle-mapping"
+    elementFormDefault="qualified">
+
+    <xs:annotation>
+        <xs:documentation>This is the XML Schema for the DoctrineCrudApiBundle by Werner Dweight Solutions</xs:documentation>
+    </xs:annotation>
+
+    <xs:element name="listable" type="crud-api:listable"/>
+    <xs:element name="creatable" type="crud-api:creatable"/>
+    <xs:element name="updatable" type="crud-api:updatable"/>
+    <xs:element name="metadata" type="crud-api:metadata"/>
+
+    <xs:complexType name="listable">
+        <xs:attribute name="default" type="xs:boolean" use="optional" default="false"/>
+    </xs:complexType>
+
+    <xs:complexType name="creatable"/>
+
+    <xs:complexType name="updatable">
+        <xs:attribute name="nested" type="xs:boolean" use="optional" default="false"/>
+    </xs:complexType>
+
+    <xs:complexType name="metadata">
+        <xs:attribute name="type" type="crud-api:metadata-type" use="optional"/>
+        <xs:attribute name="class" type="xs:string" use="optional"/>
+    </xs:complexType>
+
+    <xs:simpleType name="metadata-type">
+        <xs:restriction base="xs:token">
+            <xs:enumeration value="entity"/>
+            <xs:enumeration value="collection"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+</xs:schema>
