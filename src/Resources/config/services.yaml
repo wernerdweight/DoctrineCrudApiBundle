@@ -6,7 +6,7 @@ services:
 
     WernerDweight\DoctrineCrudApiBundle\:
         resource: '../../*'
-        exclude: '../../{DependencyInjection,Exception,Mapping}'
+        exclude: '../../{DependencyInjection,Exception}'
 
     WernerDweight\DoctrineCrudApiBundle\Controller\:
         resource: '../../Controller'
@@ -18,3 +18,13 @@ services:
 
     WernerDweight\DoctrineCrudApiBundle\Mapping\DoctrineCrudApiEventSubscriber:
         tags: ['doctrine.event_subscriber']
+
+    WernerDweight\DoctrineCrudApiBundle\Mapping\Driver\:
+        resource: '../../Mapping/Driver/*'
+        exclude: '../../Mapping/Driver/Abstract*'
+        tags:
+            - { name: 'crud_api.driver' }
+
+    WernerDweight\DoctrineCrudApiBundle\Mapping\DoctrineCrudApiDriverFactory:
+        arguments:
+            $drivers: !tagged crud_api.driver

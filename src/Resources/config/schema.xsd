@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
-    targetNamespace="https://schemas.wds.blue/orm/doctrine-api-crud-bundle-mapping"
-    xmlns:crud-api="https://schemas.wds.blue/orm/doctrine-api-crud-bundle-mapping"
+    targetNamespace="http://schemas.wds.blue/orm/doctrine-crud-api-bundle-mapping"
+    xmlns:wds="http://schemas.wds.blue/orm/doctrine-crud-api-bundle-mapping"
     elementFormDefault="qualified">
 
     <xs:annotation>
         <xs:documentation>This is the XML Schema for the DoctrineCrudApiBundle by Werner Dweight Solutions</xs:documentation>
     </xs:annotation>
 
-    <xs:element name="listable" type="crud-api:listable"/>
-    <xs:element name="creatable" type="crud-api:creatable"/>
-    <xs:element name="updatable" type="crud-api:updatable"/>
-    <xs:element name="metadata" type="crud-api:metadata"/>
+    <xs:element name="listable" type="wds:listable"/>
+    <xs:element name="creatable" type="wds:creatable"/>
+    <xs:element name="updatable" type="wds:updatable"/>
+    <xs:element name="metadata" type="wds:metadata"/>
 
     <xs:complexType name="listable">
         <xs:attribute name="default" type="xs:boolean" use="optional" default="false"/>
@@ -25,8 +25,10 @@
     </xs:complexType>
 
     <xs:complexType name="metadata">
-        <xs:attribute name="type" type="crud-api:metadata-type" use="optional"/>
-        <xs:attribute name="class" type="xs:string" use="optional"/>
+        <xs:sequence>
+            <xs:element name="type" type="wds:metadata-type" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="class" type="xs:string" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
     </xs:complexType>
 
     <xs:simpleType name="metadata-type">

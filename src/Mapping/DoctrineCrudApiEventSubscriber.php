@@ -3,13 +3,28 @@ declare(strict_types=1);
 
 namespace WernerDweight\DoctrineCrudApiBundle\Mapping;
 
+use Doctrine\Common\Annotations\AnnotationRegistry;
 use Doctrine\Common\EventArgs;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\LoadClassMetadataEventArgs;
 use Doctrine\ORM\Events;
+use Doctrine\ORM\Mapping\ClassMetadataFactory;
+use WernerDweight\RA\RA;
 
 class DoctrineCrudApiEventSubscriber implements EventSubscriber
 {
+    /** @var DoctrineCrudApiMetadataFactory */
+    private $metadataFactory;
+
+    /**
+     * DoctrineCrudApiEventSubscriber constructor.
+     * @param DoctrineCrudApiMetadataFactory $metadataFactory
+     */
+    public function __construct(DoctrineCrudApiMetadataFactory $metadataFactory)
+    {
+        $this->metadataFactory = $metadataFactory;
+    }
+
     /**
      * @return string[]
      */
@@ -25,7 +40,6 @@ class DoctrineCrudApiEventSubscriber implements EventSubscriber
      */
     public function loadClassMetadata(LoadClassMetadataEventArgs $args): void
     {
-        // TODO: ignore mongoDB (ODM) for now, only support ORM for now
-        dump(get_class($args), $args);exit;
+        $this->metadataFactory->extendClassMetadata($args->getClassMetadata());
     }
 }
