@@ -9,17 +9,32 @@ use Doctrine\Common\Persistence\Mapping\Driver\FileLocator;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
 use WernerDweight\DoctrineCrudApiBundle\Exception\XmlDriverException;
+use WernerDweight\DoctrineCrudApiBundle\Mapping\Type\DoctrineCrudApiMappingTypeInterface;
+use WernerDweight\DoctrineCrudApiBundle\Mapping\Type\Factory\XmlMappingTypeFactory;
+use WernerDweight\DoctrineCrudApiBundle\Mapping\Type\MappingTypeInterface;
 use WernerDweight\RA\RA;
 
 class Xml extends AbstractDriver implements DoctrineCrudApiDriverInterface
 {
     /** @var string */
-    private const WDS_NAMESPACE_URI = 'http://schemas.wds.blue/orm/doctrine-crud-api-bundle-mapping';
+    public const WDS_NAMESPACE_URI = 'http://schemas.wds.blue/orm/doctrine-crud-api-bundle-mapping';
     /** @var string */
     private const DOCTRINE_NAMESPACE_URI = 'http://doctrine-project.org/schemas/orm/doctrine-mapping';
 
     /** @var FileLocator */
     private $locator;
+
+    /** @var XmlMappingTypeFactory */
+    private $mappingTypeFactory;
+
+    /**
+     * Xml constructor.
+     * @param XmlMappingTypeFactory $mappingTypeFactory
+     */
+    public function __construct(XmlMappingTypeFactory $mappingTypeFactory)
+    {
+        $this->mappingTypeFactory = $mappingTypeFactory;
+    }
 
     /**
      * @param FileLocator $locator
@@ -85,28 +100,25 @@ class Xml extends AbstractDriver implements DoctrineCrudApiDriverInterface
         return $mapping[$entityName];
     }
 
+    /**
+     * @param ClassMetadata $metadata
+     * @param RA $config
+     * @return RA
+     * @throws \Doctrine\Common\Persistence\Mapping\MappingException
+     * @throws \Safe\Exceptions\SimplexmlException
+     * @throws \WernerDweight\RA\Exception\RAException
+     */
     public function readMetadata(ClassMetadata $metadata, RA $config): RA
     {
         $mapping = $this->getXmlMapping($metadata->name);
-        if (true === isset($mapping->field)) {
-            foreach ($mapping->field as $field) {
-                $filteredMapping = $field->children(self::WDS_NAMESPACE_URI);
-                if (true === isset($filteredMapping->listable)) {
-
-                }
-                if (true === isset($filteredMapping->creatable)) {
-                    // TODO: generalize this for other elements (listable etc.) and other types (relations)
-                    // TODO: use class constants for mapping elements (CREATABLE, ...)
-                    if (true !== $config->hasKey('creatable')) {
-                        $config->set('creatable', new RA());
+        foreach (DoctrineCrudApiDriverInterface::INSPECTABLE_PROPERTIES as $property) {
+            if (true === isset($mapping->$property)) {
+                foreach ($mapping->$property as $propertyMapping) {
+                    $filteredMapping = $propertyMapping->children(self::WDS_NAMESPACE_URI);
+                    foreach (DoctrineCrudApiMappingTypeInterface::MAPPING_TYPES as $mappingType) {
+                        $config = $this->mappingTypeFactory->get($mappingType)
+                            ->readConfiguration($propertyMapping, $filteredMapping, $config);
                     }
-                    $config->getRA('creatable')->push((string)$field->attributes()['name']);
-                }
-                if (true === isset($filteredMapping->updatable)) {
-
-                }
-                if (true === isset($filteredMapping->metadata)) {
-
                 }
             }
         }

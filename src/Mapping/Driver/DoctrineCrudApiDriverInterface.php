@@ -11,6 +11,28 @@ use WernerDweight\RA\RA;
 
 interface DoctrineCrudApiDriverInterface
 {
+    /** @var string */
+    public const PROPERTY_ID = 'id';
+    /** @var string */
+    public const PROPERTY_FIELD = 'field';
+    /** @var string */
+    public const PROPERTY_ONE_TO_ONE = 'one-to-one';
+    /** @var string */
+    public const PROPERTY_ONE_TO_MANY = 'one-to-many';
+    /** @var string */
+    public const PROPERTY_MANY_TO_ONE = 'many-to-one';
+    /** @var string */
+    public const PROPERTY_MANY_TO_MANY = 'many-to-many';
+    /** @var string[] */
+    public const INSPECTABLE_PROPERTIES = [
+        self::PROPERTY_ID,
+        self::PROPERTY_FIELD,
+        self::PROPERTY_ONE_TO_ONE,
+        self::PROPERTY_ONE_TO_MANY,
+        self::PROPERTY_MANY_TO_ONE,
+        self::PROPERTY_MANY_TO_MANY,
+    ];
+
     /**
      * @param MappingDriver $driver
      * @return DoctrineCrudApiDriverInterface

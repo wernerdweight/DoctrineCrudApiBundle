@@ -28,3 +28,23 @@ services:
     WernerDweight\DoctrineCrudApiBundle\Mapping\DoctrineCrudApiDriverFactory:
         arguments:
             $drivers: !tagged crud_api.driver
+
+    WernerDweight\DoctrineCrudApiBundle\Mapping\Type\Xml\:
+        resource: '../../Mapping/Type/Xml/*'
+        exclude: '../../Mapping/Type/Xml/Abstract*'
+        tags:
+            - { name: 'crud_api.mapping_type.xml' }
+
+    WernerDweight\DoctrineCrudApiBundle\Mapping\Type\Factory\XmlMappingTypeFactory:
+        arguments:
+            $types: !tagged crud_api.mapping_type.xml
+
+    WernerDweight\DoctrineCrudApiBundle\Mapping\Type\Annotation\:
+        resource: '../../Mapping/Type/Annotation/*'
+        exclude: '../../Mapping/Type/Annotation/Abstract*'
+        tags:
+            - { name: 'crud_api.mapping_type.annotation' }
+
+    WernerDweight\DoctrineCrudApiBundle\Mapping\Type\Factory\AnnotationMappingTypeFactory:
+        arguments:
+            $types: !tagged crud_api.mapping_type.annotation

@@ -16,6 +16,7 @@ use WernerDweight\DoctrineCrudApiBundle\Mapping\Driver\Annotation;
 use WernerDweight\DoctrineCrudApiBundle\Mapping\Driver\Chain;
 use WernerDweight\DoctrineCrudApiBundle\Mapping\Driver\DoctrineCrudApiDriverInterface;
 use WernerDweight\DoctrineCrudApiBundle\Mapping\Driver\Xml;
+use WernerDweight\DoctrineCrudApiBundle\Mapping\Type\DoctrineCrudApiMappingTypeInterface;
 use WernerDweight\RA\RA;
 use WernerDweight\Stringy\Stringy;
 
@@ -27,6 +28,8 @@ class DoctrineCrudApiMetadataFactory
     private const DRIVER_SUFFIX = 'Driver';
     /** @var string */
     private const SIMPLIFIED_DRIVER_SUFFIX = 'Simplified';
+    /** @var string */
+    private const CACHE_NAMESPACE = 'DOCTRINE_CRUD_API_CLASSMETADATA';
 
     /** @var EntityManager */
     private $entityManager;
@@ -113,12 +116,35 @@ class DoctrineCrudApiMetadataFactory
         return $this->driver;
     }
 
+    /**
+     * @return RA
+     */
+    private function createConfigurationObject(): RA
+    {
+        return (new RA())
+            ->set(DoctrineCrudApiMappingTypeInterface::LISTABLE, new RA())
+            ->set(DoctrineCrudApiMappingTypeInterface::DEFAULT_LISTABLE, new RA())
+            ->set(DoctrineCrudApiMappingTypeInterface::CREATABLE, new RA())
+            ->set(DoctrineCrudApiMappingTypeInterface::UPDATABLE, new RA())
+            ->set(DoctrineCrudApiMappingTypeInterface::UPDATABLE_NESTED, new RA())
+            ->set(DoctrineCrudApiMappingTypeInterface::METADATA, new RA())
+        ;
+    }
+
+    /**
+     * @param ClassMetadata $metadata
+     * @return DoctrineCrudApiMetadataFactory
+     * @throws \Doctrine\Common\Annotations\AnnotationException
+     * @throws \Doctrine\ORM\ORMException
+     * @throws \Safe\Exceptions\StringsException
+     * @throws \WernerDweight\RA\Exception\RAException
+     */
     public function extendClassMetadata(ClassMetadata $metadata): self
     {
         $metadataFactory = $this->entityManager->getMetadataFactory();
         $reflectionClass = $metadata->reflClass;
 
-        $config = new RA();
+        $config = $this->createConfigurationObject();
         if (null !== $reflectionClass) {
             $config = (new RA(class_parents($metadata->name)))
                 ->reverse()
@@ -134,10 +160,11 @@ class DoctrineCrudApiMetadataFactory
 
         $cacheDriver = $metadataFactory->getCacheDriver();
         if (null !== $cacheDriver) {
-            $cacheKey = \Safe\sprintf('%s\\$DOCTRINE_CRUD_API_CLASSMETADATA', $metadata->name);
+            $cacheKey = \Safe\sprintf('%s\\$%s', $metadata->name, self::CACHE_NAMESPACE);
             $cacheDriver->save($cacheKey, $config->toArray());
         }
 
-        dump($config);exit;
+        $metadata->apiData = $config;
+        return $this;
     }
 }

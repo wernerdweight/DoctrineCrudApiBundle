@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace WernerDweight\DoctrineCrudApiBundle\Service\Data;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Mapping\ClassMetadata;
 use WernerDweight\DoctrineCrudApiBundle\Entity\ApiEntityInterface;
 use WernerDweight\DoctrineCrudApiBundle\Exception\ConfigurationManagerException;
 use WernerDweight\RA\RA;
@@ -30,23 +31,19 @@ class ConfigurationManager
         $this->configuration = new RA();
     }
 
-    private function loadConfigurationForEntityClass(string $class): RA
-    {
-        dump($this->entityManager->getClassMetadata($class));
-        exit;
-    }
-
     /**
      * @param string $class
-     * @return RA
+     * @return ClassMetadata
      * @throws \WernerDweight\RA\Exception\RAException
      */
-    private function getConfigurationForEntityClass(string $class): RA
+    private function getConfigurationForEntityClass(string $class): ClassMetadata
     {
         if (true !== $this->configuration->hasKey($class)) {
-            $this->configuration->set($class, $this->loadConfigurationForEntityClass($class));
+            // TODO: use custom Metadata object with getListableFields etc. getters
+            $this->configuration->set($class, $this->entityManager->getClassMetadata($class));
         }
-        $configuration = $this->configuration->getRAOrNull($class);
+        /** @var ClassMetadata|null $configuration */
+        $configuration = $this->configuration->get($class);
         if (null === $configuration) {
             throw new ConfigurationManagerException(
                 ConfigurationManagerException::EXCEPTION_NO_CONFIGURATION_FOR_ENTITY,
@@ -58,9 +55,10 @@ class ConfigurationManager
 
     /**
      * @param ApiEntityInterface $entity
-     * @return RA
+     * @return ClassMetadata
+     * @throws \WernerDweight\RA\Exception\RAException
      */
-    public function getConfigurationForEntity(ApiEntityInterface $entity): RA
+    public function getConfigurationForEntity(ApiEntityInterface $entity): ClassMetadata
     {
         $className = (new Stringy(get_class($entity)))->replace(self::PROXY_PREFIX, '');
         return $this->getConfigurationForEntityClass((string)$className);
