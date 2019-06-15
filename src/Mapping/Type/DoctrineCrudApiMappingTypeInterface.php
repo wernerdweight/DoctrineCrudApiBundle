@@ -27,6 +27,21 @@ interface DoctrineCrudApiMappingTypeInterface
         self::METADATA,
     ];
 
+    /** @var string */
+    public const METADATA_TYPE = 'type';
+    /** @var string */
+    public const METADATA_TYPE_COLLECTION = 'collection';
+    /** @var string */
+    public const METADATA_TYPE_ENTITY = 'entity';
+
+    /** @var string */
+    public const METADATA_CLASS = 'class';
+
+    /** @var string */
+    public const METADATA_PAYLOAD = 'payload';
+    /** @var string */
+    public const METADATA_PAYLOAD_ARGUMENT = 'argument';
+
     /**
      * @return string
      */

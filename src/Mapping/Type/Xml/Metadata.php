@@ -9,11 +9,6 @@ use WernerDweight\RA\RA;
 
 final class Metadata extends AbstractType implements DoctrineCrudApiMappingTypeInterface
 {
-    /** @var string */
-    private const CHILD_TYPE = 'type';
-    /** @var string */
-    private const CHILD_CLASS = 'class';
-
     /**
      * @param \SimpleXMLElement $propertyMapping
      * @param \SimpleXMLElement $filteredMapping
@@ -30,8 +25,21 @@ final class Metadata extends AbstractType implements DoctrineCrudApiMappingTypeI
             $config->getRA($mappingType)->set(
                 (string)($attributes['name'] ?: $attributes['field']),
                 (new RA())
-                    ->set(self::CHILD_TYPE, (string)($children->{self::CHILD_TYPE}) ?: null)
-                    ->set(self::CHILD_CLASS, (string)($children->{self::CHILD_CLASS}) ?: null)
+                    ->set(
+                        DoctrineCrudApiMappingTypeInterface::METADATA_TYPE,
+                        (string)($children->{DoctrineCrudApiMappingTypeInterface::METADATA_TYPE}) ?: null
+                    )
+                    ->set(
+                        DoctrineCrudApiMappingTypeInterface::METADATA_CLASS,
+                        (string)($children->{DoctrineCrudApiMappingTypeInterface::METADATA_CLASS}) ?: null
+                    )
+                    ->set(
+                        DoctrineCrudApiMappingTypeInterface::METADATA_PAYLOAD,
+                        (array)($children
+                            ->{DoctrineCrudApiMappingTypeInterface::METADATA_PAYLOAD}
+                            ->{DoctrineCrudApiMappingTypeInterface::METADATA_PAYLOAD_ARGUMENT}
+                        ) ?: []
+                    )
             );
         }
         return $config;

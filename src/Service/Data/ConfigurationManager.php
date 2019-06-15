@@ -5,6 +5,7 @@ namespace WernerDweight\DoctrineCrudApiBundle\Service\Data;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
+use WernerDweight\DoctrineCrudApiBundle\DTO\DoctrineCrudApiMetadata;
 use WernerDweight\DoctrineCrudApiBundle\Entity\ApiEntityInterface;
 use WernerDweight\DoctrineCrudApiBundle\Exception\ConfigurationManagerException;
 use WernerDweight\RA\RA;
@@ -33,16 +34,23 @@ class ConfigurationManager
 
     /**
      * @param string $class
-     * @return ClassMetadata
+     * @param DoctrineCrudApiMetadata $metadata
+     * @return ConfigurationManager
+     */
+    public function setConfiguration(string $class, DoctrineCrudApiMetadata $metadata): self
+    {
+        $this->configuration->set($class, $metadata);
+        return $this;
+    }
+
+    /**
+     * @param string $class
+     * @return DoctrineCrudApiMetadata
      * @throws \WernerDweight\RA\Exception\RAException
      */
-    private function getConfigurationForEntityClass(string $class): ClassMetadata
+    private function getConfigurationForEntityClass(string $class): DoctrineCrudApiMetadata
     {
-        if (true !== $this->configuration->hasKey($class)) {
-            // TODO: use custom Metadata object with getListableFields etc. getters
-            $this->configuration->set($class, $this->entityManager->getClassMetadata($class));
-        }
-        /** @var ClassMetadata|null $configuration */
+        /** @var DoctrineCrudApiMetadata|null $configuration */
         $configuration = $this->configuration->get($class);
         if (null === $configuration) {
             throw new ConfigurationManagerException(
@@ -55,17 +63,17 @@ class ConfigurationManager
 
     /**
      * @param ApiEntityInterface $entity
-     * @return ClassMetadata
+     * @return DoctrineCrudApiMetadata
      * @throws \WernerDweight\RA\Exception\RAException
      */
-    public function getConfigurationForEntity(ApiEntityInterface $entity): ClassMetadata
+    public function getConfigurationForEntity(ApiEntityInterface $entity): DoctrineCrudApiMetadata
     {
         $className = (new Stringy(get_class($entity)))->replace(self::PROXY_PREFIX, '');
         return $this->getConfigurationForEntityClass((string)$className);
     }
 
-    public function getFieldMetadata(RA $configuration, string $field): ?RA
+    public function getFieldMetadata(DoctrineCrudApiMetadata $configuration, string $field): ?RA
     {
-
+        
     }
 }

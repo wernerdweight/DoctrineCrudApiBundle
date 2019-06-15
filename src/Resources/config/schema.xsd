@@ -28,6 +28,7 @@
         <xs:sequence>
             <xs:element name="type" type="wds:metadata-type" minOccurs="0" maxOccurs="1"/>
             <xs:element name="class" type="xs:string" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="payload" type="wds:metadata-payload" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
     </xs:complexType>
 
@@ -37,5 +38,11 @@
             <xs:enumeration value="collection"/>
         </xs:restriction>
     </xs:simpleType>
+
+    <xs:complexType name="metadata-payload">
+        <xs:sequence>
+            <xs:element name="argument" type="xs:string" minOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
 
 </xs:schema>

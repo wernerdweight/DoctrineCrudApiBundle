@@ -11,12 +11,14 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
+use WernerDweight\DoctrineCrudApiBundle\DTO\DoctrineCrudApiMetadata;
 use WernerDweight\DoctrineCrudApiBundle\Exception\DoctrineCrudApiMetadataFactoryException;
 use WernerDweight\DoctrineCrudApiBundle\Mapping\Driver\Annotation;
 use WernerDweight\DoctrineCrudApiBundle\Mapping\Driver\Chain;
 use WernerDweight\DoctrineCrudApiBundle\Mapping\Driver\DoctrineCrudApiDriverInterface;
 use WernerDweight\DoctrineCrudApiBundle\Mapping\Driver\Xml;
 use WernerDweight\DoctrineCrudApiBundle\Mapping\Type\DoctrineCrudApiMappingTypeInterface;
+use WernerDweight\DoctrineCrudApiBundle\Service\Data\ConfigurationManager;
 use WernerDweight\RA\RA;
 use WernerDweight\Stringy\Stringy;
 
@@ -40,15 +42,23 @@ class DoctrineCrudApiMetadataFactory
     /** @var DoctrineCrudApiDriverInterface|null */
     private $driver;
 
+    /** @var ConfigurationManager */
+    private $configurationManager;
+
     /**
      * DoctrineCrudApiMetadataFactory constructor.
      * @param EntityManagerInterface $entityManager
-     * @param DoctrineCrudApiDriverFactory $driverFactory¨
+     * @param DoctrineCrudApiDriverFactory $driverFactory
+     * @param ConfigurationManager $configurationManager
      */
-    public function __construct(EntityManagerInterface $entityManager, DoctrineCrudApiDriverFactory $driverFactory)
-    {
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        DoctrineCrudApiDriverFactory $driverFactory,
+        ConfigurationManager $configurationManager
+    ) {
         $this->entityManager = $entityManager;
         $this->driverFactory = $driverFactory;
+        $this->configurationManager = $configurationManager;
     }
 
     /**
@@ -164,7 +174,10 @@ class DoctrineCrudApiMetadataFactory
             $cacheDriver->save($cacheKey, $config->toArray());
         }
 
-        $metadata->apiData = $config;
+        $this->configurationManager->setConfiguration(
+            $metadata->name,
+            new DoctrineCrudApiMetadata($metadata->name, $metadata, $config)
+        );
         return $this;
     }
 }

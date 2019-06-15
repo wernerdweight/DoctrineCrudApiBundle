@@ -3,8 +3,11 @@ declare(strict_types=1);
 
 namespace WernerDweight\DoctrineCrudApiBundle\Service\Response;
 
+use Doctrine\Common\Collections\Collection;
+use WernerDweight\DoctrineCrudApiBundle\DTO\DoctrineCrudApiMetadata;
 use WernerDweight\DoctrineCrudApiBundle\Entity\ApiEntityInterface;
 use WernerDweight\DoctrineCrudApiBundle\Exception\FormatterException;
+use WernerDweight\DoctrineCrudApiBundle\Mapping\Type\DoctrineCrudApiMappingTypeInterface;
 use WernerDweight\DoctrineCrudApiBundle\Service\Data\ConfigurationManager;
 use WernerDweight\DoctrineCrudApiBundle\Service\Data\QueryBuilderDecorator;
 use WernerDweight\DoctrineCrudApiBundle\Service\Request\ParameterEnum;
@@ -70,6 +73,120 @@ class Formatter
     }
 
     /**
+     * @param Stringy $field
+     * @param DoctrineCrudApiMetadata $configuration
+     * @param RA|null $responseStructure
+     * @return bool
+     * @throws \WernerDweight\RA\Exception\RAException
+     */
+    private function isAllowedForOutput(
+        Stringy $field,
+        DoctrineCrudApiMetadata $configuration,
+        ?RA $responseStructure = null
+    ): bool {
+        if (null === $responseStructure) {
+            $responseStructure = $this->parameterResolver->getRAOrNull(ParameterEnum::RESPONSE_STRUCTURE)
+                ?? $configuration->getDefaultListableFields()->fillKeys(ParameterEnum::TRUE_VALUE);
+        }
+
+        $lastDotPosition = $field->getPositionOfLastSubstring(ParameterEnum::FILTER_FIELD_SEPARATOR);
+        if (null !== $lastDotPosition) {
+            $key = (clone $field)->substring($lastDotPosition + 1);
+            return true === $responseStructure->hasKey((string)$key);
+        }
+
+        if (true === $responseStructure->hasKey((string)$field)) {
+            $value = $responseStructure->get((string)$field);
+            return ($value === ParameterEnum::TRUE_VALUE || $value instanceof RA);
+        }
+        return false;
+    }
+
+    /**
+     * @param ApiEntityInterface $item
+     * @param Stringy $field
+     * @param array $args
+     * @return mixed
+     */
+    private function getEntityPropertyValue(ApiEntityInterface $item, Stringy $field, array $args = [])
+    {
+        $propertyName = (clone $field)->uppercaseFirst();
+        if (true === method_exists($item, 'get' . $propertyName)) {
+            return $item->{'get' . $propertyName}(...$args);
+        }
+        if (true === method_exists($item, 'is' . $propertyName)) {
+            return $item->{'is' . $propertyName}(...$args);
+        }
+        if (true === method_exists($item, $field)) {
+            return $item->{$field}(...$args);
+        }
+        if (true === property_exists($item, $field)) {
+            return $item->$field;
+        }
+        throw new FormatterException(
+            FormatterException::EXCEPTION_NO_PROPERTY_GETTER,
+            [$field, get_class($item)]
+        );
+    }
+
+    private function getRelatedEntityValue(ApiEntityInterface $item, Stringy $field, DoctrineCrudApiMetadata $configuration, string $prefix)
+    {
+
+    }
+
+    /**
+     * @param ApiEntityInterface $item
+     * @param Stringy $field
+     * @param DoctrineCrudApiMetadata $configuration
+     * @param string $prefix
+     * @return RA
+     * @throws \WernerDweight\RA\Exception\RAException
+     */
+    private function getRelatedCollectionValue(
+        ApiEntityInterface $item,
+        Stringy $field,
+        DoctrineCrudApiMetadata $configuration,
+        string $prefix
+    ): RA {
+        $fieldMetadata = $configuration->getFieldMetadata((string)$field);
+        $payload = null !== $fieldMetadata && $fieldMetadata->hasKey(DoctrineCrudApiMappingTypeInterface::METADATA_PAYLOAD)
+            ? $fieldMetadata->getRAOrNull(DoctrineCrudApiMappingTypeInterface::METADATA_PAYLOAD)
+            : [];
+        /** @var Collection $fieldValue */
+        $fieldValue = $this->getEntityPropertyValue($item, $field, $payload);
+        return (new RA($fieldValue->getValues()))->map(function (ApiEntityInterface $entry) use ($prefix, $field) {
+            return $this->formatOne($entry, \Safe\sprintf('%s%s.', $prefix, (string)$field));
+        });
+    }
+
+    /**
+     * @param ApiEntityInterface $item
+     * @param Stringy $field
+     * @param DoctrineCrudApiMetadata $configuration
+     * @param string $prefix
+     * @return mixed
+     * @throws \WernerDweight\RA\Exception\RAException
+     */
+    private function getEntityPropertyValueBasedOnMetadata(
+        ApiEntityInterface $item,
+        Stringy $field,
+        DoctrineCrudApiMetadata $configuration,
+        string $prefix
+    ) {
+        $type = $configuration->getFieldType((string)$field);
+        if (null === $type) {
+            return $this->getEntityPropertyValue($item, $field);
+        }
+        if ($type === DoctrineCrudApiMappingTypeInterface::METADATA_TYPE_ENTITY) {
+            return $this->getRelatedEntityValue($item, $field, $configuration, $prefix);
+        }
+        if ($type === DoctrineCrudApiMappingTypeInterface::METADATA_TYPE_COLLECTION) {
+            return $this->getRelatedCollectionValue($item, $field, $configuration, $prefix);
+        }
+        throw new FormatterException(FormatterException::EXCEPTION_INVALID_METADATA_TYPE, [$type]);
+    }
+
+    /**
      * @param ApiEntityInterface $item
      * @param string $prefix
      * @return RA
@@ -78,16 +195,16 @@ class Formatter
     {
         $configuration = $this->configurationManager->getConfigurationForEntity($item);
         $result = new RA();
-        $configuration->getListableFields()->walk(function (string $field) use ($prefix, $result, $configuration): void {
-            if (true !== $this->isAllowedForOutput(\Safe\sprintf('%s%s', $prefix, $field))) {
+        $configuration->getListableFields()->walk(function (string $field) use ($item, $prefix, $result, $configuration): void {
+            if (true !== $this->isAllowedForOutput(new Stringy(\Safe\sprintf('%s%s', $prefix, $field)), $configuration)) {
                 return;
             }
-            $metadata = $this->configurationManager->getFieldMetadata($configuration, $field);
+            $metadata = $configuration->getFieldMetadata($field);
             if (null === $metadata) {
-                $result->set($field, $this->getEntityPropertyValue($item, $field));
+                $result->set($field, $this->getEntityPropertyValue($item, new Stringy($field)));
                 return;
             }
-            $result->set($field, $this->getEntityPropertyValueBasedOnMetadata($item, $field, $metadata, $prefix));
+            $result->set($field, $this->getEntityPropertyValueBasedOnMetadata($item, new Stringy($field), $configuration, $prefix));
         });
         return $result;
     }

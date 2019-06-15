@@ -19,4 +19,7 @@ final class Metadata extends Annotation
 
     /** @var string */
     public $class;
+
+    /** @var array */
+    public $payload;
 }
