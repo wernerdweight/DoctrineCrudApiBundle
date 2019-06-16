@@ -290,7 +290,10 @@ class ParameterResolver
             ->set(ParameterEnum::FILTER, $this->parameterValidator->validateFilter($query->get(ParameterEnum::FILTER)))
             ->set(ParameterEnum::ORDER_BY, $this->parameterValidator->validateOrderBy($query->get(ParameterEnum::ORDER_BY)))
             ->set(ParameterEnum::GROUP_BY, $this->parameterValidator->validateGroupBy($query->get(ParameterEnum::GROUP_BY)))
-            ->set(ParameterEnum::RESPONSE_STRUCTURE, $query->get(ParameterEnum::RESPONSE_STRUCTURE))
+            ->set(
+                ParameterEnum::RESPONSE_STRUCTURE,
+                $this->parameterValidator->validateResponseStructure($query->get(ParameterEnum::RESPONSE_STRUCTURE))
+            )
         ;
         return $this;
     }

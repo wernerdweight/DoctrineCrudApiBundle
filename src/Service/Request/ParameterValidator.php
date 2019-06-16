@@ -243,4 +243,16 @@ class ParameterValidator
             return new RA(compact('field', 'direction', 'aggregates'));
         });
     }
+
+    /**
+     * @param array|null $responseStructure
+     * @return RA|null
+     */
+    public function validateResponseStructure(?array $responseStructure): ?RA
+    {
+        if (null === $responseStructure) {
+            return null;
+        }
+        return new RA($responseStructure, RA::RECURSIVE);
+    }
 }

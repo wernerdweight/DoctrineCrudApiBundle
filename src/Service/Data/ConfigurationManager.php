@@ -48,7 +48,7 @@ class ConfigurationManager
      * @return DoctrineCrudApiMetadata
      * @throws \WernerDweight\RA\Exception\RAException
      */
-    private function getConfigurationForEntityClass(string $class): DoctrineCrudApiMetadata
+    public function getConfigurationForEntityClass(string $class): DoctrineCrudApiMetadata
     {
         /** @var DoctrineCrudApiMetadata|null $configuration */
         $configuration = $this->configuration->get($class);

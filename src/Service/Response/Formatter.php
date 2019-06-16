@@ -82,17 +82,35 @@ class Formatter
     private function isAllowedForOutput(
         Stringy $field,
         DoctrineCrudApiMetadata $configuration,
-        ?RA $responseStructure = null
+        ?RA $responseStructure = null,
+        int $level = 0
     ): bool {
         if (null === $responseStructure) {
             $responseStructure = $this->parameterResolver->getRAOrNull(ParameterEnum::RESPONSE_STRUCTURE)
                 ?? $configuration->getDefaultListableFields()->fillKeys(ParameterEnum::TRUE_VALUE);
         }
 
-        $lastDotPosition = $field->getPositionOfLastSubstring(ParameterEnum::FILTER_FIELD_SEPARATOR);
-        if (null !== $lastDotPosition) {
-            $key = (clone $field)->substring($lastDotPosition + 1);
-            return true === $responseStructure->hasKey((string)$key);
+        //FIXME: responseStructure must be traversed to current level (using field, but field is currently being stripped in formatOne)
+
+        dump($field, $configuration, $responseStructure, $level);
+
+        $firstDotPosition = $field->getPositionOfSubstring(ParameterEnum::FILTER_FIELD_SEPARATOR);
+        if (null !== $firstDotPosition) {
+            $root = (clone $field)->substring(0, $firstDotPosition);
+            $key = (clone $field)->substring($firstDotPosition + 1);
+            $responseStructureKey = (string)($level === 0 ? $root : $key);
+            if (true !== $responseStructure->hasKey($responseStructureKey)) {
+                return false;
+            }
+            $subStructure = $responseStructure->get($responseStructureKey);
+            if (ParameterEnum::TRUE_VALUE === $subStructure) {
+                $rootResponseStructure = $configuration->getDefaultListableFields()->fillKeys(ParameterEnum::TRUE_VALUE);
+                return $this->isAllowedForOutput($key, $configuration, $rootResponseStructure, $level + 1);
+            }
+            if ($subStructure instanceof RA) {
+                return $this->isAllowedForOutput($key, $configuration, $subStructure, $level + 1);
+            }
+            return false;
         }
 
         if (true === $responseStructure->hasKey((string)$field)) {
@@ -129,9 +147,17 @@ class Formatter
         );
     }
 
-    private function getRelatedEntityValue(ApiEntityInterface $item, Stringy $field, DoctrineCrudApiMetadata $configuration, string $prefix)
+    /**
+     * @param ApiEntityInterface $item
+     * @param Stringy $field
+     * @param string $prefix
+     * @return RA|null
+     * @throws \Safe\Exceptions\StringsException
+     */
+    private function getRelatedEntityValue(ApiEntityInterface $item, Stringy $field, string $prefix): ?RA
     {
-
+        $value = $this->getEntityPropertyValue($item, $field);
+        return null !== $value ? $this->formatOne($value, \Safe\sprintf('%s%s.', $prefix, $field)) : null;
     }
 
     /**
@@ -178,7 +204,7 @@ class Formatter
             return $this->getEntityPropertyValue($item, $field);
         }
         if ($type === DoctrineCrudApiMappingTypeInterface::METADATA_TYPE_ENTITY) {
-            return $this->getRelatedEntityValue($item, $field, $configuration, $prefix);
+            return $this->getRelatedEntityValue($item, $field, $prefix);
         }
         if ($type === DoctrineCrudApiMappingTypeInterface::METADATA_TYPE_COLLECTION) {
             return $this->getRelatedCollectionValue($item, $field, $configuration, $prefix);
@@ -196,7 +222,10 @@ class Formatter
         $configuration = $this->configurationManager->getConfigurationForEntity($item);
         $result = new RA();
         $configuration->getListableFields()->walk(function (string $field) use ($item, $prefix, $result, $configuration): void {
-            if (true !== $this->isAllowedForOutput(new Stringy(\Safe\sprintf('%s%s', $prefix, $field)), $configuration)) {
+            $formatedPrefix = (string)((new Stringy($prefix))->pregReplace('/^.*\.([^\.]+\.)$/', '$1'));
+            $prefixedField = new Stringy(\Safe\sprintf('%s%s', $formatedPrefix, $field));
+            $level = $prefix === ParameterEnum::EMPTY_VALUE ? 0 : 1;
+            if (true !== $this->isAllowedForOutput($prefixedField, $configuration, null, $level)) {
                 return;
             }
             $metadata = $configuration->getFieldMetadata($field);
