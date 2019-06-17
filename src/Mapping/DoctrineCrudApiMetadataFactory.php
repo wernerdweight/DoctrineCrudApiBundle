@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace WernerDweight\DoctrineCrudApiBundle\Mapping;
 
 use Doctrine\Common\Annotations\AnnotationReader;
-use Doctrine\Common\Persistence\Mapping\Driver\AnnotationDriver;
 use Doctrine\Common\Persistence\Mapping\Driver\MappingDriver;
 use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
 use Doctrine\ORM\EntityManager;
@@ -47,9 +46,10 @@ class DoctrineCrudApiMetadataFactory
 
     /**
      * DoctrineCrudApiMetadataFactory constructor.
-     * @param EntityManagerInterface $entityManager
+     *
+     * @param EntityManagerInterface       $entityManager
      * @param DoctrineCrudApiDriverFactory $driverFactory
-     * @param ConfigurationManager $configurationManager
+     * @param ConfigurationManager         $configurationManager
      */
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -63,7 +63,9 @@ class DoctrineCrudApiMetadataFactory
 
     /**
      * @param MappingDriver $mappingDriver
+     *
      * @return DoctrineCrudApiDriverInterface
+     *
      * @throws \Doctrine\Common\Annotations\AnnotationException
      * @throws \WernerDweight\RA\Exception\RAException
      */
@@ -72,7 +74,7 @@ class DoctrineCrudApiMetadataFactory
         $shortDriverName = new Stringy(get_class($mappingDriver));
         $shortDriverName = $shortDriverName->substring($shortDriverName->getPositionOfLastSubstring('\\') + 1);
 
-        if ($mappingDriver instanceof MappingDriverChain || $shortDriverName === self::DRIVER_CHAIN_CLASSNAME) {
+        if ($mappingDriver instanceof MappingDriverChain || self::DRIVER_CHAIN_CLASSNAME === $shortDriverName) {
             $driver = new Chain();
             foreach ($mappingDriver->getDrivers() as $namespace => $childDriver) {
                 $driver->addDriver($this->getCustomDriver($childDriver), $namespace);
@@ -83,11 +85,16 @@ class DoctrineCrudApiMetadataFactory
             return $driver;
         }
 
-        $shortDriverName = $shortDriverName->substring(0, $shortDriverName->getPositionOfSubstring(self::DRIVER_SUFFIX));
+        $shortDriverName = $shortDriverName->substring(
+            0,
+            $shortDriverName->getPositionOfSubstring(self::DRIVER_SUFFIX)
+        );
         $simplifiedPosition = $shortDriverName->getPositionOfSubstring(self::SIMPLIFIED_DRIVER_SUFFIX);
         $isSimplified = null !== $simplifiedPosition;
         if (true === $isSimplified) {
-            $shortDriverName = $shortDriverName->substring($simplifiedPosition + strlen(self::SIMPLIFIED_DRIVER_SUFFIX));
+            $shortDriverName = $shortDriverName->substring(
+                $simplifiedPosition + strlen(self::SIMPLIFIED_DRIVER_SUFFIX)
+            );
         }
 
         $driver = $this->driverFactory->get((string)$shortDriverName);
@@ -112,6 +119,7 @@ class DoctrineCrudApiMetadataFactory
 
     /**
      * @return DoctrineCrudApiDriverInterface
+     *
      * @throws \Doctrine\Common\Annotations\AnnotationException
      * @throws \Doctrine\ORM\ORMException
      * @throws \WernerDweight\RA\Exception\RAException
@@ -143,7 +151,9 @@ class DoctrineCrudApiMetadataFactory
 
     /**
      * @param ClassMetadata $metadata
+     *
      * @return DoctrineCrudApiMetadataFactory
+     *
      * @throws \Doctrine\Common\Annotations\AnnotationException
      * @throws \Doctrine\ORM\ORMException
      * @throws \Safe\Exceptions\StringsException

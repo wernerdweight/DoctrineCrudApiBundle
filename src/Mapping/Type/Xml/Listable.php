@@ -16,8 +16,10 @@ final class Listable extends AbstractType implements DoctrineCrudApiMappingTypeI
     /**
      * @param \SimpleXMLElement $propertyMapping
      * @param \SimpleXMLElement $filteredMapping
-     * @param RA $config
+     * @param RA                $config
+     *
      * @return RA
+     *
      * @throws \WernerDweight\RA\Exception\RAException
      */
     protected function readExtraConfiguration(

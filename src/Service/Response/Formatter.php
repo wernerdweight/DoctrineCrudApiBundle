@@ -28,7 +28,8 @@ class Formatter
 
     /**
      * Formatter constructor.
-     * @param ParameterResolver $parameterResolver
+     *
+     * @param ParameterResolver    $parameterResolver
      * @param ConfigurationManager $configurationManager
      */
     public function __construct(ParameterResolver $parameterResolver, ConfigurationManager $configurationManager)
@@ -39,18 +40,20 @@ class Formatter
 
     /**
      * @param mixed $value
+     *
      * @return string
+     *
      * @throws \Safe\Exceptions\PcreException
      */
     private function printValue($value): string
     {
-        if ($value === null) {
+        if (null === $value) {
             return ParameterEnum::NULL_VALUE;
         }
-        if ($value === true) {
+        if (true === $value) {
             return ParameterEnum::TRUE_VALUE;
         }
-        if ($value === false) {
+        if (false === $value) {
             return ParameterEnum::FALSE_VALUE;
         }
         if (true === is_numeric($value)) {
@@ -76,8 +79,9 @@ class Formatter
     }
 
     /**
-     * @param RA $responseStructure
+     * @param RA      $responseStructure
      * @param Stringy $path
+     *
      * @return RA|null
      */
     private function traverseResponseStructure(RA $responseStructure, Stringy $path): ?RA
@@ -93,17 +97,19 @@ class Formatter
             }
             return new RA();
         }, $responseStructure);
-        if ($reducedResponseStructure->length() === 0) {
+        if (0 === $reducedResponseStructure->length()) {
             return null;
         }
         return $reducedResponseStructure;
     }
 
     /**
-     * @param Stringy $field
+     * @param Stringy                 $field
      * @param DoctrineCrudApiMetadata $configuration
-     * @param RA|null $responseStructure
+     * @param RA|null                 $responseStructure
+     *
      * @return bool
+     *
      * @throws \WernerDweight\RA\Exception\RAException
      */
     private function isAllowedForOutput(
@@ -129,15 +135,16 @@ class Formatter
 
         if (true === $responseStructure->hasKey((string)$key)) {
             $value = $responseStructure->get((string)$key);
-            return ($value === ParameterEnum::TRUE_VALUE || $value instanceof RA);
+            return ParameterEnum::TRUE_VALUE === $value || $value instanceof RA;
         }
         return false;
     }
 
     /**
      * @param ApiEntityInterface $item
-     * @param Stringy $field
-     * @param array $args
+     * @param Stringy            $field
+     * @param array              $args
+     *
      * @return mixed
      */
     private function getEntityPropertyValue(ApiEntityInterface $item, Stringy $field, array $args = [])
@@ -163,9 +170,11 @@ class Formatter
 
     /**
      * @param ApiEntityInterface $item
-     * @param Stringy $field
-     * @param string $prefix
+     * @param Stringy            $field
+     * @param string             $prefix
+     *
      * @return RA|null
+     *
      * @throws \Safe\Exceptions\StringsException
      */
     private function getRelatedEntityValue(ApiEntityInterface $item, Stringy $field, string $prefix): ?RA
@@ -177,11 +186,13 @@ class Formatter
     }
 
     /**
-     * @param ApiEntityInterface $item
-     * @param Stringy $field
+     * @param ApiEntityInterface      $item
+     * @param Stringy                 $field
      * @param DoctrineCrudApiMetadata $configuration
-     * @param string $prefix
+     * @param string                  $prefix
+     *
      * @return RA
+     *
      * @throws \WernerDweight\RA\Exception\RAException
      */
     private function getRelatedCollectionValue(
@@ -191,7 +202,9 @@ class Formatter
         string $prefix
     ): RA {
         $fieldMetadata = $configuration->getFieldMetadata((string)$field);
-        $payload = null !== $fieldMetadata && $fieldMetadata->hasKey(DoctrineCrudApiMappingTypeInterface::METADATA_PAYLOAD)
+        $payload = null !== $fieldMetadata && $fieldMetadata->hasKey(
+            DoctrineCrudApiMappingTypeInterface::METADATA_PAYLOAD
+        )
             ? $fieldMetadata->getRAOrNull(DoctrineCrudApiMappingTypeInterface::METADATA_PAYLOAD)
             : [];
         /** @var Collection $fieldValue */
@@ -202,11 +215,13 @@ class Formatter
     }
 
     /**
-     * @param ApiEntityInterface $item
-     * @param Stringy $field
+     * @param ApiEntityInterface      $item
+     * @param Stringy                 $field
      * @param DoctrineCrudApiMetadata $configuration
-     * @param string $prefix
+     * @param string                  $prefix
+     *
      * @return mixed
+     *
      * @throws \WernerDweight\RA\Exception\RAException
      */
     private function getEntityPropertyValueBasedOnMetadata(
@@ -219,10 +234,10 @@ class Formatter
         if (null === $type) {
             return $this->getEntityPropertyValue($item, $field);
         }
-        if ($type === DoctrineCrudApiMappingTypeInterface::METADATA_TYPE_ENTITY) {
+        if (DoctrineCrudApiMappingTypeInterface::METADATA_TYPE_ENTITY === $type) {
             return $this->getRelatedEntityValue($item, $field, $prefix);
         }
-        if ($type === DoctrineCrudApiMappingTypeInterface::METADATA_TYPE_COLLECTION) {
+        if (DoctrineCrudApiMappingTypeInterface::METADATA_TYPE_COLLECTION === $type) {
             return $this->getRelatedCollectionValue($item, $field, $configuration, $prefix);
         }
         throw new FormatterException(FormatterException::EXCEPTION_INVALID_METADATA_TYPE, [$type]);
@@ -230,14 +245,20 @@ class Formatter
 
     /**
      * @param ApiEntityInterface $item
-     * @param string $prefix
+     * @param string             $prefix
+     *
      * @return RA
      */
     public function formatOne(ApiEntityInterface $item, string $prefix = ParameterEnum::EMPTY_VALUE): RA
     {
         $configuration = $this->configurationManager->getConfigurationForEntity($item);
         $result = new RA();
-        $configuration->getListableFields()->walk(function (string $field) use ($item, $prefix, $result, $configuration): void {
+        $configuration->getListableFields()->walk(function (string $field) use (
+            $item,
+            $prefix,
+            $result,
+            $configuration
+        ): void {
             $prefixedField = new Stringy(\Safe\sprintf('%s%s', $prefix, $field));
             if (true !== $this->isAllowedForOutput($prefixedField, $configuration)) {
                 return;
@@ -247,14 +268,18 @@ class Formatter
                 $result->set($field, $this->getEntityPropertyValue($item, new Stringy($field)));
                 return;
             }
-            $result->set($field, $this->getEntityPropertyValueBasedOnMetadata($item, new Stringy($field), $configuration, $prefix));
+            $result->set(
+                $field,
+                $this->getEntityPropertyValueBasedOnMetadata($item, new Stringy($field), $configuration, $prefix)
+            );
         });
         return $result;
     }
 
     /**
-     * @param RA $items
+     * @param RA     $items
      * @param string $prefix
+     *
      * @return RA
      */
     public function formatMany(RA $items, string $prefix): RA
@@ -265,9 +290,10 @@ class Formatter
     }
 
     /**
-     * @param RA $groups
-     * @param int $level
+     * @param RA     $groups
+     * @param int    $level
      * @param string $groupingField
+     *
      * @return RA
      */
     private function formatGroupped(RA $groups, int $level, string $groupingField): RA
@@ -276,7 +302,7 @@ class Formatter
             return (new RA())
                 ->set(ParameterEnum::GROUP_BY_AGGREGATES, $group->map(function ($value, string $field): RA {
                     $field = new Stringy($field);
-                    if ($field->getPositionOfSubstring(QueryBuilderDecorator::AGGREGATE_PREFIX) !== 0) {
+                    if (0 !== $field->getPositionOfSubstring(QueryBuilderDecorator::AGGREGATE_PREFIX)) {
                         return new RA();
                     }
                     $field = $field->substring((new Stringy(QueryBuilderDecorator::AGGREGATE_PREFIX))->length());
@@ -307,18 +333,20 @@ class Formatter
     }
 
     /**
-     * @param RA $items
+     * @param RA       $items
      * @param int|null $level
+     *
      * @return RA
+     *
      * @throws \WernerDweight\RA\Exception\RAException
      */
     public function formatListing(RA $items, ?int $level = null): RA
     {
         $groupBy = $this->parameterResolver->getRAOrNull(ParameterEnum::GROUP_BY);
-        if ($level === null) {
-            $level = $groupBy !== null ? $groupBy->length() : 0;
+        if (null === $level) {
+            $level = null !== $groupBy ? $groupBy->length() : 0;
         }
-        if ($level > 0 && $groupBy !== null) {
+        if ($level > 0 && null !== $groupBy) {
             $levelConfiguration = $groupBy->getRAOrNull($groupBy->length() - $level) ?? new RA();
             $levelGroupingField = $levelConfiguration->hasKey(ParameterEnum::GROUP_BY_FIELD)
                 ? (new RA(
@@ -328,7 +356,7 @@ class Formatter
                 : QueryBuilderDecorator::IDENTIFIER_FIELD_NAME;
             return $this->formatGroupped($items, $level, $levelGroupingField);
         }
-        $prefix = (clone ($this->parameterResolver->getStringy(ParameterEnum::ENTITY_NAME)))->lowercaseFirst();
+        $prefix = (clone $this->parameterResolver->getStringy(ParameterEnum::ENTITY_NAME))->lowercaseFirst();
         return $this->formatMany($items, \Safe\sprintf('%s%s', (string)$prefix, self::FIELD_SEPARATOR));
     }
 }

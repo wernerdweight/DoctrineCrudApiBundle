@@ -16,8 +16,10 @@ final class Updatable extends AbstractType implements DoctrineCrudApiMappingType
     /**
      * @param \SimpleXMLElement $propertyMapping
      * @param \SimpleXMLElement $filteredMapping
-     * @param RA $config
+     * @param RA                $config
+     *
      * @return RA
+     *
      * @throws \WernerDweight\RA\Exception\RAException
      */
     protected function readExtraConfiguration(

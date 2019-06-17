@@ -9,13 +9,14 @@ use Doctrine\ORM\Mapping\ClassMetadata;
 use WernerDweight\DoctrineCrudApiBundle\Exception\AnnotationDriverException;
 use WernerDweight\RA\RA;
 
-class Annotation extends AbstractDriver implements DoctrineCrudApiDriverInterface
+final class Annotation extends AbstractDriver implements DoctrineCrudApiDriverInterface
 {
     /** @var AnnotationReader */
     private $annotationReader;
 
     /**
      * @param FileLocator $locator
+     *
      * @return Annotation
      */
     public function setLocator(FileLocator $locator): DoctrineCrudApiDriverInterface
@@ -25,6 +26,7 @@ class Annotation extends AbstractDriver implements DoctrineCrudApiDriverInterfac
 
     /**
      * @param AnnotationReader $reader
+     *
      * @return Annotation
      */
     public function setAnnotationReader(AnnotationReader $reader): DoctrineCrudApiDriverInterface

@@ -7,14 +7,12 @@ use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Persistence\Mapping\Driver\FileDriver;
 use Doctrine\Common\Persistence\Mapping\Driver\FileLocator;
 use Doctrine\ORM\Mapping\ClassMetadata;
-use Doctrine\ORM\Mapping\Driver\XmlDriver;
 use WernerDweight\DoctrineCrudApiBundle\Exception\XmlDriverException;
 use WernerDweight\DoctrineCrudApiBundle\Mapping\Type\DoctrineCrudApiMappingTypeInterface;
 use WernerDweight\DoctrineCrudApiBundle\Mapping\Type\Factory\XmlMappingTypeFactory;
-use WernerDweight\DoctrineCrudApiBundle\Mapping\Type\MappingTypeInterface;
 use WernerDweight\RA\RA;
 
-class Xml extends AbstractDriver implements DoctrineCrudApiDriverInterface
+final class Xml extends AbstractDriver implements DoctrineCrudApiDriverInterface
 {
     /** @var string */
     public const WDS_NAMESPACE_URI = 'http://schemas.wds.blue/orm/doctrine-crud-api-bundle-mapping';
@@ -29,6 +27,7 @@ class Xml extends AbstractDriver implements DoctrineCrudApiDriverInterface
 
     /**
      * Xml constructor.
+     *
      * @param XmlMappingTypeFactory $mappingTypeFactory
      */
     public function __construct(XmlMappingTypeFactory $mappingTypeFactory)
@@ -38,6 +37,7 @@ class Xml extends AbstractDriver implements DoctrineCrudApiDriverInterface
 
     /**
      * @param FileLocator $locator
+     *
      * @return Xml
      */
     public function setLocator(FileLocator $locator): DoctrineCrudApiDriverInterface
@@ -48,6 +48,7 @@ class Xml extends AbstractDriver implements DoctrineCrudApiDriverInterface
 
     /**
      * @param AnnotationReader $reader
+     *
      * @return Xml
      */
     public function setAnnotationReader(AnnotationReader $reader): DoctrineCrudApiDriverInterface
@@ -57,7 +58,9 @@ class Xml extends AbstractDriver implements DoctrineCrudApiDriverInterface
 
     /**
      * @param string $fileName
+     *
      * @return array
+     *
      * @throws \Safe\Exceptions\SimplexmlException
      */
     private function getXmlMappingFromFile(string $fileName): array
@@ -85,7 +88,9 @@ class Xml extends AbstractDriver implements DoctrineCrudApiDriverInterface
 
     /**
      * @param string $entityName
+     *
      * @return \SimpleXMLElement|ClassMetadata
+     *
      * @throws \Doctrine\Common\Persistence\Mapping\MappingException
      * @throws \Safe\Exceptions\SimplexmlException
      */
@@ -102,8 +107,10 @@ class Xml extends AbstractDriver implements DoctrineCrudApiDriverInterface
 
     /**
      * @param ClassMetadata $metadata
-     * @param RA $config
+     * @param RA            $config
+     *
      * @return RA
+     *
      * @throws \Doctrine\Common\Persistence\Mapping\MappingException
      * @throws \Safe\Exceptions\SimplexmlException
      * @throws \WernerDweight\RA\Exception\RAException

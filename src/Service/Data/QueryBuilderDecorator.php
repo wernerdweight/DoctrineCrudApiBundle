@@ -50,6 +50,7 @@ class QueryBuilderDecorator
 
     /**
      * QueryBuilderDecorator constructor.
+     *
      * @param RepositoryManager $repositoryManager
      */
     public function __construct(RepositoryManager $repositoryManager)
@@ -59,7 +60,9 @@ class QueryBuilderDecorator
 
     /**
      * @param RA $filterData
+     *
      * @return string
+     *
      * @throws \WernerDweight\RA\Exception\RAException
      */
     private function getFilteringLogic(RA $filterData): string
@@ -77,7 +80,9 @@ class QueryBuilderDecorator
 
     /**
      * @param RA $conditionData
+     *
      * @return string
+     *
      * @throws \WernerDweight\RA\Exception\RAException
      */
     private function getFilteringField(RA $conditionData): string
@@ -90,7 +95,9 @@ class QueryBuilderDecorator
 
     /**
      * @param RA $filterData
+     *
      * @return string
+     *
      * @throws \WernerDweight\RA\Exception\RAException
      */
     private function getFilteringOperator(RA $filterData): string
@@ -108,6 +115,7 @@ class QueryBuilderDecorator
 
     /**
      * @param string $value
+     *
      * @return bool
      */
     private function containsWildcard(string $value): bool
@@ -117,14 +125,15 @@ class QueryBuilderDecorator
 
     /**
      * @param string $operator
+     *
      * @return string
      */
     private function replaceWildcardOperator(string $operator): string
     {
-        if ($operator === ParameterEnum::FILTER_OPERATOR_EQUAL) {
+        if (ParameterEnum::FILTER_OPERATOR_EQUAL === $operator) {
             return ParameterEnum::FILTER_OPERATOR_CONTAINS;
         }
-        if ($operator === ParameterEnum::FILTER_OPERATOR_NOT_EQUAL) {
+        if (ParameterEnum::FILTER_OPERATOR_NOT_EQUAL === $operator) {
             return ParameterEnum::FILTER_OPERATOR_CONTAINS_NOT;
         }
         return $operator;
@@ -132,7 +141,9 @@ class QueryBuilderDecorator
 
     /**
      * @param Stringy $field
+     *
      * @return bool
+     *
      * @throws \Safe\Exceptions\StringsException
      */
     private function isManyToManyField(Stringy $field): bool
@@ -145,7 +156,9 @@ class QueryBuilderDecorator
 
     /**
      * @param Stringy $field
+     *
      * @return Stringy
+     *
      * @throws \Safe\Exceptions\PcreException
      */
     private function getFilteringPathForField(Stringy $field): Stringy
@@ -161,7 +174,9 @@ class QueryBuilderDecorator
 
     /**
      * @param Stringy $field
+     *
      * @return Stringy
+     *
      * @throws \Safe\Exceptions\PcreException
      * @throws \Safe\Exceptions\StringsException
      */
@@ -170,16 +185,18 @@ class QueryBuilderDecorator
         if (true === $this->isEmbed($field)) {
             return \Safe\sprintf('%s%s%s', DataManager::ROOT_ALIAS, ParameterEnum::FILTER_FIELD_SEPARATOR, $field);
         }
-        
+
         $field = $this->getFilteringPathForField($field);
         return $field;
     }
 
     /**
      * @param Stringy $field
-     * @param string $operator
-     * @param string $parameterName
+     * @param string  $operator
+     * @param string  $parameterName
+     *
      * @return string
+     *
      * @throws \Safe\Exceptions\PcreException
      * @throws \Safe\Exceptions\StringsException
      */
@@ -188,61 +205,61 @@ class QueryBuilderDecorator
         $field = (string)($this->resolveFilteringConditionFieldName($field));
 
         $expression = new Expr();
-        if ($operator === ParameterEnum::FILTER_OPERATOR_EQUAL) {
+        if (ParameterEnum::FILTER_OPERATOR_EQUAL === $operator) {
             return (string)($expression->eq($field, $parameterName));
         }
-        if ($operator === ParameterEnum::FILTER_OPERATOR_NOT_EQUAL) {
+        if (ParameterEnum::FILTER_OPERATOR_NOT_EQUAL === $operator) {
             return (string)($expression->neq($field, $parameterName));
         }
-        if ($operator === ParameterEnum::FILTER_OPERATOR_GREATER_THAN) {
+        if (ParameterEnum::FILTER_OPERATOR_GREATER_THAN === $operator) {
             return (string)($expression->gt($field, $parameterName));
         }
-        if ($operator === ParameterEnum::FILTER_OPERATOR_GREATER_THAN_OR_EQUAL) {
+        if (ParameterEnum::FILTER_OPERATOR_GREATER_THAN_OR_EQUAL === $operator) {
             return (string)($expression->gte($field, $parameterName));
         }
-        if ($operator === ParameterEnum::FILTER_OPERATOR_GREATER_THAN_OR_EQUAL_OR_NULL) {
+        if (ParameterEnum::FILTER_OPERATOR_GREATER_THAN_OR_EQUAL_OR_NULL === $operator) {
             return (string)($expression->orX(
                 $expression->gte($field, $parameterName),
                 $expression->isNull($field)
             ));
         }
-        if ($operator === ParameterEnum::FILTER_OPERATOR_LOWER_THAN) {
+        if (ParameterEnum::FILTER_OPERATOR_LOWER_THAN === $operator) {
             return (string)($expression->lt($field, $parameterName));
         }
-        if ($operator === ParameterEnum::FILTER_OPERATOR_LOWER_THAN_OR_EQUAL) {
+        if (ParameterEnum::FILTER_OPERATOR_LOWER_THAN_OR_EQUAL === $operator) {
             return (string)($expression->lte($field, $parameterName));
         }
-        if ($operator === ParameterEnum::FILTER_OPERATOR_BEGINS_WITH) {
+        if (ParameterEnum::FILTER_OPERATOR_BEGINS_WITH === $operator) {
             return (string)($expression->like($expression->lower($field), $expression->lower($parameterName)));
         }
-        if ($operator === ParameterEnum::FILTER_OPERATOR_CONTAINS) {
+        if (ParameterEnum::FILTER_OPERATOR_CONTAINS === $operator) {
             return (string)($expression->like($expression->lower($field), $expression->lower($parameterName)));
         }
-        if ($operator === ParameterEnum::FILTER_OPERATOR_CONTAINS_NOT) {
+        if (ParameterEnum::FILTER_OPERATOR_CONTAINS_NOT === $operator) {
             return (string)($expression->notLike($expression->lower($field), $expression->lower($parameterName)));
         }
-        if ($operator === ParameterEnum::FILTER_OPERATOR_ENDS_WITH) {
+        if (ParameterEnum::FILTER_OPERATOR_ENDS_WITH === $operator) {
             return (string)($expression->like($expression->lower($field), $expression->lower($parameterName)));
         }
-        if ($operator === ParameterEnum::FILTER_OPERATOR_IS_NULL) {
+        if (ParameterEnum::FILTER_OPERATOR_IS_NULL === $operator) {
             return (string)($expression->isNull($field));
         }
-        if ($operator === ParameterEnum::FILTER_OPERATOR_IS_NOT_NULL) {
+        if (ParameterEnum::FILTER_OPERATOR_IS_NOT_NULL === $operator) {
             return (string)($expression->isNotNull($field));
         }
-        if ($operator === ParameterEnum::FILTER_OPERATOR_IS_EMPTY) {
+        if (ParameterEnum::FILTER_OPERATOR_IS_EMPTY === $operator) {
             return (string)($expression->orX(
                 $expression->isNull($field),
                 $expression->eq($field, $parameterName)
             ));
         }
-        if ($operator === ParameterEnum::FILTER_OPERATOR_IS_NOT_EMPTY) {
+        if (ParameterEnum::FILTER_OPERATOR_IS_NOT_EMPTY === $operator) {
             return (string)($expression->andX(
                 $expression->isNotNull($field),
                 $expression->neq($field, $parameterName)
             ));
         }
-        if ($operator === ParameterEnum::FILTER_OPERATOR_IN) {
+        if (ParameterEnum::FILTER_OPERATOR_IN === $operator) {
             return (string)($expression->in($field, $parameterName));
         }
         throw new FilteringException(
@@ -253,6 +270,7 @@ class QueryBuilderDecorator
 
     /**
      * @param Stringy $field
+     *
      * @return bool
      */
     private function isEmbed(Stringy $field): bool
@@ -266,8 +284,10 @@ class QueryBuilderDecorator
 
     /**
      * @param QueryBuilder $queryBuilder
-     * @param Stringy $field
+     * @param Stringy      $field
+     *
      * @return QueryBuilderDecorator
+     *
      * @throws \Safe\Exceptions\PcreException
      * @throws \Safe\Exceptions\StringsException
      */
@@ -280,7 +300,7 @@ class QueryBuilderDecorator
                 $currentPrefix = $currentPrefix->substring(0, $firstSeparatorPosition);
             }
 
-            if ($currentPrefix !== DataManager::ROOT_ALIAS) {
+            if (DataManager::ROOT_ALIAS !== $currentPrefix) {
                 $previousPrefix = new Stringy(DataManager::ROOT_ALIAS);
                 $currentField = (clone $field)->substring($currentPrefix->length() + 1);
                 while (true !== $currentPrefix->sameAs($previousPrefix)) {
@@ -314,6 +334,7 @@ class QueryBuilderDecorator
 
     /**
      * @param string $operator
+     *
      * @return bool
      */
     private function isBinaryOperator(string $operator): bool
@@ -323,10 +344,12 @@ class QueryBuilderDecorator
 
     /**
      * @param QueryBuilder $queryBuilder
-     * @param RA $conditionData
-     * @param int $conditionKey
-     * @param int $filteringKey
+     * @param RA           $conditionData
+     * @param int          $conditionKey
+     * @param int          $filteringKey
+     *
      * @return string
+     *
      * @throws \Safe\Exceptions\StringsException
      * @throws \WernerDweight\RA\Exception\RAException
      */
@@ -339,7 +362,7 @@ class QueryBuilderDecorator
         $field = new Stringy($this->getFilteringField($conditionData));
         $operator = $this->getFilteringOperator($conditionData);
         $value = $conditionData->get(ParameterEnum::FILTER_VALUE);
-        
+
         if (true === is_string($value) && $this->containsWildcard($value)) {
             $replacementOperator = $this->replaceWildcardOperator($operator);
             if ($replacementOperator !== $operator) {
@@ -372,8 +395,9 @@ class QueryBuilderDecorator
 
     /**
      * @param QueryBuilder $queryBuilder
-     * @param RA $conditions
-     * @param int $filteringKey
+     * @param RA           $conditions
+     * @param int          $filteringKey
+     *
      * @return RA
      */
     private function prepareFilteringConditions(QueryBuilder $queryBuilder, RA $conditions, int $filteringKey): RA
@@ -394,7 +418,8 @@ class QueryBuilderDecorator
 
     /**
      * @param QueryBuilder $queryBuilder
-     * @param RA $filter
+     * @param RA           $filterData
+     *
      * @return QueryBuilderDecorator
      */
     public function applyFiltering(QueryBuilder $queryBuilder, RA $filterData): self
@@ -406,7 +431,7 @@ class QueryBuilderDecorator
                 $filterData->getRA(ParameterEnum::FILTER_CONDITIONS),
                 0
             );
-            $logic === ParameterEnum::FILTER_LOGIC_AND
+            ParameterEnum::FILTER_LOGIC_AND === $logic
                 ? $queryBuilder->andWhere(...$conditions->toArray())
                 : $queryBuilder->orWhere(...$conditions->toArray());
         }
@@ -415,7 +440,8 @@ class QueryBuilderDecorator
 
     /**
      * @param QueryBuilder $queryBuilder
-     * @param RA $orderings
+     * @param RA           $orderings
+     *
      * @return QueryBuilderDecorator
      */
     public function applyOrdering(QueryBuilder $queryBuilder, RA $orderings): self
@@ -444,8 +470,9 @@ class QueryBuilderDecorator
 
     /**
      * @param QueryBuilder $queryBuilder
-     * @param int $offset
-     * @param int $limit
+     * @param int          $offset
+     * @param int          $limit
+     *
      * @return QueryBuilderDecorator
      */
     public function applyPagination(QueryBuilder $queryBuilder, int $offset, int $limit): self
@@ -458,8 +485,10 @@ class QueryBuilderDecorator
 
     /**
      * @param QueryBuilder $queryBuilder
-     * @param string $field
+     * @param string       $field
+     *
      * @return QueryBuilderDecorator
+     *
      * @throws \Safe\Exceptions\PcreException
      * @throws \Safe\Exceptions\StringsException
      */
@@ -476,7 +505,8 @@ class QueryBuilderDecorator
 
     /**
      * @param QueryBuilder $queryBuilder
-     * @param RA $aggregates
+     * @param RA           $aggregates
+     *
      * @return QueryBuilderDecorator
      */
     public function applyAggregates(QueryBuilder $queryBuilder, RA $aggregates): self

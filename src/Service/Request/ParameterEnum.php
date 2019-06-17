@@ -23,8 +23,8 @@ class ParameterEnum
     public const FILTER_LOGIC_OR = 'or';
     /** @var string[] */
     public const AVAILABLE_FILTERING_LOGICS = [
-        ParameterEnum::FILTER_LOGIC_AND,
-        ParameterEnum::FILTER_LOGIC_OR,
+        self::FILTER_LOGIC_AND,
+        self::FILTER_LOGIC_OR,
     ];
     /** @var string */
     public const FILTER_FIELD = 'field';
@@ -66,22 +66,22 @@ class ParameterEnum
     public const FILTER_OPERATOR_IN = 'in';
     /** @var string[] */
     public const AVAILABLE_FILTERING_OPERATORS = [
-        ParameterEnum::FILTER_OPERATOR_EQUAL,
-        ParameterEnum::FILTER_OPERATOR_NOT_EQUAL,
-        ParameterEnum::FILTER_OPERATOR_GREATER_THAN,
-        ParameterEnum::FILTER_OPERATOR_GREATER_THAN_OR_EQUAL,
-        ParameterEnum::FILTER_OPERATOR_GREATER_THAN_OR_EQUAL_OR_NULL,
-        ParameterEnum::FILTER_OPERATOR_LOWER_THAN,
-        ParameterEnum::FILTER_OPERATOR_LOWER_THAN_OR_EQUAL,
-        ParameterEnum::FILTER_OPERATOR_BEGINS_WITH,
-        ParameterEnum::FILTER_OPERATOR_CONTAINS,
-        ParameterEnum::FILTER_OPERATOR_CONTAINS_NOT,
-        ParameterEnum::FILTER_OPERATOR_ENDS_WITH,
-        ParameterEnum::FILTER_OPERATOR_IS_NULL,
-        ParameterEnum::FILTER_OPERATOR_IS_NOT_NULL,
-        ParameterEnum::FILTER_OPERATOR_IS_EMPTY,
-        ParameterEnum::FILTER_OPERATOR_IS_NOT_EMPTY,
-        ParameterEnum::FILTER_OPERATOR_IN,
+        self::FILTER_OPERATOR_EQUAL,
+        self::FILTER_OPERATOR_NOT_EQUAL,
+        self::FILTER_OPERATOR_GREATER_THAN,
+        self::FILTER_OPERATOR_GREATER_THAN_OR_EQUAL,
+        self::FILTER_OPERATOR_GREATER_THAN_OR_EQUAL_OR_NULL,
+        self::FILTER_OPERATOR_LOWER_THAN,
+        self::FILTER_OPERATOR_LOWER_THAN_OR_EQUAL,
+        self::FILTER_OPERATOR_BEGINS_WITH,
+        self::FILTER_OPERATOR_CONTAINS,
+        self::FILTER_OPERATOR_CONTAINS_NOT,
+        self::FILTER_OPERATOR_ENDS_WITH,
+        self::FILTER_OPERATOR_IS_NULL,
+        self::FILTER_OPERATOR_IS_NOT_NULL,
+        self::FILTER_OPERATOR_IS_EMPTY,
+        self::FILTER_OPERATOR_IS_NOT_EMPTY,
+        self::FILTER_OPERATOR_IN,
     ];
     /** @var string */
     public const FILTER_VALUE = 'value';
@@ -100,8 +100,8 @@ class ParameterEnum
     public const ORDER_BY_DIRECTION_DESC = 'desc';
     /** @var string[] */
     public const AVAILABLE_ORDERING_DIRECTIONS = [
-        ParameterEnum::ORDER_BY_DIRECTION_ASC,
-        ParameterEnum::ORDER_BY_DIRECTION_DESC,
+        self::ORDER_BY_DIRECTION_ASC,
+        self::ORDER_BY_DIRECTION_DESC,
     ];
 
     /** @var string */

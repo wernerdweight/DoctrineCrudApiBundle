@@ -39,7 +39,7 @@ class ServiceEntityRepositoryFactory
     }
 
     /**
-     * @param string $repositoryType
+     * @param string $className
      *
      * @return ServiceEntityRepository
      *

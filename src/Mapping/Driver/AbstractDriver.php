@@ -14,6 +14,7 @@ abstract class AbstractDriver
 
     /**
      * @param MappingDriver $driver
+     *
      * @return DoctrineCrudApiDriverInterface
      */
     public function setOriginalDriver(MappingDriver $driver): DoctrineCrudApiDriverInterface

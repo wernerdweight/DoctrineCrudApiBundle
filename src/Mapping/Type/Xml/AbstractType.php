@@ -11,7 +11,8 @@ abstract class AbstractType implements DoctrineCrudApiMappingTypeInterface
     /**
      * @param \SimpleXMLElement $propertyMapping
      * @param \SimpleXMLElement $filteredMapping
-     * @param RA $config
+     * @param RA                $config
+     *
      * @return RA
      */
     protected function readExtraConfiguration(
@@ -25,8 +26,10 @@ abstract class AbstractType implements DoctrineCrudApiMappingTypeInterface
     /**
      * @param \SimpleXMLElement $propertyMapping
      * @param \SimpleXMLElement $filteredMapping
-     * @param RA $config
+     * @param RA                $config
+     *
      * @return RA
+     *
      * @throws \WernerDweight\RA\Exception\RAException
      */
     public function readConfiguration(object $propertyMapping, object $filteredMapping, RA $config): RA

@@ -40,9 +40,10 @@ class RepositoryManager
 
     /**
      * RepositoryManager constructor.
-     * @param EntityManagerInterface $entityManager
+     *
+     * @param EntityManagerInterface         $entityManager
      * @param ServiceEntityRepositoryFactory $repositoryFactory
-     * @param CurrentEntityResolver $currentEntityResolver
+     * @param CurrentEntityResolver          $currentEntityResolver
      */
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -56,6 +57,7 @@ class RepositoryManager
 
     /**
      * @return Stringy
+     *
      * @throws RAException
      */
     public function getCurrentEntityName(): Stringy
@@ -79,6 +81,7 @@ class RepositoryManager
 
     /**
      * @return ServiceEntityRepository
+     *
      * @throws RAException
      */
     public function getCurrentRepository(): ServiceEntityRepository
@@ -91,6 +94,7 @@ class RepositoryManager
 
     /**
      * @param string $entityFQCN
+     *
      * @return ClassMetadata
      */
     private function getEntityMetadata(string $entityFQCN): ClassMetadata
@@ -111,6 +115,7 @@ class RepositoryManager
 
     /**
      * @param ClassMetadata $metadata
+     *
      * @return RA
      */
     private function getEntityMappings(ClassMetadata $metadata): RA
@@ -136,7 +141,9 @@ class RepositoryManager
     /**
      * @param Stringy $field
      * @param RA|null $mappings
+     *
      * @return RA|null
+     *
      * @throws RAException
      */
     public function getMappingForField(Stringy $field, ?RA $mappings = null): ?RA

@@ -35,25 +35,29 @@ interface DoctrineCrudApiDriverInterface
 
     /**
      * @param MappingDriver $driver
+     *
      * @return DoctrineCrudApiDriverInterface
      */
     public function setOriginalDriver(MappingDriver $driver): self;
 
     /**
      * @param FileLocator $locator
+     *
      * @return DoctrineCrudApiDriverInterface
      */
     public function setLocator(FileLocator $locator): self;
 
     /**
      * @param AnnotationReader $reader
+     *
      * @return DoctrineCrudApiDriverInterface
      */
     public function setAnnotationReader(AnnotationReader $reader): self;
 
     /**
      * @param ClassMetadata $metadata
-     * @param RA $config
+     * @param RA            $config
+     *
      * @return RA
      */
     public function readMetadata(ClassMetadata $metadata, RA $config): RA;

@@ -12,7 +12,6 @@ class DoctrineCrudApiDriverFactoryException extends AbstractEnhancedException
 
     /** @var string[] */
     protected static $messages = [
-        self::INVALID_DRIVER_TYPE =>
-            'No driver for type %s found! Make sure your repository implements DoctrineCrudApiDriverInterface',
+        self::INVALID_DRIVER_TYPE => 'No driver for type %s found! Make sure your repository implements DoctrineCrudApiDriverInterface',
     ];
 }

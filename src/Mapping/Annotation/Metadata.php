@@ -13,6 +13,7 @@ final class Metadata extends Annotation
 {
     /**
      * @Enum({"entity", "collection"})
+     *
      * @var string
      */
     public $type;
@@ -21,5 +22,5 @@ final class Metadata extends Annotation
     public $class;
 
     /** @var array */
-    public $payload;
+    public $payload = [];
 }

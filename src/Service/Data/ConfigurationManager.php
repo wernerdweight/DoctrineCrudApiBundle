@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace WernerDweight\DoctrineCrudApiBundle\Service\Data;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Mapping\ClassMetadata;
 use WernerDweight\DoctrineCrudApiBundle\DTO\DoctrineCrudApiMetadata;
 use WernerDweight\DoctrineCrudApiBundle\Entity\ApiEntityInterface;
 use WernerDweight\DoctrineCrudApiBundle\Exception\ConfigurationManagerException;
@@ -15,7 +14,7 @@ class ConfigurationManager
 {
     /** @var string */
     private const PROXY_PREFIX = 'Proxies\\__CG__\\';
-    
+
     /** @var RA */
     private $configuration;
 
@@ -24,6 +23,7 @@ class ConfigurationManager
 
     /**
      * ConfigurationManager constructor.
+     *
      * @param EntityManagerInterface $entityManager
      */
     public function __construct(EntityManagerInterface $entityManager)
@@ -33,8 +33,9 @@ class ConfigurationManager
     }
 
     /**
-     * @param string $class
+     * @param string                  $class
      * @param DoctrineCrudApiMetadata $metadata
+     *
      * @return ConfigurationManager
      */
     public function setConfiguration(string $class, DoctrineCrudApiMetadata $metadata): self
@@ -45,7 +46,9 @@ class ConfigurationManager
 
     /**
      * @param string $class
+     *
      * @return DoctrineCrudApiMetadata
+     *
      * @throws \WernerDweight\RA\Exception\RAException
      */
     public function getConfigurationForEntityClass(string $class): DoctrineCrudApiMetadata
@@ -63,7 +66,9 @@ class ConfigurationManager
 
     /**
      * @param ApiEntityInterface $entity
+     *
      * @return DoctrineCrudApiMetadata
+     *
      * @throws \WernerDweight\RA\Exception\RAException
      */
     public function getConfigurationForEntity(ApiEntityInterface $entity): DoctrineCrudApiMetadata

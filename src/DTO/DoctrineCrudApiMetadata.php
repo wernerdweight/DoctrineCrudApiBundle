@@ -6,7 +6,6 @@ namespace WernerDweight\DoctrineCrudApiBundle\DTO;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
 use WernerDweight\DoctrineCrudApiBundle\Mapping\Type\DoctrineCrudApiMappingTypeInterface;
-use WernerDweight\DoctrineCrudApiBundle\Mapping\Type\Xml\Metadata;
 use WernerDweight\DoctrineCrudApiBundle\Service\Data\QueryBuilderDecorator;
 use WernerDweight\RA\RA;
 
@@ -23,9 +22,10 @@ class DoctrineCrudApiMetadata
 
     /**
      * DoctrineCrudApiMetadata constructor.
-     * @param string $name
+     *
+     * @param string        $name
      * @param ClassMetadata $doctrineMetadata
-     * @param RA $apiMetadata
+     * @param RA            $apiMetadata
      */
     public function __construct(string $name, ClassMetadata $doctrineMetadata, RA $apiMetadata)
     {
@@ -52,6 +52,7 @@ class DoctrineCrudApiMetadata
 
     /**
      * @return RA
+     *
      * @throws \WernerDweight\RA\Exception\RAException
      */
     public function getListableFields(): RA
@@ -61,6 +62,7 @@ class DoctrineCrudApiMetadata
 
     /**
      * @return RA
+     *
      * @throws \WernerDweight\RA\Exception\RAException
      */
     public function getDefaultListableFields(): RA
@@ -70,6 +72,7 @@ class DoctrineCrudApiMetadata
 
     /**
      * @return RA
+     *
      * @throws \WernerDweight\RA\Exception\RAException
      */
     public function getCreatableFields(): RA
@@ -79,6 +82,7 @@ class DoctrineCrudApiMetadata
 
     /**
      * @return RA
+     *
      * @throws \WernerDweight\RA\Exception\RAException
      */
     public function getUpdatableFields(): RA
@@ -88,6 +92,7 @@ class DoctrineCrudApiMetadata
 
     /**
      * @return RA
+     *
      * @throws \WernerDweight\RA\Exception\RAException
      */
     public function getUpdatableNested(): RA
@@ -96,8 +101,9 @@ class DoctrineCrudApiMetadata
     }
 
     /**
-     * @param string $field
+     * @param string  $field
      * @param RA|null $metadata
+     *
      * @return RA|null
      */
     private function extendFieldMetadata(string $field, ?RA $metadata = null): ?RA
@@ -108,7 +114,6 @@ class DoctrineCrudApiMetadata
         ) {
             return $metadata;
         }
-
 
         if (true === array_key_exists($field, $this->doctrineMetadata->associationMappings)) {
             $extendedFieldMetadata = $metadata ?? new RA();
@@ -135,7 +140,9 @@ class DoctrineCrudApiMetadata
 
     /**
      * @param string $field
+     *
      * @return RA|null
+     *
      * @throws \WernerDweight\RA\Exception\RAException
      */
     public function getFieldMetadata(string $field): ?RA
@@ -149,7 +156,9 @@ class DoctrineCrudApiMetadata
 
     /**
      * @param string $field
+     *
      * @return string|null
+     *
      * @throws \WernerDweight\RA\Exception\RAException
      */
     public function getFieldType(string $field): ?string

@@ -10,7 +10,7 @@ use WernerDweight\DoctrineCrudApiBundle\Exception\ChainDriverException;
 use WernerDweight\RA\RA;
 use WernerDweight\Stringy\Stringy;
 
-class Chain extends AbstractDriver implements DoctrineCrudApiDriverInterface
+final class Chain extends AbstractDriver implements DoctrineCrudApiDriverInterface
 {
     /** @var DoctrineCrudApiDriverInterface|null */
     private $defaultDriver;
@@ -28,6 +28,7 @@ class Chain extends AbstractDriver implements DoctrineCrudApiDriverInterface
 
     /**
      * @param FileLocator $locator
+     *
      * @return Chain
      */
     public function setLocator(FileLocator $locator): DoctrineCrudApiDriverInterface
@@ -37,6 +38,7 @@ class Chain extends AbstractDriver implements DoctrineCrudApiDriverInterface
 
     /**
      * @param AnnotationReader $reader
+     *
      * @return Chain
      */
     public function setAnnotationReader(AnnotationReader $reader): DoctrineCrudApiDriverInterface
@@ -46,17 +48,18 @@ class Chain extends AbstractDriver implements DoctrineCrudApiDriverInterface
 
     /**
      * @param ClassMetadata $metadata
-     * @param RA $config
+     * @param RA            $config
+     *
      * @return RA
      */
     public function readMetadata(ClassMetadata $metadata, RA $config): RA
     {
         /**
-         * @var string $namespace
+         * @var string
          * @var DoctrineCrudApiDriverInterface $driver
          */
         foreach ($this->drivers as $namespace => $driver) {
-            if ((new Stringy($metadata->name))->getPositionOfSubstring($namespace) === 0) {
+            if (0 === (new Stringy($metadata->name))->getPositionOfSubstring($namespace)) {
                 return $driver->readMetadata($metadata, $config);
             }
         }
@@ -70,7 +73,8 @@ class Chain extends AbstractDriver implements DoctrineCrudApiDriverInterface
 
     /**
      * @param DoctrineCrudApiDriverInterface $driver
-     * @param string $namespace
+     * @param string                         $namespace
+     *
      * @return Chain
      */
     public function addDriver(DoctrineCrudApiDriverInterface $driver, string $namespace): self
@@ -97,6 +101,7 @@ class Chain extends AbstractDriver implements DoctrineCrudApiDriverInterface
 
     /**
      * @param DoctrineCrudApiDriverInterface $driver
+     *
      * @return Chain
      */
     public function setDefaultDriver(DoctrineCrudApiDriverInterface $driver): self

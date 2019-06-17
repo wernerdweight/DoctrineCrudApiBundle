@@ -12,7 +12,6 @@ class ServiceEntityRepositoryFactoryException extends AbstractEnhancedException
 
     /** @var string[] */
     protected static $messages = [
-        self::INVALID_ENTITY_CLASS =>
-            'No repository for entity %s found! Make sure your repository implements ServiceEntityRepositoryInterface',
+        self::INVALID_ENTITY_CLASS => 'No repository for entity %s found! Make sure your repository implements ServiceEntityRepositoryInterface',
     ];
 }

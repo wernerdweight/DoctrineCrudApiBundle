@@ -50,7 +50,8 @@ interface DoctrineCrudApiMappingTypeInterface
     /**
      * @param object $propertyMapping
      * @param object $filteredMapping
-     * @param RA $config
+     * @param RA     $config
+     *
      * @return RA
      */
     public function readConfiguration(object $propertyMapping, object $filteredMapping, RA $config): RA;

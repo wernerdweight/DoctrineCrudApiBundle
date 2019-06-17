@@ -3,11 +3,7 @@ declare(strict_types=1);
 
 namespace WernerDweight\DoctrineCrudApiBundle\Service\Data;
 
-use Doctrine\Bundle\DoctrineBundle\Repository\ContainerRepositoryFactory;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\ORM\EntityManagerInterface;
 use WernerDweight\DoctrineCrudApiBundle\Service\Request\ParameterEnum;
-use WernerDweight\DoctrineCrudApiBundle\Service\Request\ParameterResolver;
 use WernerDweight\RA\RA;
 
 class DataManager
@@ -30,9 +26,11 @@ class DataManager
     /**
      * @param int $offset
      * @param int $limit
-     * @param RA $orderBy
-     * @param RA $filters
+     * @param RA  $orderBy
+     * @param RA  $filters
+     *
      * @return RA
+     *
      * @throws \Safe\Exceptions\StringsException
      * @throws \WernerDweight\RA\Exception\RAException
      */
@@ -57,10 +55,12 @@ class DataManager
     /**
      * @param int $offset
      * @param int $limit
-     * @param RA $orderBy
-     * @param RA $filter
-     * @param RA $groupBy
+     * @param RA  $orderBy
+     * @param RA  $filter
+     * @param RA  $groupBy
+     *
      * @return RA
+     *
      * @throws \Safe\Exceptions\PcreException
      * @throws \Safe\Exceptions\StringsException
      * @throws \WernerDweight\RA\Exception\RAException

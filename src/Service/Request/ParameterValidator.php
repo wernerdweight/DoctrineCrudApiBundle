@@ -21,8 +21,9 @@ class ParameterValidator
 
     /**
      * ParameterValidator constructor.
+     *
      * @param RepositoryManager $repositoryManager
-     * @param MappingResolver $mappingResolver
+     * @param MappingResolver   $mappingResolver
      */
     public function __construct(RepositoryManager $repositoryManager, MappingResolver $mappingResolver)
     {
@@ -32,6 +33,7 @@ class ParameterValidator
 
     /**
      * @param string $operator
+     *
      * @return string
      */
     private function validateFilteringOperator(string $operator): string
@@ -47,6 +49,7 @@ class ParameterValidator
 
     /**
      * @param string $direction
+     *
      * @return string
      */
     private function validateDirection(string $direction): string
@@ -62,22 +65,26 @@ class ParameterValidator
 
     /**
      * @param Stringy $field
+     *
      * @return bool
+     *
      * @throws \Safe\Exceptions\StringsException
      * @throws \WernerDweight\RA\Exception\RAException
      */
     private function fieldContainsRootAlias(Stringy $field): bool
     {
         $rootAlias = \Safe\sprintf('%s%s', DataManager::ROOT_ALIAS, ParameterEnum::FILTER_FIELD_SEPARATOR);
-        return $field->getPositionOfSubstring($rootAlias) === 0 ||
-            $field->getPositionOfSubstring($this->repositoryManager->getCurrentEntityName()) === 0;
+        return 0 === $field->getPositionOfSubstring($rootAlias) ||
+            0 === $field->getPositionOfSubstring($this->repositoryManager->getCurrentEntityName());
     }
 
     /**
      * @param Stringy $field
-     * @param string $operator
-     * @param mixed $value
+     * @param string  $operator
+     * @param mixed   $value
+     *
      * @return mixed
+     *
      * @throws \Safe\Exceptions\StringsException
      * @throws \WernerDweight\RA\Exception\RAExceptio
      */
@@ -92,7 +99,7 @@ class ParameterValidator
             $value = $this->mappingResolver->resolveValue($configuration, $value);
         }
 
-        if ($operator === ParameterEnum::FILTER_OPERATOR_BEGINS_WITH) {
+        if (ParameterEnum::FILTER_OPERATOR_BEGINS_WITH === $operator) {
             return \Safe\sprintf('%s%s', $value, QueryBuilderDecorator::SQL_WILDCARD);
         }
         $containsOperators = [ParameterEnum::FILTER_OPERATOR_CONTAINS, ParameterEnum::FILTER_OPERATOR_CONTAINS_NOT];
@@ -104,7 +111,7 @@ class ParameterValidator
                 QueryBuilderDecorator::SQL_WILDCARD
             );
         }
-        if ($operator === ParameterEnum::FILTER_OPERATOR_ENDS_WITH) {
+        if (ParameterEnum::FILTER_OPERATOR_ENDS_WITH === $operator) {
             return \Safe\sprintf('%s%s', QueryBuilderDecorator::SQL_WILDCARD, $value);
         }
         $emptyOperators = [ParameterEnum::FILTER_OPERATOR_IS_EMPTY, ParameterEnum::FILTER_OPERATOR_IS_NOT_EMPTY];
@@ -117,6 +124,7 @@ class ParameterValidator
 
     /**
      * @param RA $conditions
+     *
      * @return RA
      */
     private function validateFilteringConditions(RA $conditions): RA
@@ -144,7 +152,9 @@ class ParameterValidator
             }
 
             return new RA([
-                ParameterEnum::FILTER_FIELD => null === $field->getPositionOfSubstring(ParameterEnum::FILTER_FIELD_SEPARATOR)
+                ParameterEnum::FILTER_FIELD => null === $field->getPositionOfSubstring(
+                    ParameterEnum::FILTER_FIELD_SEPARATOR
+                )
                     ? \Safe\sprintf('%s%s%s', DataManager::ROOT_ALIAS, ParameterEnum::FILTER_FIELD_SEPARATOR, $field)
                     : (string)$field,
                 ParameterEnum::FILTER_OPERATOR => $operator,
@@ -155,6 +165,7 @@ class ParameterValidator
 
     /**
      * @param string $logic
+     *
      * @return string
      */
     private function validateFilteringLogic(string $logic): string
@@ -170,6 +181,7 @@ class ParameterValidator
 
     /**
      * @param array|null $filter
+     *
      * @return RA
      */
     public function validateFilter(?array $filter): RA
@@ -182,7 +194,7 @@ class ParameterValidator
             new RA($filter[ParameterEnum::FILTER_CONDITIONS], RA::RECURSIVE)
         );
 
-        if ($conditions->length() === 0) {
+        if (0 === $conditions->length()) {
             return new RA();
         }
 
@@ -196,6 +208,7 @@ class ParameterValidator
 
     /**
      * @param array|null $orderBy
+     *
      * @return RA
      */
     public function validateOrderBy(?array $orderBy): RA
@@ -221,6 +234,7 @@ class ParameterValidator
 
     /**
      * @param array|null $groupBy
+     *
      * @return RA|null
      */
     public function validateGroupBy(?array $groupBy): ?RA
@@ -247,7 +261,8 @@ class ParameterValidator
 
     /**
      * @param array|null $responseStructure
-     * @param Stringy $entityName
+     * @param Stringy    $entityName
+     *
      * @return RA|null
      */
     public function validateResponseStructure(?array $responseStructure, Stringy $entityName): ?RA

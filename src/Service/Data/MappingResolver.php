@@ -20,6 +20,7 @@ class MappingResolver
 
     /**
      * MappingResolver constructor.
+     *
      * @param EntityManagerInterface $entityManager
      */
     public function __construct(EntityManagerInterface $entityManager)
@@ -28,9 +29,11 @@ class MappingResolver
     }
 
     /**
-     * @param RA $itemData
+     * @param RA     $itemData
      * @param string $className
+     *
      * @return ApiEntityInterface
+     *
      * @throws \WernerDweight\RA\Exception\RAException
      */
     private function resolveEntity(RA $itemData, string $className): ApiEntityInterface
@@ -48,8 +51,9 @@ class MappingResolver
     }
 
     /**
-     * @param RA $value
+     * @param RA     $value
      * @param string $className
+     *
      * @return ArrayCollection
      */
     private function resolveToMany(RA $value, string $className): ArrayCollection
@@ -65,7 +69,8 @@ class MappingResolver
 
     /**
      * @param RA|string|int $value
-     * @param string $className
+     * @param string        $className
+     *
      * @return ApiEntityInterface
      */
     private function resolveToOne($value, string $className): ApiEntityInterface
@@ -78,8 +83,9 @@ class MappingResolver
     }
 
     /**
-     * @param RA $configuration
+     * @param RA    $configuration
      * @param mixed $value
+     *
      * @return mixed
      */
     public function resolveValue(RA $configuration, $value)
@@ -89,8 +95,8 @@ class MappingResolver
         }
         $type = $configuration->getString(QueryBuilderDecorator::DOCTRINE_ASSOCIATION_TYPE);
 
-        if (true === in_array($type, [Type::DATETIME, $type === Type::DATE, $type === Type::TIME], true)) {
-            if (true === empty($value) || $value === ParameterEnum::NULL_VALUE) {
+        if (true === in_array($type, [Type::DATETIME, Type::DATE === $type, Type::TIME === $type], true)) {
+            if (true === empty($value) || ParameterEnum::NULL_VALUE === $value) {
                 return null;
             }
             return new \DateTime(
@@ -99,16 +105,16 @@ class MappingResolver
             );
         }
         if (true === in_array($type, [Type::INTEGER, Type::BIGINT, Type::SMALLINT], true)) {
-            return $value !== ParameterEnum::EMPTY_VALUE ? (int)$value : null;
+            return ParameterEnum::EMPTY_VALUE !== $value ? (int)$value : null;
         }
         if (true === in_array($type, [Type::FLOAT, Type::DECIMAL], true)) {
-            return $value !== ParameterEnum::EMPTY_VALUE ? (float)$value : null;
+            return ParameterEnum::EMPTY_VALUE !== $value ? (float)$value : null;
         }
-        if ($type === Type::BOOLEAN) {
-            return $value === ParameterEnum::TRUE_VALUE;
+        if (Type::BOOLEAN === $type) {
+            return ParameterEnum::TRUE_VALUE === $value;
         }
         if (true === in_array($type, [Type::STRING, Type::TEXT], true)) {
-            return $value !== ParameterEnum::EMPTY_VALUE ? (string)$value : null;
+            return ParameterEnum::EMPTY_VALUE !== $value ? (string)$value : null;
         }
         if (true === in_array(
             $type, [
@@ -117,7 +123,7 @@ class MappingResolver
                 ClassMetadataInfo::TO_ONE,
                 ClassMetadataInfo::ONE_TO_MANY,
                 ClassMetadataInfo::MANY_TO_MANY,
-                ClassMetadataInfo::TO_MANY
+                ClassMetadataInfo::TO_MANY,
             ],
             true
         )) {
@@ -130,7 +136,7 @@ class MappingResolver
             }
             return $this->resolveToOne($value, $className);
         }
-        
+
         throw new MappingResolverException(MappingResolverException::EXCEPTION_UNKNOWN_MAPPING_TYPE, [$type]);
     }
 }

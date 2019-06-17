@@ -22,9 +22,10 @@ class Lister
 
     /**
      * Lister constructor.
+     *
      * @param ParameterResolver $parameterResolver
-     * @param DataManager $dataManager
-     * @param Formatter $formatter
+     * @param DataManager       $dataManager
+     * @param Formatter         $formatter
      */
     public function __construct(ParameterResolver $parameterResolver, DataManager $dataManager, Formatter $formatter)
     {
@@ -35,6 +36,7 @@ class Lister
 
     /**
      * @return RA
+     *
      * @throws \Safe\Exceptions\PcreException
      * @throws \Safe\Exceptions\StringsException
      * @throws \WernerDweight\RA\Exception\RAException
@@ -57,6 +59,7 @@ class Lister
 
     /**
      * @return RA
+     *
      * @throws \Safe\Exceptions\PcreException
      * @throws \Safe\Exceptions\StringsException
      * @throws \WernerDweight\RA\Exception\RAException

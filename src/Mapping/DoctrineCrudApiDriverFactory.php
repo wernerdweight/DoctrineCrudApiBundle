@@ -16,6 +16,7 @@ class DoctrineCrudApiDriverFactory
 
     /**
      * DoctrineCrudApiDriverFactory constructor.
+     *
      * @param RewindableGenerator $drivers
      */
     public function __construct(RewindableGenerator $drivers)
@@ -35,12 +36,14 @@ class DoctrineCrudApiDriverFactory
 
     /**
      * @param string $driverType
+     *
      * @return DoctrineCrudApiDriverInterface
+     *
      * @throws \WernerDweight\RA\Exception\RAException
      */
     public function get(string $driverType): DoctrineCrudApiDriverInterface
     {
-        if ($this->drivers->hasKey($driverType) !== true) {
+        if (true !== $this->drivers->hasKey($driverType)) {
             throw new DoctrineCrudApiDriverFactoryException(
                 DoctrineCrudApiDriverFactoryException::INVALID_DRIVER_TYPE,
                 [$driverType]

@@ -1,17 +1,18 @@
 <?php
+declare(strict_types=1);
 
 namespace WernerDweight\DoctrineCrudApiBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Routing\Annotation\Route;
 use WernerDweight\DoctrineCrudApiBundle\Service\ActionProcessor\Lister;
 use WernerDweight\RA\RA;
 
-class ListController extends AbstractController implements DoctrineCrudApiControllerInterface
+final class ListController extends AbstractController implements DoctrineCrudApiControllerInterface
 {
     /**
      * @param Lister $lister
+     *
      * @return JsonResponse
      */
     public function index(Lister $lister): JsonResponse
