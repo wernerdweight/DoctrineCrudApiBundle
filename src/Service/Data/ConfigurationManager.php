@@ -74,6 +74,6 @@ class ConfigurationManager
 
     public function getFieldMetadata(DoctrineCrudApiMetadata $configuration, string $field): ?RA
     {
-        
+        // FIXME: remove?
     }
 }

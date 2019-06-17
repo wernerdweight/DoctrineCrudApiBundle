@@ -83,15 +83,17 @@ class ParameterValidator
      */
     private function validateFilteringValue(Stringy $field, string $operator, $value)
     {
-        $configuration = $this->repositoryManager->getCurrentMappings()->getRAOrNull((string)$field)
-            ?? $this->repositoryManager->getMappingForField($field);
-        
+        $configuration = $this->repositoryManager->getCurrentMappings();
+        $configuration = true === $configuration->hasKey((string)$field)
+            ? $configuration->getRAOrNull((string)$field)
+            : $this->repositoryManager->getMappingForField($field);
+
         if (null !== $configuration) {
             $value = $this->mappingResolver->resolveValue($configuration, $value);
         }
 
         if ($operator === ParameterEnum::FILTER_OPERATOR_BEGINS_WITH) {
-            return \Safe\sprintf('%s%s', QueryBuilderDecorator::SQL_WILDCARD, $value);
+            return \Safe\sprintf('%s%s', $value, QueryBuilderDecorator::SQL_WILDCARD);
         }
         $containsOperators = [ParameterEnum::FILTER_OPERATOR_CONTAINS, ParameterEnum::FILTER_OPERATOR_CONTAINS_NOT];
         if (true === in_array($operator, $containsOperators, true)) {
@@ -103,11 +105,11 @@ class ParameterValidator
             );
         }
         if ($operator === ParameterEnum::FILTER_OPERATOR_ENDS_WITH) {
-            return \Safe\sprintf('%s%s', $value, QueryBuilderDecorator::SQL_WILDCARD);
+            return \Safe\sprintf('%s%s', QueryBuilderDecorator::SQL_WILDCARD, $value);
         }
         $emptyOperators = [ParameterEnum::FILTER_OPERATOR_IS_EMPTY, ParameterEnum::FILTER_OPERATOR_IS_NOT_EMPTY];
         if (true === in_array($operator, $emptyOperators, true)) {
-            return '';
+            return ParameterEnum::EMPTY_VALUE;
         }
 
         return $value;
@@ -144,7 +146,7 @@ class ParameterValidator
             return new RA([
                 ParameterEnum::FILTER_FIELD => null === $field->getPositionOfSubstring(ParameterEnum::FILTER_FIELD_SEPARATOR)
                     ? \Safe\sprintf('%s%s%s', DataManager::ROOT_ALIAS, ParameterEnum::FILTER_FIELD_SEPARATOR, $field)
-                    : $field,
+                    : (string)$field,
                 ParameterEnum::FILTER_OPERATOR => $operator,
                 ParameterEnum::FILTER_VALUE => $this->validateFilteringValue($field, $operator, $value),
             ]);
@@ -177,8 +179,7 @@ class ParameterValidator
         }
 
         $conditions = $this->validateFilteringConditions(
-            new RA($filter[ParameterEnum::FILTER_CONDITIONS]),
-            RA::RECURSIVE
+            new RA($filter[ParameterEnum::FILTER_CONDITIONS], RA::RECURSIVE)
         );
 
         if ($conditions->length() === 0) {
@@ -246,13 +247,14 @@ class ParameterValidator
 
     /**
      * @param array|null $responseStructure
+     * @param Stringy $entityName
      * @return RA|null
      */
-    public function validateResponseStructure(?array $responseStructure): ?RA
+    public function validateResponseStructure(?array $responseStructure, Stringy $entityName): ?RA
     {
         if (null === $responseStructure) {
             return null;
         }
-        return new RA($responseStructure, RA::RECURSIVE);
+        return new RA([(string)$entityName => $responseStructure], RA::RECURSIVE);
     }
 }

@@ -17,6 +17,9 @@ use WernerDweight\Stringy\Stringy;
 
 class Formatter
 {
+    /** @var string */
+    private const FIELD_SEPARATOR = '.';
+
     /** @var ParameterResolver */
     private $parameterResolver;
 
@@ -73,6 +76,30 @@ class Formatter
     }
 
     /**
+     * @param RA $responseStructure
+     * @param Stringy $path
+     * @return RA|null
+     */
+    private function traverseResponseStructure(RA $responseStructure, Stringy $path): ?RA
+    {
+        $segments = new RA($path->explode(self::FIELD_SEPARATOR));
+        $reducedResponseStructure = $segments->reduce(function (RA $carry, string $segment): RA {
+            if (true !== $carry->hasKey($segment)) {
+                return new RA();
+            }
+            $value = $carry->get($segment);
+            if ($value instanceof RA) {
+                return $value;
+            }
+            return new RA();
+        }, $responseStructure);
+        if ($reducedResponseStructure->length() === 0) {
+            return null;
+        }
+        return $reducedResponseStructure;
+    }
+
+    /**
      * @param Stringy $field
      * @param DoctrineCrudApiMetadata $configuration
      * @param RA|null $responseStructure
@@ -82,39 +109,26 @@ class Formatter
     private function isAllowedForOutput(
         Stringy $field,
         DoctrineCrudApiMetadata $configuration,
-        ?RA $responseStructure = null,
-        int $level = 0
+        ?RA $responseStructure = null
     ): bool {
+        $root = new Stringy(ParameterEnum::EMPTY_VALUE);
+        $key = (clone $field);
+        $lastDotPosition = $field->getPositionOfLastSubstring(ParameterEnum::FILTER_FIELD_SEPARATOR);
+        if (null !== $lastDotPosition) {
+            $root = (clone $field)->substring(0, $lastDotPosition);
+            $key = (clone $field)->substring($lastDotPosition + 1);
+        }
+
+        $responseStructure = $this->parameterResolver->getRAOrNull(ParameterEnum::RESPONSE_STRUCTURE);
+        if (null !== $responseStructure) {
+            $responseStructure = $this->traverseResponseStructure($responseStructure, $root);
+        }
         if (null === $responseStructure) {
-            $responseStructure = $this->parameterResolver->getRAOrNull(ParameterEnum::RESPONSE_STRUCTURE)
-                ?? $configuration->getDefaultListableFields()->fillKeys(ParameterEnum::TRUE_VALUE);
+            $responseStructure = $configuration->getDefaultListableFields()->fillKeys(ParameterEnum::TRUE_VALUE);
         }
 
-        //FIXME: responseStructure must be traversed to current level (using field, but field is currently being stripped in formatOne)
-
-        dump($field, $configuration, $responseStructure, $level);
-
-        $firstDotPosition = $field->getPositionOfSubstring(ParameterEnum::FILTER_FIELD_SEPARATOR);
-        if (null !== $firstDotPosition) {
-            $root = (clone $field)->substring(0, $firstDotPosition);
-            $key = (clone $field)->substring($firstDotPosition + 1);
-            $responseStructureKey = (string)($level === 0 ? $root : $key);
-            if (true !== $responseStructure->hasKey($responseStructureKey)) {
-                return false;
-            }
-            $subStructure = $responseStructure->get($responseStructureKey);
-            if (ParameterEnum::TRUE_VALUE === $subStructure) {
-                $rootResponseStructure = $configuration->getDefaultListableFields()->fillKeys(ParameterEnum::TRUE_VALUE);
-                return $this->isAllowedForOutput($key, $configuration, $rootResponseStructure, $level + 1);
-            }
-            if ($subStructure instanceof RA) {
-                return $this->isAllowedForOutput($key, $configuration, $subStructure, $level + 1);
-            }
-            return false;
-        }
-
-        if (true === $responseStructure->hasKey((string)$field)) {
-            $value = $responseStructure->get((string)$field);
+        if (true === $responseStructure->hasKey((string)$key)) {
+            $value = $responseStructure->get((string)$key);
             return ($value === ParameterEnum::TRUE_VALUE || $value instanceof RA);
         }
         return false;
@@ -157,7 +171,9 @@ class Formatter
     private function getRelatedEntityValue(ApiEntityInterface $item, Stringy $field, string $prefix): ?RA
     {
         $value = $this->getEntityPropertyValue($item, $field);
-        return null !== $value ? $this->formatOne($value, \Safe\sprintf('%s%s.', $prefix, $field)) : null;
+        return null !== $value
+            ? $this->formatOne($value, \Safe\sprintf('%s%s%s', $prefix, $field, self::FIELD_SEPARATOR))
+            : null;
     }
 
     /**
@@ -181,7 +197,7 @@ class Formatter
         /** @var Collection $fieldValue */
         $fieldValue = $this->getEntityPropertyValue($item, $field, $payload);
         return (new RA($fieldValue->getValues()))->map(function (ApiEntityInterface $entry) use ($prefix, $field) {
-            return $this->formatOne($entry, \Safe\sprintf('%s%s.', $prefix, (string)$field));
+            return $this->formatOne($entry, \Safe\sprintf('%s%s%s', $prefix, (string)$field, self::FIELD_SEPARATOR));
         });
     }
 
@@ -222,10 +238,8 @@ class Formatter
         $configuration = $this->configurationManager->getConfigurationForEntity($item);
         $result = new RA();
         $configuration->getListableFields()->walk(function (string $field) use ($item, $prefix, $result, $configuration): void {
-            $formatedPrefix = (string)((new Stringy($prefix))->pregReplace('/^.*\.([^\.]+\.)$/', '$1'));
-            $prefixedField = new Stringy(\Safe\sprintf('%s%s', $formatedPrefix, $field));
-            $level = $prefix === ParameterEnum::EMPTY_VALUE ? 0 : 1;
-            if (true !== $this->isAllowedForOutput($prefixedField, $configuration, null, $level)) {
+            $prefixedField = new Stringy(\Safe\sprintf('%s%s', $prefix, $field));
+            if (true !== $this->isAllowedForOutput($prefixedField, $configuration)) {
                 return;
             }
             $metadata = $configuration->getFieldMetadata($field);
@@ -240,12 +254,13 @@ class Formatter
 
     /**
      * @param RA $items
+     * @param string $prefix
      * @return RA
      */
-    public function formatMany(RA $items): RA
+    public function formatMany(RA $items, string $prefix): RA
     {
-        return $items->map(function (ApiEntityInterface $item): RA {
-            return $this->formatOne($item);
+        return $items->map(function (ApiEntityInterface $item) use ($prefix): RA {
+            return $this->formatOne($item, $prefix);
         });
     }
 
@@ -313,6 +328,7 @@ class Formatter
                 : QueryBuilderDecorator::IDENTIFIER_FIELD_NAME;
             return $this->formatGroupped($items, $level, $levelGroupingField);
         }
-        return $this->formatMany($items);
+        $prefix = (clone ($this->parameterResolver->getStringy(ParameterEnum::ENTITY_NAME)))->lowercaseFirst();
+        return $this->formatMany($items, \Safe\sprintf('%s%s', (string)$prefix, self::FIELD_SEPARATOR));
     }
 }

@@ -17,6 +17,9 @@ class RepositoryManager
     /** @var Stringy */
     private $currentEntityName;
 
+    /** @var Stringy */
+    private $currentEntityFQCN;
+
     /** @var ServiceEntityRepository|null */
     private $currentRepository;
 
@@ -64,6 +67,17 @@ class RepositoryManager
     }
 
     /**
+     * @return Stringy
+     */
+    public function getCurrentEntityFQCN(): Stringy
+    {
+        if (null === $this->currentEntityFQCN) {
+            $this->currentEntityFQCN = $this->currentEntityResolver->getCurrentEntityFQCN();
+        }
+        return $this->currentEntityFQCN;
+    }
+
+    /**
      * @return ServiceEntityRepository
      * @throws RAException
      */
@@ -76,14 +90,36 @@ class RepositoryManager
     }
 
     /**
+     * @param string $entityFQCN
+     * @return ClassMetadata
+     */
+    private function getEntityMetadata(string $entityFQCN): ClassMetadata
+    {
+        return $this->entityManager->getClassMetadata($entityFQCN);
+    }
+
+    /**
      * @return ClassMetadata
      */
     public function getCurrentMetadata(): ClassMetadata
     {
         if (null === $this->currentMetadata) {
-            $this->currentMetadata = $this->entityManager->getClassMetadata(ParameterEnum::ENTITY_NAME);
+            $this->currentMetadata = $this->getEntityMetadata((string)$this->getCurrentEntityFQCN());
         }
         return $this->currentMetadata;
+    }
+
+    /**
+     * @param ClassMetadata $metadata
+     * @return RA
+     */
+    private function getEntityMappings(ClassMetadata $metadata): RA
+    {
+        return (new RA())
+            ->merge(
+                new RA($metadata->fieldMappings, RA::RECURSIVE),
+                new RA($metadata->associationMappings, RA::RECURSIVE)
+            );
     }
 
     /**
@@ -92,22 +128,48 @@ class RepositoryManager
     public function getCurrentMappings(): RA
     {
         if (null === $this->currentMappings) {
-            $metadata = $this->getCurrentMetadata();
-            $this->currentMappings = (new RA())
-                ->merge(
-                    $metadata->fieldMappings,
-                    $metadata->associationMappings,
-                    [$metadata->getIdentifier()]
-                );
+            $this->currentMappings = $this->getEntityMappings($this->getCurrentMetadata());
         }
         return $this->currentMappings;
     }
 
+    /**
+     * @param Stringy $field
+     * @param RA|null $mappings
+     * @return RA|null
+     * @throws RAException
+     */
     public function getMappingForField(Stringy $field, ?RA $mappings = null): ?RA
     {
         if (null === $mappings) {
             $mappings = $this->getCurrentMappings();
         }
-        // TODO:
+
+        $firstDotPosition = $field->getPositionOfSubstring(ParameterEnum::FILTER_FIELD_SEPARATOR);
+        if (null === $firstDotPosition) {
+            return null;
+        }
+
+        $root = (clone $field)->substring(0, $firstDotPosition);
+        $field = $field->substring($firstDotPosition + 1);
+        if (true !== $mappings->hasKey((string)$root)) {
+            return null;
+        }
+
+        $mapping = $mappings->getRA((string)$root);
+        if (true !== $mapping->hasKey(QueryBuilderDecorator::DOCTRINE_TARGET_ENTITY)) {
+            return null;
+        }
+
+        $targetEntity = $mapping->getString(QueryBuilderDecorator::DOCTRINE_TARGET_ENTITY);
+        $firstDotPosition = $field->getPositionOfSubstring(ParameterEnum::FILTER_FIELD_SEPARATOR);
+        $fieldMappings = $this->getEntityMappings($this->getEntityMetadata($targetEntity));
+        if (null !== $firstDotPosition) {
+            return $this->getMappingForField($field, $fieldMappings);
+        }
+
+        return true === $fieldMappings->hasKey((string)$field)
+            ? $fieldMappings->getRA((string)$field)
+            : null;
     }
 }

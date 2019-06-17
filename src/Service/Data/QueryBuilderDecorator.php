@@ -82,7 +82,7 @@ class QueryBuilderDecorator
      */
     private function getFilteringField(RA $conditionData): string
     {
-        if (true !== $conditionData->hasKey(ParameterEnum::FILTER_VALUE)) {
+        if (true !== $conditionData->hasKey(ParameterEnum::FILTER_FIELD)) {
             throw new FilteringException(FilteringException::EXCEPTION_MISSING_FILTER_FIELD);
         }
         return $conditionData->getString(ParameterEnum::FILTER_FIELD);
@@ -139,7 +139,7 @@ class QueryBuilderDecorator
     {
         $associations = $this->repositoryManager->getCurrentMetadata()->associationMappings;
         $clonedField = (string)((clone $field)->replace(\Safe\sprintf('%s.', DataManager::ROOT_ALIAS), ''));
-        return true === array_key_exists($field, $associations) &&
+        return true === array_key_exists($clonedField, $associations) &&
             $associations[$field][self::DOCTRINE_ASSOCIATION_TYPE] & ClassMetadataInfo::TO_MANY;
     }
 
@@ -213,16 +213,16 @@ class QueryBuilderDecorator
             return (string)($expression->lte($field, $parameterName));
         }
         if ($operator === ParameterEnum::FILTER_OPERATOR_BEGINS_WITH) {
-            return (string)($expression->like($field, $parameterName));
+            return (string)($expression->like($expression->lower($field), $expression->lower($parameterName)));
         }
         if ($operator === ParameterEnum::FILTER_OPERATOR_CONTAINS) {
-            return (string)($expression->like($field, $parameterName));
+            return (string)($expression->like($expression->lower($field), $expression->lower($parameterName)));
         }
         if ($operator === ParameterEnum::FILTER_OPERATOR_CONTAINS_NOT) {
-            return (string)($expression->notLike($field, $parameterName));
+            return (string)($expression->notLike($expression->lower($field), $expression->lower($parameterName)));
         }
         if ($operator === ParameterEnum::FILTER_OPERATOR_ENDS_WITH) {
-            return (string)($expression->like($field, $parameterName));
+            return (string)($expression->like($expression->lower($field), $expression->lower($parameterName)));
         }
         if ($operator === ParameterEnum::FILTER_OPERATOR_IS_NULL) {
             return (string)($expression->isNull($field));
@@ -281,7 +281,7 @@ class QueryBuilderDecorator
             }
 
             if ($currentPrefix !== DataManager::ROOT_ALIAS) {
-                $previousPrefix = DataManager::ROOT_ALIAS;
+                $previousPrefix = new Stringy(DataManager::ROOT_ALIAS);
                 $currentField = (clone $field)->substring($currentPrefix->length() + 1);
                 while (true !== $currentPrefix->sameAs($previousPrefix)) {
                     if (true !== in_array((string)$currentPrefix, $queryBuilder->getAllAliases(), true)) {
@@ -351,7 +351,7 @@ class QueryBuilderDecorator
 
         $parameterName = \Safe\sprintf(
             '%s_%s_%d_%d',
-            (new Stringy())->replace(ParameterEnum::FILTER_FIELD_SEPARATOR, self::PARAM_NAME_SEPARATOR),
+            (clone $field)->replace(ParameterEnum::FILTER_FIELD_SEPARATOR, self::PARAM_NAME_SEPARATOR),
             $operator,
             $filteringKey,
             $conditionKey
@@ -384,34 +384,32 @@ class QueryBuilderDecorator
                 $conditions = $this->prepareFilteringConditions(
                     $queryBuilder,
                     $conditionData->getRA(ParameterEnum::FILTER_CONDITIONS),
-                    $filteringKey
+                    $key
                 );
                 return \Safe\sprintf('(%s)', $conditions->join(\Safe\sprintf(' %s ', $logic)));
             }
             return $this->getFilteringCondition($queryBuilder, $conditionData, $key, $filteringKey);
-        });
+        }, $conditions->keys());
     }
 
     /**
      * @param QueryBuilder $queryBuilder
-     * @param RA $filters
+     * @param RA $filter
      * @return QueryBuilderDecorator
      */
-    public function applyFiltering(QueryBuilder $queryBuilder, RA $filters): self
+    public function applyFiltering(QueryBuilder $queryBuilder, RA $filterData): self
     {
-        $filters->walk(function (RA $filterData, int $key) use ($queryBuilder): void {
-            if (true === $filterData->hasKey(ParameterEnum::FILTER_CONDITIONS)) {
-                $logic = $this->getFilteringLogic($filterData);
-                $conditions = $this->prepareFilteringConditions(
-                    $queryBuilder,
-                    $filterData->getRA(ParameterEnum::FILTER_CONDITIONS),
-                    $key
-                );
-                $logic === ParameterEnum::FILTER_LOGIC_AND
-                    ? $queryBuilder->andWhere(...$conditions->toArray())
-                    : $queryBuilder->orWhere(...$conditions->toArray());
-            }
-        });
+        if (true === $filterData->hasKey(ParameterEnum::FILTER_CONDITIONS)) {
+            $logic = $this->getFilteringLogic($filterData);
+            $conditions = $this->prepareFilteringConditions(
+                $queryBuilder,
+                $filterData->getRA(ParameterEnum::FILTER_CONDITIONS),
+                0
+            );
+            $logic === ParameterEnum::FILTER_LOGIC_AND
+                ? $queryBuilder->andWhere(...$conditions->toArray())
+                : $queryBuilder->orWhere(...$conditions->toArray());
+        }
         return $this;
     }
 

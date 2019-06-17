@@ -214,6 +214,30 @@ class ParameterResolver
     /**
      * @param string $key
      *
+     * @return Stringy
+     */
+    public function getStringy(string $key): Stringy
+    {
+        /** @var Stringy $value */
+        $value = $this->parameters->get($key);
+        return $value;
+    }
+
+    /**
+     * @param string $key
+     *
+     * @return Stringy|null
+     */
+    public function getStringyOrNull(string $key): ?Stringy
+    {
+        /** @var Stringy|null $value */
+        $value = $this->parameters->get($key);
+        return $value;
+    }
+
+    /**
+     * @param string $key
+     *
      * @return callable
      *
      * @throws \WernerDweight\RA\Exception\RAException
@@ -292,7 +316,10 @@ class ParameterResolver
             ->set(ParameterEnum::GROUP_BY, $this->parameterValidator->validateGroupBy($query->get(ParameterEnum::GROUP_BY)))
             ->set(
                 ParameterEnum::RESPONSE_STRUCTURE,
-                $this->parameterValidator->validateResponseStructure($query->get(ParameterEnum::RESPONSE_STRUCTURE))
+                $this->parameterValidator->validateResponseStructure(
+                    $query->get(ParameterEnum::RESPONSE_STRUCTURE),
+                    (clone ($this->getStringy(ParameterEnum::ENTITY_NAME)))->lowercaseFirst()
+                )
             )
         ;
         return $this;
