@@ -518,7 +518,7 @@ class QueryBuilderDecorator
             $function = $aggregateData->getString(ParameterEnum::GROUP_BY_AGGREGATE_FUNCTION);
             $field = $aggregateData->getString(ParameterEnum::GROUP_BY_AGGREGATE_FIELD);
             $queryBuilder->addSelect(\Safe\sprintf(
-                '%s(DISTINCT(%s.%s)) AS %s%s%s%s%s',
+                '%s(%s.%s) AS %s%s%s%s%s',
                 $function,
                 DataManager::ROOT_ALIAS,
                 $field,

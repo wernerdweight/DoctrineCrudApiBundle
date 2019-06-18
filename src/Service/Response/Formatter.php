@@ -305,7 +305,7 @@ class Formatter
             $aggregates = $aggregateFields
                 ->map(function ($value, string $field): ?RA {
                     $field = (new Stringy($field))
-                        ->substring((new Stringy(QueryBuilderDecorator::AGGREGATE_PREFIX))->length());
+                        ->substring((new Stringy(QueryBuilderDecorator::AGGREGATE_PREFIX))->length() + 1);
                     $lastUnderscorePosition = $field
                         ->getPositionOfLastSubstring(QueryBuilderDecorator::AGGREGATE_FUNCTION_SEPARATOR);
                     if (null === $lastUnderscorePosition) {
@@ -317,8 +317,8 @@ class Formatter
                     $functionName = (clone $field)->substring(0, $lastUnderscorePosition);
                     $field = $field->substring($lastUnderscorePosition + 1);
                     return new RA([
-                        $field => [
-                            $functionName => $value,
+                        (string)$field => [
+                            (string)$functionName => $value,
                         ],
                     ], RA::RECURSIVE);
                 }, $aggregateFields->keys());
