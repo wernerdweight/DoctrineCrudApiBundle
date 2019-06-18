@@ -150,6 +150,7 @@ class Formatter
     private function getEntityPropertyValue(ApiEntityInterface $item, Stringy $field, array $args = [])
     {
         $propertyName = (clone $field)->uppercaseFirst();
+        $field = (string)$field;
         if (true === method_exists($item, 'get' . $propertyName)) {
             return $item->{'get' . $propertyName}(...$args);
         }
@@ -205,7 +206,7 @@ class Formatter
         $payload = null !== $fieldMetadata && $fieldMetadata->hasKey(
             DoctrineCrudApiMappingTypeInterface::METADATA_PAYLOAD
         )
-            ? $fieldMetadata->getRAOrNull(DoctrineCrudApiMappingTypeInterface::METADATA_PAYLOAD)
+            ? $fieldMetadata->getRA(DoctrineCrudApiMappingTypeInterface::METADATA_PAYLOAD)->toArray()
             : [];
         /** @var Collection $fieldValue */
         $fieldValue = $this->getEntityPropertyValue($item, $field, $payload);

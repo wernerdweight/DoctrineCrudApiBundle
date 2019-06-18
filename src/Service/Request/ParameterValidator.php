@@ -75,7 +75,7 @@ class ParameterValidator
     {
         $rootAlias = \Safe\sprintf('%s%s', DataManager::ROOT_ALIAS, ParameterEnum::FILTER_FIELD_SEPARATOR);
         return 0 === $field->getPositionOfSubstring($rootAlias) ||
-            0 === $field->getPositionOfSubstring($this->repositoryManager->getCurrentEntityName());
+            0 === $field->getPositionOfSubstring((string)($this->repositoryManager->getCurrentEntityName()));
     }
 
     /**
@@ -86,7 +86,7 @@ class ParameterValidator
      * @return mixed
      *
      * @throws \Safe\Exceptions\StringsException
-     * @throws \WernerDweight\RA\Exception\RAExceptio
+     * @throws \WernerDweight\RA\Exception\RAException
      */
     private function validateFilteringValue(Stringy $field, string $operator, $value)
     {

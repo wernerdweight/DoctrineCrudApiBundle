@@ -5,7 +5,7 @@ namespace WernerDweight\DoctrineCrudApiBundle\Mapping\Driver;
 
 use Doctrine\Common\Persistence\Mapping\Driver\MappingDriver;
 
-abstract class AbstractDriver
+abstract class AbstractDriver implements DoctrineCrudApiDriverInterface
 {
     /**
      * @var MappingDriver

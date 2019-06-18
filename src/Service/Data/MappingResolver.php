@@ -39,7 +39,7 @@ class MappingResolver
     private function resolveEntity(RA $itemData, string $className): ApiEntityInterface
     {
         $id = $itemData->get(QueryBuilderDecorator::IDENTIFIER_FIELD_NAME);
-        /** @var ApiEntityInterface $item */
+        /** @var ApiEntityInterface|null $item */
         $item = $this->entityManager->find($className, $id);
         if (null === $item) {
             throw new MappingResolverException(
@@ -101,7 +101,7 @@ class MappingResolver
             }
             return new \DateTime(
                 // remove localized timezone (some browsers use localized names)
-                (new Stringy($value))->eregReplace('^([^\(]*)\s(.*$', '\\1')
+                (string)((new Stringy($value))->eregReplace('^([^\(]*)\s(.*$', '\\1'))
             );
         }
         if (true === in_array($type, [Type::INTEGER, Type::BIGINT, Type::SMALLINT], true)) {

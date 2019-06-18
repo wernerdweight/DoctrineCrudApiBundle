@@ -67,8 +67,9 @@ class QueryBuilderDecorator
      */
     private function getFilteringLogic(RA $filterData): string
     {
-        $logic = strtolower($filterData->getStringOrNull(ParameterEnum::FILTER_LOGIC))
-            ?? ParameterEnum::FILTER_LOGIC_AND;
+        $logic = mb_strtolower(
+            $filterData->getStringOrNull(ParameterEnum::FILTER_LOGIC) ?? ParameterEnum::FILTER_LOGIC_AND
+        );
         if (true !== in_array($logic, ParameterEnum::AVAILABLE_FILTERING_LOGICS, true)) {
             throw new FilteringException(
                 FilteringException::EXCEPTION_INVALID_FILTER_LOGIC,
@@ -104,8 +105,9 @@ class QueryBuilderDecorator
      */
     private function getFilteringOperator(RA $filterData): string
     {
-        $operator = strtolower($filterData->getStringOrNull(ParameterEnum::FILTER_OPERATOR))
-            ?? ParameterEnum::FILTER_OPERATOR_EQUAL;
+        $operator = mb_strtolower(
+            $filterData->getStringOrNull(ParameterEnum::FILTER_OPERATOR) ?? ParameterEnum::FILTER_OPERATOR_EQUAL
+        );
         if (true !== in_array($operator, ParameterEnum::AVAILABLE_FILTERING_OPERATORS, true)) {
             throw new FilteringException(
                 FilteringException::EXCEPTION_INVALID_FILTER_OPERATOR,
@@ -153,7 +155,7 @@ class QueryBuilderDecorator
         $associations = $this->repositoryManager->getCurrentMetadata()->associationMappings;
         $clonedField = (string)((clone $field)->replace(\Safe\sprintf('%s.', DataManager::ROOT_ALIAS), ''));
         return true === array_key_exists($clonedField, $associations) &&
-            $associations[$field][self::DOCTRINE_ASSOCIATION_TYPE] & ClassMetadataInfo::TO_MANY;
+            $associations[$clonedField][self::DOCTRINE_ASSOCIATION_TYPE] & ClassMetadataInfo::TO_MANY;
     }
 
     /**
@@ -185,7 +187,9 @@ class QueryBuilderDecorator
     private function resolveFilteringConditionFieldName(Stringy $field): Stringy
     {
         if (true === $this->isEmbed($field)) {
-            return \Safe\sprintf('%s%s%s', DataManager::ROOT_ALIAS, ParameterEnum::FILTER_FIELD_SEPARATOR, $field);
+            return new Stringy(
+                \Safe\sprintf('%s%s%s', DataManager::ROOT_ALIAS, ParameterEnum::FILTER_FIELD_SEPARATOR, $field)
+            );
         }
 
         $field = $this->getFilteringPathForField($field);
@@ -232,22 +236,34 @@ class QueryBuilderDecorator
             return (string)($expression->lte($field, $parameterName));
         }
         if (ParameterEnum::FILTER_OPERATOR_BEGINS_WITH === $operator) {
-            return (string)($expression->like($expression->lower($field), $expression->lower($parameterName)));
+            return (string)($expression->like(
+                (string)($expression->lower($field)),
+                (string)($expression->lower($parameterName))
+            ));
         }
         if (ParameterEnum::FILTER_OPERATOR_CONTAINS === $operator) {
-            return (string)($expression->like($expression->lower($field), $expression->lower($parameterName)));
+            return (string)($expression->like(
+                (string)($expression->lower($field)),
+                (string)($expression->lower($parameterName))
+            ));
         }
         if (ParameterEnum::FILTER_OPERATOR_CONTAINS_NOT === $operator) {
-            return (string)($expression->notLike($expression->lower($field), $expression->lower($parameterName)));
+            return (string)($expression->notLike(
+                (string)($expression->lower($field)),
+                (string)($expression->lower($parameterName))
+            ));
         }
         if (ParameterEnum::FILTER_OPERATOR_ENDS_WITH === $operator) {
-            return (string)($expression->like($expression->lower($field), $expression->lower($parameterName)));
+            return (string)($expression->like(
+                (string)($expression->lower($field)),
+                (string)($expression->lower($parameterName))
+            ));
         }
         if (ParameterEnum::FILTER_OPERATOR_IS_NULL === $operator) {
-            return (string)($expression->isNull($field));
+            return $expression->isNull($field);
         }
         if (ParameterEnum::FILTER_OPERATOR_IS_NOT_NULL === $operator) {
-            return (string)($expression->isNotNull($field));
+            return $expression->isNotNull($field);
         }
         if (ParameterEnum::FILTER_OPERATOR_IS_EMPTY === $operator) {
             return (string)($expression->orX(
@@ -328,7 +344,10 @@ class QueryBuilderDecorator
             if (true === $this->isManyToManyField($currentField) &&
                 true !== in_array((string)$currentField, $queryBuilder->getAllAliases(), true)
             ) {
-                $queryBuilder->leftJoin(\Safe\sprintf('%s.%s', DataManager::ROOT_ALIAS, $currentField), $currentField);
+                $queryBuilder->leftJoin(
+                    \Safe\sprintf('%s.%s', DataManager::ROOT_ALIAS, $currentField),
+                    (string)$currentField
+                );
             }
         }
         return $this;
@@ -461,12 +480,12 @@ class QueryBuilderDecorator
             }
 
             if (true === $this->isEmbed($field)) {
-                $queryBuilder->addOrderBy($field, $direction);
+                $queryBuilder->addOrderBy((string)$field, $direction);
                 return;
             }
 
             $this->joinRequiredFilteringRelations($queryBuilder, $field);
-            $queryBuilder->addOrderBy($this->getFilteringPathForField($field), $direction);
+            $queryBuilder->addOrderBy((string)($this->getFilteringPathForField($field)), $direction);
         });
         return $this;
     }

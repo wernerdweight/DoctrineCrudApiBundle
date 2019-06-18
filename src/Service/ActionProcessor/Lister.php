@@ -70,4 +70,9 @@ class Lister
         $items = $this->fetch();
         return $this->formatter->formatListing($items);
     }
+
+    public function getItemCount(): RA
+    {
+        // TODO:
+    }
 }

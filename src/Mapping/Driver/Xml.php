@@ -98,7 +98,9 @@ final class Xml extends AbstractDriver implements DoctrineCrudApiDriverInterface
     {
         $originalDriver = $this->originalDriver;
         if (null !== $originalDriver && $originalDriver instanceof FileDriver) {
-            return $originalDriver->getElement($entityName);
+            /** @var ClassMetadata $element */
+            $element = $originalDriver->getElement($entityName);
+            return $element;
         }
 
         $mapping = $this->getXmlMappingFromFile($this->locator->findMappingFile($entityName));

@@ -12,10 +12,10 @@ use WernerDweight\Stringy\Stringy;
 
 class CurrentEntityResolver
 {
-    /** @var string */
+    /** @var Stringy */
     private $currentEntity;
 
-    /** @var string */
+    /** @var Stringy */
     private $currentEntityFQCN;
 
     /** @var Request */

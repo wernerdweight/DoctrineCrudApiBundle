@@ -6,9 +6,9 @@ namespace WernerDweight\DoctrineCrudApiBundle\Mapping;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Persistence\Mapping\Driver\MappingDriver;
 use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
+use Doctrine\ORM\Mapping\ClassMetadataFactory;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
 use WernerDweight\DoctrineCrudApiBundle\DTO\DoctrineCrudApiMetadata;
 use WernerDweight\DoctrineCrudApiBundle\Exception\DoctrineCrudApiMetadataFactoryException;
@@ -32,7 +32,7 @@ class DoctrineCrudApiMetadataFactory
     /** @var string */
     private const CACHE_NAMESPACE = 'DOCTRINE_CRUD_API_CLASSMETADATA';
 
-    /** @var EntityManager */
+    /** @var EntityManagerInterface */
     private $entityManager;
 
     /** @var DoctrineCrudApiDriverFactory */
@@ -74,7 +74,7 @@ class DoctrineCrudApiMetadataFactory
         $shortDriverName = new Stringy(get_class($mappingDriver));
         $shortDriverName = $shortDriverName->substring($shortDriverName->getPositionOfLastSubstring('\\') + 1);
 
-        if ($mappingDriver instanceof MappingDriverChain || self::DRIVER_CHAIN_CLASSNAME === $shortDriverName) {
+        if ($mappingDriver instanceof MappingDriverChain) {
             $driver = new Chain();
             foreach ($mappingDriver->getDrivers() as $namespace => $childDriver) {
                 $driver->addDriver($this->getCustomDriver($childDriver), $namespace);
@@ -113,7 +113,7 @@ class DoctrineCrudApiMetadataFactory
 
         throw new DoctrineCrudApiMetadataFactoryException(
             DoctrineCrudApiMetadataFactoryException::UNEXPECTED_DRIVER,
-            get_class($driver)
+            [get_class($driver)]
         );
     }
 
@@ -127,9 +127,13 @@ class DoctrineCrudApiMetadataFactory
     private function getDriver(): DoctrineCrudApiDriverInterface
     {
         if (null === $this->driver) {
-            $this->driver = $this->getCustomDriver(
-                $this->entityManager->getConfiguration()->getMetadataDriverImpl()
-            );
+            $implementation = $this->entityManager->getConfiguration()->getMetadataDriverImpl();
+            if (null === $implementation) {
+                throw new DoctrineCrudApiMetadataFactoryException(
+                    DoctrineCrudApiMetadataFactoryException::UNKNOWN_DEFAULT_DRIVER_IMPLEMENTATION
+                );
+            }
+            $this->driver = $this->getCustomDriver($implementation);
         }
         return $this->driver;
     }
@@ -161,6 +165,7 @@ class DoctrineCrudApiMetadataFactory
      */
     public function extendClassMetadata(ClassMetadata $metadata): self
     {
+        /** @var ClassMetadataFactory $metadataFactory */
         $metadataFactory = $this->entityManager->getMetadataFactory();
         $reflectionClass = $metadata->reflClass;
 

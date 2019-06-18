@@ -5,6 +5,7 @@ namespace WernerDweight\DoctrineCrudApiBundle\Service\Data;
 
 use WernerDweight\DoctrineCrudApiBundle\Service\Request\ParameterEnum;
 use WernerDweight\RA\RA;
+use WernerDweight\Stringy\Stringy;
 
 class DataManager
 {
@@ -19,7 +20,8 @@ class DataManager
 
     /**
      * DataManager constructor.
-     * @param RepositoryManager $repositoryManager
+     *
+     * @param RepositoryManager     $repositoryManager
      * @param QueryBuilderDecorator $queryBuilderDecorator
      */
     public function __construct(RepositoryManager $repositoryManager, QueryBuilderDecorator $queryBuilderDecorator)
@@ -90,7 +92,7 @@ class DataManager
 
         $groups = new RA($queryBuilder->getQuery()->getResult(), RA::RECURSIVE);
 
-        return $groups->map(function (RA $group) use ($groupBy, $filter, $field, $limit, $orderBy): RA {
+        return $groups->map(function (RA $group) use ($groupBy, $field, $limit, $orderBy): RA {
             $filteringConditions = new RA();
             $filteringConditions->push((new RA())
                 ->set(ParameterEnum::FILTER_FIELD, $field)
