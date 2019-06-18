@@ -299,13 +299,13 @@ class Formatter
     private function formatGroupped(RA $groups, int $level, string $groupingField): RA
     {
         return $groups->map(function (RA $group) use ($groupingField, $level): RA {
-            return (new RA())
-                ->set(ParameterEnum::GROUP_BY_AGGREGATES, $group->map(function ($value, string $field): RA {
-                    $field = new Stringy($field);
-                    if (0 !== $field->getPositionOfSubstring(QueryBuilderDecorator::AGGREGATE_PREFIX)) {
-                        return new RA();
-                    }
-                    $field = $field->substring((new Stringy(QueryBuilderDecorator::AGGREGATE_PREFIX))->length());
+            $aggregateFields = $group->filter(function (string $field): bool {
+                return 0 === (new Stringy($field))->getPositionOfSubstring(QueryBuilderDecorator::AGGREGATE_PREFIX);
+            }, ARRAY_FILTER_USE_KEY);
+            $aggregates = $aggregateFields
+                ->map(function ($value, string $field): ?RA {
+                    $field = (new Stringy($field))
+                        ->substring((new Stringy(QueryBuilderDecorator::AGGREGATE_PREFIX))->length());
                     $lastUnderscorePosition = $field
                         ->getPositionOfLastSubstring(QueryBuilderDecorator::AGGREGATE_FUNCTION_SEPARATOR);
                     if (null === $lastUnderscorePosition) {
@@ -321,7 +321,10 @@ class Formatter
                             $functionName => $value,
                         ],
                     ], RA::RECURSIVE);
-                }, $group->keys()))
+                }, $aggregateFields->keys());
+
+            return (new RA())
+                ->set(ParameterEnum::GROUP_BY_AGGREGATES, $aggregates)
                 ->set(ParameterEnum::GROUP_BY_FIELD, $groupingField)
                 ->set(ParameterEnum::GROUP_BY_VALUE, $this->printValue($group->get(ParameterEnum::GROUP_BY_VALUE)))
                 ->set(ParameterEnum::GROUP_BY_HAS_GROUPS, $level > 1)

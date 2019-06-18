@@ -41,7 +41,7 @@ class QueryBuilderDecorator
     /** @var string */
     public const IDENTIFIER_FIELD_NAME = 'id';
     /** @var string */
-    public const AGGREGATE_PREFIX = 'aggregate';
+    public const AGGREGATE_PREFIX = '_aggregate';
     /** @var string */
     public const AGGREGATE_FUNCTION_SEPARATOR = '_';
 
