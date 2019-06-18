@@ -8,6 +8,9 @@ use WernerDweight\RA\RA;
 interface DoctrineCrudApiMappingTypeInterface
 {
     /** @var string */
+    public const ANNOTATION_NAMESPACE =  'WernerDweight\\DoctrineCrudApiBundle\\Mapping\\Annotation';
+
+    /** @var string */
     public const LISTABLE = 'listable';
     /** @var string */
     public const DEFAULT_LISTABLE = 'default-listable';

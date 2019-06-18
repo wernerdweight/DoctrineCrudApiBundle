@@ -7,12 +7,27 @@ use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Persistence\Mapping\Driver\FileLocator;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use WernerDweight\DoctrineCrudApiBundle\Exception\AnnotationDriverException;
+use WernerDweight\DoctrineCrudApiBundle\Mapping\Type\DoctrineCrudApiMappingTypeInterface;
+use WernerDweight\DoctrineCrudApiBundle\Mapping\Type\Factory\AnnotationMappingTypeFactory;
 use WernerDweight\RA\RA;
+use WernerDweight\Stringy\Stringy;
 
 final class Annotation extends AbstractDriver implements DoctrineCrudApiDriverInterface
 {
     /** @var AnnotationReader */
     private $annotationReader;
+    
+    /** @var AnnotationMappingTypeFactory */
+    private $mappingTypeFactory;
+
+    /**
+     * Annotation constructor.
+     * @param AnnotationMappingTypeFactory $mappingTypeFactory
+     */
+    public function __construct(AnnotationMappingTypeFactory $mappingTypeFactory)
+    {
+        $this->mappingTypeFactory = $mappingTypeFactory;
+    }
 
     /**
      * @param FileLocator $locator
@@ -35,8 +50,31 @@ final class Annotation extends AbstractDriver implements DoctrineCrudApiDriverIn
         return $this;
     }
 
+    /**
+     * @param ClassMetadata $metadata
+     * @param RA $config
+     * @return RA
+     * @throws \Safe\Exceptions\StringsException
+     * @throws \WernerDweight\RA\Exception\RAException
+     */
     public function readMetadata(ClassMetadata $metadata, RA $config): RA
     {
-        // TODO: Implement readMetadata() method.
+        $reflectedEntity = $metadata->getReflectionClass();
+
+        foreach ($reflectedEntity->getProperties() as $reflectedProperty) {
+            foreach (DoctrineCrudApiMappingTypeInterface::MAPPING_TYPES as $mappingType) {
+                $annotationClassName = \Safe\sprintf(
+                    '%s\\%s',
+                    DoctrineCrudApiMappingTypeInterface::ANNOTATION_NAMESPACE,
+                    ucfirst($mappingType)
+                );
+                $annotation = $this->annotationReader->getPropertyAnnotation($reflectedProperty, $annotationClassName);
+                if (null !== $annotation) {
+                    $config = $this->mappingTypeFactory->get($mappingType)
+                        ->readConfiguration(new Stringy($reflectedProperty->getName()), $annotation, $config);
+                }
+            }
+        }
+        return $config;
     }
 }
