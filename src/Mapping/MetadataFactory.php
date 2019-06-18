@@ -21,24 +21,24 @@ class MetadataFactory
     /** @var ConfigurationManager */
     private $configurationManager;
 
-    /** @var MetadataDriverManager */
-    private $driverManager;
+    /** @var MetadataDriverFactory */
+    private $driverFactory;
 
     /**
      * MetadataFactory constructor.
      *
      * @param EntityManagerInterface $entityManager
      * @param ConfigurationManager   $configurationManager
-     * @param MetadataDriverManager  $driverManager
+     * @param MetadataDriverFactory  $driverFactory
      */
     public function __construct(
         EntityManagerInterface $entityManager,
         ConfigurationManager $configurationManager,
-        MetadataDriverManager $driverManager
+        MetadataDriverFactory $driverFactory
     ) {
         $this->entityManager = $entityManager;
         $this->configurationManager = $configurationManager;
-        $this->driverManager = $driverManager;
+        $this->driverFactory = $driverFactory;
     }
 
     /**
@@ -64,11 +64,11 @@ class MetadataFactory
                 ->reduce(function (RA $carry, string $className) use ($metadataFactory): RA {
                     if (true === $metadataFactory->hasMetadataFor($className)) {
                         $classMetadata = $this->entityManager->getClassMetadata($className);
-                        return $this->driverManager->getDriver()->readMetadata($classMetadata, $carry);
+                        return $this->driverFactory->getDriver()->readMetadata($classMetadata, $carry);
                     }
                     return $carry;
                 }, $config);
-            $config = $this->driverManager->getDriver()->readMetadata($metadata, $config);
+            $config = $this->driverFactory->getDriver()->readMetadata($metadata, $config);
         }
 
         $cacheDriver = $metadataFactory->getCacheDriver();

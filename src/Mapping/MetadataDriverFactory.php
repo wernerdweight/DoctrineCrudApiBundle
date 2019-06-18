@@ -3,100 +3,43 @@ declare(strict_types=1);
 
 namespace WernerDweight\DoctrineCrudApiBundle\Mapping;
 
-use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Persistence\Mapping\Driver\MappingDriver;
 use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Mapping\Driver\XmlDriver;
 use WernerDweight\DoctrineCrudApiBundle\Exception\MetadataFactoryException;
-use WernerDweight\DoctrineCrudApiBundle\Mapping\Driver\Annotation;
 use WernerDweight\DoctrineCrudApiBundle\Mapping\Driver\Chain;
 use WernerDweight\DoctrineCrudApiBundle\Mapping\Driver\DoctrineCrudApiDriverInterface;
-use WernerDweight\DoctrineCrudApiBundle\Mapping\Driver\Xml;
 use WernerDweight\Stringy\Stringy;
 
-class MetadataDriverManager
+class MetadataDriverFactory
 {
-    /** @var string */
-    private const DRIVER_SUFFIX = 'Driver';
-    /** @var string */
-    private const SIMPLIFIED_DRIVER_SUFFIX = 'Simplified';
-
     /** @var EntityManagerInterface */
     private $entityManager;
 
     /** @var DriverFactory */
     private $driverFactory;
 
+    /** @var RegularDriverFactory */
+    private $regularDriverFactory;
+
     /** @var DoctrineCrudApiDriverInterface|null */
     private $driver;
 
     /**
-     * DoctrineCrudApiMetadataFactory constructor.
+     * MetadataDriverFactory constructor.
      *
      * @param EntityManagerInterface $entityManager
      * @param DriverFactory          $driverFactory
+     * @param RegularDriverFactory   $regularDriverFactory
      */
     public function __construct(
         EntityManagerInterface $entityManager,
-        DriverFactory $driverFactory
+        DriverFactory $driverFactory,
+        RegularDriverFactory $regularDriverFactory
     ) {
         $this->entityManager = $entityManager;
         $this->driverFactory = $driverFactory;
-    }
-
-    /**
-     * @param Stringy $shortDriverName
-     *
-     * @return Stringy
-     */
-    private function getRegularDriverName(Stringy $shortDriverName): Stringy
-    {
-        $shortDriverName = $shortDriverName->substring(
-            0,
-            $shortDriverName->getPositionOfSubstring(self::DRIVER_SUFFIX)
-        );
-        $simplifiedPosition = $shortDriverName->getPositionOfSubstring(self::SIMPLIFIED_DRIVER_SUFFIX);
-        $isSimplified = null !== $simplifiedPosition;
-        if (true === $isSimplified) {
-            $shortDriverName = $shortDriverName->substring(
-                $simplifiedPosition + strlen(self::SIMPLIFIED_DRIVER_SUFFIX)
-            );
-        }
-        return $shortDriverName;
-    }
-
-    /**
-     * @param MappingDriver $mappingDriver
-     * @param Stringy       $shortDriverName
-     *
-     * @return DoctrineCrudApiDriverInterface
-     *
-     * @throws \Doctrine\Common\Annotations\AnnotationException
-     * @throws \WernerDweight\RA\Exception\RAException
-     */
-    private function getRegularDriver(
-        MappingDriver $mappingDriver,
-        Stringy $shortDriverName
-    ): DoctrineCrudApiDriverInterface {
-        $driver = $this->driverFactory->get((string)($this->getRegularDriverName($shortDriverName)));
-        $driver->setOriginalDriver($mappingDriver);
-        if ($driver instanceof Xml) {
-            /** @var XmlDriver $typedMappingDriver */
-            $typedMappingDriver = $mappingDriver;
-            $driver->setLocator($typedMappingDriver->getLocator());
-            return $driver;
-        }
-
-        if ($driver instanceof Annotation) {
-            $driver->setAnnotationReader(new AnnotationReader());
-            return $driver;
-        }
-
-        throw new MetadataFactoryException(
-            MetadataFactoryException::UNEXPECTED_DRIVER,
-            [get_class($driver)]
-        );
+        $this->regularDriverFactory = $regularDriverFactory;
     }
 
     /**
@@ -109,6 +52,7 @@ class MetadataDriverManager
      */
     private function getChainDriver(MappingDriverChain $mappingDriver): Chain
     {
+        /** @var Chain $driver */
         $driver = $this->driverFactory->get(Chain::NAME);
         foreach ($mappingDriver->getDrivers() as $namespace => $childDriver) {
             $driver->addDriver($this->getCustomDriver($childDriver), $namespace);
@@ -136,7 +80,7 @@ class MetadataDriverManager
             return $this->getChainDriver($mappingDriver);
         }
 
-        return $this->getRegularDriver($mappingDriver, $shortDriverName);
+        return $this->regularDriverFactory->getRegularDriver($mappingDriver, $shortDriverName);
     }
 
     /**

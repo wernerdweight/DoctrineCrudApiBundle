@@ -1,0 +1,88 @@
+<?php
+declare(strict_types=1);
+
+namespace WernerDweight\DoctrineCrudApiBundle\Mapping;
+
+use Doctrine\Common\Annotations\AnnotationReader;
+use Doctrine\Common\Persistence\Mapping\Driver\MappingDriver;
+use Doctrine\ORM\Mapping\Driver\XmlDriver;
+use WernerDweight\DoctrineCrudApiBundle\Exception\MetadataFactoryException;
+use WernerDweight\DoctrineCrudApiBundle\Mapping\Driver\Annotation;
+use WernerDweight\DoctrineCrudApiBundle\Mapping\Driver\DoctrineCrudApiDriverInterface;
+use WernerDweight\DoctrineCrudApiBundle\Mapping\Driver\Xml;
+use WernerDweight\Stringy\Stringy;
+
+class RegularDriverFactory
+{
+    /** @var string */
+    private const DRIVER_SUFFIX = 'Driver';
+    /** @var string */
+    private const SIMPLIFIED_DRIVER_SUFFIX = 'Simplified';
+
+    /** @var DriverFactory */
+    private $driverFactory;
+
+    /**
+     * RegularDriverFactory constructor.
+     *
+     * @param DriverFactory $driverFactory
+     */
+    public function __construct(DriverFactory $driverFactory)
+    {
+        $this->driverFactory = $driverFactory;
+    }
+
+    /**
+     * @param Stringy $shortDriverName
+     *
+     * @return Stringy
+     */
+    private function getRegularDriverName(Stringy $shortDriverName): Stringy
+    {
+        $shortDriverName = $shortDriverName->substring(
+            0,
+            $shortDriverName->getPositionOfSubstring(self::DRIVER_SUFFIX)
+        );
+        $simplifiedPosition = $shortDriverName->getPositionOfSubstring(self::SIMPLIFIED_DRIVER_SUFFIX);
+        $isSimplified = null !== $simplifiedPosition;
+        if (true === $isSimplified) {
+            $shortDriverName = $shortDriverName->substring(
+                $simplifiedPosition + strlen(self::SIMPLIFIED_DRIVER_SUFFIX)
+            );
+        }
+        return $shortDriverName;
+    }
+
+    /**
+     * @param MappingDriver $mappingDriver
+     * @param Stringy       $shortDriverName
+     *
+     * @return DoctrineCrudApiDriverInterface
+     *
+     * @throws \Doctrine\Common\Annotations\AnnotationException
+     * @throws \WernerDweight\RA\Exception\RAException
+     */
+    public function getRegularDriver(
+        MappingDriver $mappingDriver,
+        Stringy $shortDriverName
+    ): DoctrineCrudApiDriverInterface {
+        $driver = $this->driverFactory->get((string)($this->getRegularDriverName($shortDriverName)));
+        $driver->setOriginalDriver($mappingDriver);
+        if ($driver instanceof Xml) {
+            /** @var XmlDriver $typedMappingDriver */
+            $typedMappingDriver = $mappingDriver;
+            $driver->setLocator($typedMappingDriver->getLocator());
+            return $driver;
+        }
+
+        if ($driver instanceof Annotation) {
+            $driver->setAnnotationReader(new AnnotationReader());
+            return $driver;
+        }
+
+        throw new MetadataFactoryException(
+            MetadataFactoryException::UNEXPECTED_DRIVER,
+            [get_class($driver)]
+        );
+    }
+}
