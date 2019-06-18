@@ -24,8 +24,6 @@ use WernerDweight\Stringy\Stringy;
 class DoctrineCrudApiMetadataFactory
 {
     /** @var string */
-    private const DRIVER_CHAIN_CLASSNAME = 'DriverChain';
-    /** @var string */
     private const DRIVER_SUFFIX = 'Driver';
     /** @var string */
     private const SIMPLIFIED_DRIVER_SUFFIX = 'Simplified';

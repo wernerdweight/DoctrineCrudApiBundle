@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace WernerDweight\DoctrineCrudApiBundle\Service\Data;
 
-use Doctrine\ORM\EntityManagerInterface;
 use WernerDweight\DoctrineCrudApiBundle\DTO\DoctrineCrudApiMetadata;
 use WernerDweight\DoctrineCrudApiBundle\Entity\ApiEntityInterface;
 use WernerDweight\DoctrineCrudApiBundle\Exception\ConfigurationManagerException;
@@ -18,17 +17,11 @@ class ConfigurationManager
     /** @var RA */
     private $configuration;
 
-    /** @var EntityManagerInterface */
-    private $entityManager;
-
     /**
      * ConfigurationManager constructor.
-     *
-     * @param EntityManagerInterface $entityManager
      */
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct()
     {
-        $this->entityManager = $entityManager;
         $this->configuration = new RA();
     }
 
