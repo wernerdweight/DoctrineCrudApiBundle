@@ -12,12 +12,14 @@ use WernerDweight\Stringy\Stringy;
 final class Updatable extends AbstractType implements DoctrineCrudApiMappingTypeInterface
 {
     /**
-     * @param Stringy $propertyName
+     * @param Stringy             $propertyName
      * @param UpdatableAnnotation $annotation
-     * @param RA $config
+     * @param RA                  $config
+     *
      * @return RA
      */
-    protected function readExtraConfiguration(Stringy $propertyName, Annotation $annotation, RA $config): RA {
+    protected function readExtraConfiguration(Stringy $propertyName, Annotation $annotation, RA $config): RA
+    {
         if (true === $annotation->nested) {
             $config
                 ->getRA(DoctrineCrudApiMappingTypeInterface::UPDATABLE_NESTED)

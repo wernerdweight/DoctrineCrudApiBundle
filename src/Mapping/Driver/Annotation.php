@@ -16,12 +16,13 @@ final class Annotation extends AbstractDriver implements DoctrineCrudApiDriverIn
 {
     /** @var AnnotationReader */
     private $annotationReader;
-    
+
     /** @var AnnotationMappingTypeFactory */
     private $mappingTypeFactory;
 
     /**
      * Annotation constructor.
+     *
      * @param AnnotationMappingTypeFactory $mappingTypeFactory
      */
     public function __construct(AnnotationMappingTypeFactory $mappingTypeFactory)
@@ -52,8 +53,10 @@ final class Annotation extends AbstractDriver implements DoctrineCrudApiDriverIn
 
     /**
      * @param ClassMetadata $metadata
-     * @param RA $config
+     * @param RA            $config
+     *
      * @return RA
+     *
      * @throws \Safe\Exceptions\StringsException
      * @throws \WernerDweight\RA\Exception\RAException
      */

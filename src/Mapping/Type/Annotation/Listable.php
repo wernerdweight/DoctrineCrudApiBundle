@@ -12,12 +12,14 @@ use WernerDweight\Stringy\Stringy;
 final class Listable extends AbstractType implements DoctrineCrudApiMappingTypeInterface
 {
     /**
-     * @param Stringy $propertyName
+     * @param Stringy            $propertyName
      * @param ListableAnnotation $annotation
-     * @param RA $config
+     * @param RA                 $config
+     *
      * @return RA
      */
-    protected function readExtraConfiguration(Stringy $propertyName, Annotation $annotation, RA $config): RA {
+    protected function readExtraConfiguration(Stringy $propertyName, Annotation $annotation, RA $config): RA
+    {
         if (true === $annotation->default) {
             $config
                 ->getRA(DoctrineCrudApiMappingTypeInterface::DEFAULT_LISTABLE)

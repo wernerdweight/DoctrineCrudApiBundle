@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace WernerDweight\DoctrineCrudApiBundle\Mapping\Type\Annotation;
 
 use WernerDweight\DoctrineCrudApiBundle\Mapping\Annotation\Metadata as MetadataAnnotation;
-use WernerDweight\DoctrineCrudApiBundle\Mapping\Driver\Xml;
 use WernerDweight\DoctrineCrudApiBundle\Mapping\Type\DoctrineCrudApiMappingTypeInterface;
 use WernerDweight\RA\RA;
 use WernerDweight\Stringy\Stringy;
@@ -12,10 +11,12 @@ use WernerDweight\Stringy\Stringy;
 final class Metadata extends AbstractType implements DoctrineCrudApiMappingTypeInterface
 {
     /**
-     * @param Stringy $propertyName
+     * @param Stringy            $propertyName
      * @param MetadataAnnotation $annotation
-     * @param RA $config
+     * @param RA                 $config
+     *
      * @return RA
+     *
      * @throws \WernerDweight\RA\Exception\RAException
      */
     public function readConfiguration(object $propertyName, object $annotation, RA $config): RA
