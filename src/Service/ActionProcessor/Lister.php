@@ -6,7 +6,7 @@ namespace WernerDweight\DoctrineCrudApiBundle\Service\ActionProcessor;
 use WernerDweight\DoctrineCrudApiBundle\Service\Data\DataManager;
 use WernerDweight\DoctrineCrudApiBundle\Service\Request\ParameterEnum;
 use WernerDweight\DoctrineCrudApiBundle\Service\Request\ParameterResolver;
-use WernerDweight\DoctrineCrudApiBundle\Service\Response\Formatter;
+use WernerDweight\DoctrineCrudApiBundle\Service\Response\ListingFormatter;
 use WernerDweight\RA\RA;
 
 class Lister
@@ -17,7 +17,7 @@ class Lister
     /** @var DataManager */
     private $dataManager;
 
-    /** @var Formatter */
+    /** @var ListingFormatter */
     private $formatter;
 
     /**
@@ -25,10 +25,13 @@ class Lister
      *
      * @param ParameterResolver $parameterResolver
      * @param DataManager       $dataManager
-     * @param Formatter         $formatter
+     * @param ListingFormatter  $formatter
      */
-    public function __construct(ParameterResolver $parameterResolver, DataManager $dataManager, Formatter $formatter)
-    {
+    public function __construct(
+        ParameterResolver $parameterResolver,
+        DataManager $dataManager,
+        ListingFormatter $formatter
+    ) {
         $this->parameterResolver = $parameterResolver;
         $this->dataManager = $dataManager;
         $this->formatter = $formatter;
