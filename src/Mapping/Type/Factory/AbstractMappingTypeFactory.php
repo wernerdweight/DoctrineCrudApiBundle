@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace WernerDweight\DoctrineCrudApiBundle\Mapping\Type\Factory;
 
 use Symfony\Component\DependencyInjection\Argument\RewindableGenerator;
-use WernerDweight\DoctrineCrudApiBundle\Exception\DoctrineCrudApiMappingTypeFactoryException;
+use WernerDweight\DoctrineCrudApiBundle\Exception\MappingTypeFactoryException;
 use WernerDweight\DoctrineCrudApiBundle\Mapping\Type\DoctrineCrudApiMappingTypeInterface;
 use WernerDweight\RA\RA;
 
@@ -39,8 +39,8 @@ abstract class AbstractMappingTypeFactory
     public function get(string $type): DoctrineCrudApiMappingTypeInterface
     {
         if (true !== $this->types->hasKey($type)) {
-            throw new DoctrineCrudApiMappingTypeFactoryException(
-                DoctrineCrudApiMappingTypeFactoryException::INVALID_MAPPING_TYPE,
+            throw new MappingTypeFactoryException(
+                MappingTypeFactoryException::INVALID_MAPPING_TYPE,
                 [$type]
             );
         }

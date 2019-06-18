@@ -5,7 +5,7 @@ namespace WernerDweight\DoctrineCrudApiBundle\Exception;
 
 use WernerDweight\EnhancedException\Exception\AbstractEnhancedException;
 
-class DoctrineCrudApiDriverFactoryException extends AbstractEnhancedException
+class DriverFactoryException extends AbstractEnhancedException
 {
     /** @var int */
     public const INVALID_DRIVER_TYPE = 1;

@@ -5,7 +5,7 @@ namespace WernerDweight\DoctrineCrudApiBundle\Exception;
 
 use WernerDweight\EnhancedException\Exception\AbstractEnhancedException;
 
-class DoctrineCrudApiMetadataFactoryException extends AbstractEnhancedException
+class MetadataFactoryException extends AbstractEnhancedException
 {
     /** @var int */
     public const UNEXPECTED_DRIVER = 1;

@@ -6,6 +6,7 @@ namespace WernerDweight\DoctrineCrudApiBundle\Service\Data;
 use WernerDweight\DoctrineCrudApiBundle\DTO\DoctrineCrudApiMetadata;
 use WernerDweight\DoctrineCrudApiBundle\Entity\ApiEntityInterface;
 use WernerDweight\DoctrineCrudApiBundle\Exception\ConfigurationManagerException;
+use WernerDweight\DoctrineCrudApiBundle\Mapping\Type\DoctrineCrudApiMappingTypeInterface;
 use WernerDweight\RA\RA;
 use WernerDweight\Stringy\Stringy;
 
@@ -68,5 +69,20 @@ class ConfigurationManager
     {
         $className = (new Stringy(get_class($entity)))->replace(self::PROXY_PREFIX, '');
         return $this->getConfigurationForEntityClass((string)$className);
+    }
+
+    /**
+     * @return RA
+     */
+    public function createConfigurationObject(): RA
+    {
+        return (new RA())
+            ->set(DoctrineCrudApiMappingTypeInterface::LISTABLE, new RA())
+            ->set(DoctrineCrudApiMappingTypeInterface::DEFAULT_LISTABLE, new RA())
+            ->set(DoctrineCrudApiMappingTypeInterface::CREATABLE, new RA())
+            ->set(DoctrineCrudApiMappingTypeInterface::UPDATABLE, new RA())
+            ->set(DoctrineCrudApiMappingTypeInterface::UPDATABLE_NESTED, new RA())
+            ->set(DoctrineCrudApiMappingTypeInterface::METADATA, new RA())
+            ;
     }
 }

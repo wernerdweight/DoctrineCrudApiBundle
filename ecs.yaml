@@ -6,3 +6,4 @@ services:
         extraAllowedClasses:
             - WernerDweight\Stringy\Stringy
             - WernerDweight\RA\RA
+            - Doctrine\Common\Annotations\AnnotationReader

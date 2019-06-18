@@ -4,18 +4,18 @@ declare(strict_types=1);
 namespace WernerDweight\DoctrineCrudApiBundle\Mapping;
 
 use Symfony\Component\DependencyInjection\Argument\RewindableGenerator;
-use WernerDweight\DoctrineCrudApiBundle\Exception\DoctrineCrudApiDriverFactoryException;
+use WernerDweight\DoctrineCrudApiBundle\Exception\DriverFactoryException;
 use WernerDweight\DoctrineCrudApiBundle\Mapping\Driver\DoctrineCrudApiDriverInterface;
 use WernerDweight\RA\RA;
 use WernerDweight\Stringy\Stringy;
 
-class DoctrineCrudApiDriverFactory
+class DriverFactory
 {
     /** @var RA */
     private $drivers;
 
     /**
-     * DoctrineCrudApiDriverFactory constructor.
+     * DriverFactory constructor.
      *
      * @param RewindableGenerator $drivers
      */
@@ -44,8 +44,8 @@ class DoctrineCrudApiDriverFactory
     public function get(string $driverType): DoctrineCrudApiDriverInterface
     {
         if (true !== $this->drivers->hasKey($driverType)) {
-            throw new DoctrineCrudApiDriverFactoryException(
-                DoctrineCrudApiDriverFactoryException::INVALID_DRIVER_TYPE,
+            throw new DriverFactoryException(
+                DriverFactoryException::INVALID_DRIVER_TYPE,
                 [$driverType]
             );
         }

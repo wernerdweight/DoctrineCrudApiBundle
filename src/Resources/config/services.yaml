@@ -16,7 +16,7 @@ services:
         arguments:
             $repositories: !tagged doctrine.repository_service
 
-    WernerDweight\DoctrineCrudApiBundle\Mapping\DoctrineCrudApiEventSubscriber:
+    WernerDweight\DoctrineCrudApiBundle\Mapping\MappingEventSubscriber:
         tags: ['doctrine.event_subscriber']
 
     WernerDweight\DoctrineCrudApiBundle\Mapping\Driver\:
@@ -25,7 +25,7 @@ services:
         tags:
             - { name: 'crud_api.driver' }
 
-    WernerDweight\DoctrineCrudApiBundle\Mapping\DoctrineCrudApiDriverFactory:
+    WernerDweight\DoctrineCrudApiBundle\Mapping\DriverFactory:
         arguments:
             $drivers: !tagged crud_api.driver
 

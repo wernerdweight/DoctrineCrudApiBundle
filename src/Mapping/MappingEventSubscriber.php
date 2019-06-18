@@ -7,17 +7,17 @@ use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\LoadClassMetadataEventArgs;
 use Doctrine\ORM\Events;
 
-final class DoctrineCrudApiEventSubscriber implements EventSubscriber
+final class MappingEventSubscriber implements EventSubscriber
 {
-    /** @var DoctrineCrudApiMetadataFactory */
+    /** @var MetadataFactory */
     private $metadataFactory;
 
     /**
-     * DoctrineCrudApiEventSubscriber constructor.
+     * EventSubscriber constructor.
      *
-     * @param DoctrineCrudApiMetadataFactory $metadataFactory
+     * @param MetadataFactory $metadataFactory
      */
-    public function __construct(DoctrineCrudApiMetadataFactory $metadataFactory)
+    public function __construct(MetadataFactory $metadataFactory)
     {
         $this->metadataFactory = $metadataFactory;
     }

@@ -105,6 +105,35 @@ class DoctrineCrudApiMetadata
      * @param RA|null $metadata
      *
      * @return RA|null
+     *
+     * @throws \WernerDweight\RA\Exception\RAException
+     */
+    private function patchMissingFieldMetadata(string $field, ?RA $metadata)
+    {
+        $extendedFieldMetadata = $metadata ?? new RA();
+        $doctrineMetadata = $this->doctrineMetadata->associationMappings[$field];
+        if (true !== $extendedFieldMetadata->hasKey(DoctrineCrudApiMappingTypeInterface::METADATA_TYPE) ||
+            null === $extendedFieldMetadata->getStringOrNull(DoctrineCrudApiMappingTypeInterface::METADATA_TYPE)
+        ) {
+            $type = $doctrineMetadata[QueryBuilderDecorator::DOCTRINE_ASSOCIATION_TYPE] & ClassMetadataInfo::TO_MANY
+                ? DoctrineCrudApiMappingTypeInterface::METADATA_TYPE_COLLECTION
+                : DoctrineCrudApiMappingTypeInterface::METADATA_TYPE_ENTITY;
+            $extendedFieldMetadata->set(DoctrineCrudApiMappingTypeInterface::METADATA_TYPE, $type);
+        }
+        if (true !== $extendedFieldMetadata->hasKey(DoctrineCrudApiMappingTypeInterface::METADATA_CLASS) ||
+            null === $extendedFieldMetadata->getStringOrNull(DoctrineCrudApiMappingTypeInterface::METADATA_CLASS)
+        ) {
+            $class = $doctrineMetadata[QueryBuilderDecorator::DOCTRINE_TARGET_ENTITY];
+            $extendedFieldMetadata->set(DoctrineCrudApiMappingTypeInterface::METADATA_CLASS, $class);
+        }
+        return $extendedFieldMetadata;
+    }
+
+    /**
+     * @param string  $field
+     * @param RA|null $metadata
+     *
+     * @return RA|null
      */
     private function extendFieldMetadata(string $field, ?RA $metadata = null): ?RA
     {
@@ -116,23 +145,7 @@ class DoctrineCrudApiMetadata
         }
 
         if (true === array_key_exists($field, $this->doctrineMetadata->associationMappings)) {
-            $extendedFieldMetadata = $metadata ?? new RA();
-            $doctrineMetadata = $this->doctrineMetadata->associationMappings[$field];
-            if (true !== $extendedFieldMetadata->hasKey(DoctrineCrudApiMappingTypeInterface::METADATA_TYPE) ||
-                null === $extendedFieldMetadata->getStringOrNull(DoctrineCrudApiMappingTypeInterface::METADATA_TYPE)
-            ) {
-                $type = $doctrineMetadata[QueryBuilderDecorator::DOCTRINE_ASSOCIATION_TYPE] & ClassMetadataInfo::TO_MANY
-                    ? DoctrineCrudApiMappingTypeInterface::METADATA_TYPE_COLLECTION
-                    : DoctrineCrudApiMappingTypeInterface::METADATA_TYPE_ENTITY;
-                $extendedFieldMetadata->set(DoctrineCrudApiMappingTypeInterface::METADATA_TYPE, $type);
-            }
-            if (true !== $extendedFieldMetadata->hasKey(DoctrineCrudApiMappingTypeInterface::METADATA_CLASS) ||
-                null === $extendedFieldMetadata->getStringOrNull(DoctrineCrudApiMappingTypeInterface::METADATA_CLASS)
-            ) {
-                $class = $doctrineMetadata[QueryBuilderDecorator::DOCTRINE_TARGET_ENTITY];
-                $extendedFieldMetadata->set(DoctrineCrudApiMappingTypeInterface::METADATA_CLASS, $class);
-            }
-            return $extendedFieldMetadata;
+            return $this->patchMissingFieldMetadata($field, $metadata);
         }
 
         return null;

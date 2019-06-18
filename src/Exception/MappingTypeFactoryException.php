@@ -5,7 +5,7 @@ namespace WernerDweight\DoctrineCrudApiBundle\Exception;
 
 use WernerDweight\EnhancedException\Exception\AbstractEnhancedException;
 
-class DoctrineCrudApiMappingTypeFactoryException extends AbstractEnhancedException
+class MappingTypeFactoryException extends AbstractEnhancedException
 {
     /** @var int */
     public const INVALID_MAPPING_TYPE = 1;

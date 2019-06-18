@@ -12,6 +12,9 @@ use WernerDweight\Stringy\Stringy;
 
 final class Chain extends AbstractDriver implements DoctrineCrudApiDriverInterface
 {
+    /** @var string */
+    public const NAME = 'Chain';
+
     /** @var DoctrineCrudApiDriverInterface|null */
     private $defaultDriver;
 
