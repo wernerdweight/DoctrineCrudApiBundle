@@ -155,8 +155,10 @@ class ParameterValidator
                 ParameterEnum::FILTER_FIELD => null === $field->getPositionOfSubstring(
                     ParameterEnum::FILTER_FIELD_SEPARATOR
                 )
-                    ? \Safe\sprintf('%s%s%s', DataManager::ROOT_ALIAS, ParameterEnum::FILTER_FIELD_SEPARATOR, $field)
-                    : (string)$field,
+                    ? new Stringy(
+                        \Safe\sprintf('%s%s%s', DataManager::ROOT_ALIAS, ParameterEnum::FILTER_FIELD_SEPARATOR, $field)
+                    )
+                    : clone $field,
                 ParameterEnum::FILTER_OPERATOR => $operator,
                 ParameterEnum::FILTER_VALUE => $this->validateFilteringValue($field, $operator, $value),
             ]);
@@ -220,7 +222,11 @@ class ParameterValidator
         $orderBy = new RA($orderBy, RA::RECURSIVE);
         return $orderBy->map(function (RA $entry): RA {
             $direction = $this->validateDirection(
-                $entry->getStringOrNull(ParameterEnum::ORDER_BY_DIRECTION) ?? ParameterEnum::ORDER_BY_DIRECTION_ASC
+                (
+                    true === $entry->hasKey(ParameterEnum::ORDER_BY_DIRECTION)
+                        ? $entry->getStringOrNull(ParameterEnum::ORDER_BY_DIRECTION)
+                        : null
+                ) ?? ParameterEnum::ORDER_BY_DIRECTION_ASC
             );
             $field = new Stringy($entry->getString(ParameterEnum::ORDER_BY_FIELD));
             if (null === $field->getPositionOfSubstring(ParameterEnum::FILTER_FIELD_SEPARATOR)) {
@@ -228,7 +234,7 @@ class ParameterValidator
                     \Safe\sprintf('%s%s%s', DataManager::ROOT_ALIAS, ParameterEnum::FILTER_FIELD_SEPARATOR, $field)
                 );
             }
-            return new RA([$field => $direction]);
+            return new RA(compact('field', 'direction'));
         });
     }
 
@@ -254,7 +260,11 @@ class ParameterValidator
                     \Safe\sprintf('%s%s%s', DataManager::ROOT_ALIAS, ParameterEnum::FILTER_FIELD_SEPARATOR, $field)
                 );
             }
-            $aggregates = $entry->getRAOrNull(ParameterEnum::GROUP_BY_AGGREGATES) ?? new RA();
+            $aggregates = (
+                $entry->hasKey(ParameterEnum::GROUP_BY_AGGREGATES)
+                    ? $entry->getRAOrNull(ParameterEnum::GROUP_BY_AGGREGATES)
+                    : null
+                ) ?? new RA();
             return new RA(compact('field', 'direction', 'aggregates'));
         });
     }

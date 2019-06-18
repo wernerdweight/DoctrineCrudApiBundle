@@ -54,7 +54,7 @@ class Lister
         if (null === $groupByParameter) {
             return $this->dataManager->getPortion(...$arguments);
         }
-        return $this->dataManager->getGroupedPortion(...$arguments->push($groupByParameter));
+        return $this->dataManager->getGroupedPortion(...$arguments->push(clone $groupByParameter));
     }
 
     /**

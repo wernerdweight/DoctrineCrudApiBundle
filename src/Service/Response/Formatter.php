@@ -321,7 +321,7 @@ class Formatter
                             $functionName => $value,
                         ],
                     ], RA::RECURSIVE);
-                }))
+                }, $group->keys()))
                 ->set(ParameterEnum::GROUP_BY_FIELD, $groupingField)
                 ->set(ParameterEnum::GROUP_BY_VALUE, $this->printValue($group->get(ParameterEnum::GROUP_BY_VALUE)))
                 ->set(ParameterEnum::GROUP_BY_HAS_GROUPS, $level > 1)
@@ -348,12 +348,12 @@ class Formatter
         }
         if ($level > 0 && null !== $groupBy) {
             $levelConfiguration = $groupBy->getRAOrNull($groupBy->length() - $level) ?? new RA();
-            $levelGroupingField = $levelConfiguration->hasKey(ParameterEnum::GROUP_BY_FIELD)
-                ? (new RA(
-                    (new Stringy($levelConfiguration->getString(ParameterEnum::GROUP_BY_FIELD)))
-                        ->explode(ParameterEnum::FILTER_FIELD_SEPARATOR)
-                ))->last()
-                : QueryBuilderDecorator::IDENTIFIER_FIELD_NAME;
+            $levelGroupingField = QueryBuilderDecorator::IDENTIFIER_FIELD_NAME;
+            if (true === $levelConfiguration->hasKey(ParameterEnum::GROUP_BY_FIELD)) {
+                /** @var Stringy $field */
+                $field = $levelConfiguration->get(ParameterEnum::GROUP_BY_FIELD);
+                $levelGroupingField = (new RA($field->explode(ParameterEnum::FILTER_FIELD_SEPARATOR)))->last();
+            }
             return $this->formatGroupped($items, $level, $levelGroupingField);
         }
         $prefix = (clone $this->parameterResolver->getStringy(ParameterEnum::ENTITY_NAME))->lowercaseFirst();

@@ -17,6 +17,11 @@ class DataManager
     /** @var QueryBuilderDecorator */
     private $queryBuilderDecorator;
 
+    /**
+     * DataManager constructor.
+     * @param RepositoryManager $repositoryManager
+     * @param QueryBuilderDecorator $queryBuilderDecorator
+     */
     public function __construct(RepositoryManager $repositoryManager, QueryBuilderDecorator $queryBuilderDecorator)
     {
         $this->repositoryManager = $repositoryManager;
@@ -69,7 +74,8 @@ class DataManager
     {
         /** @var RA $primaryGroup */
         $primaryGroup = $groupBy->shift();
-        $field = $primaryGroup->getString(ParameterEnum::GROUP_BY_FIELD);
+        /** @var Stringy $field */
+        $field = $primaryGroup->get(ParameterEnum::GROUP_BY_FIELD);
         $direction = $primaryGroup->getString(ParameterEnum::GROUP_BY_DIRECTION);
         $aggregates = $primaryGroup->getRA(ParameterEnum::GROUP_BY_AGGREGATES);
 
@@ -79,24 +85,25 @@ class DataManager
         $this->queryBuilderDecorator
             ->applyGroupping($queryBuilder, $field)
             ->applyAggregates($queryBuilder, $aggregates)
-            ->applyOrdering($queryBuilder, $primaryGroup)
+            ->applyOrdering($queryBuilder, new RA([$primaryGroup]))
             ->applyPagination($queryBuilder, $offset, $limit);
 
         $groups = new RA($queryBuilder->getQuery()->getResult(), RA::RECURSIVE);
 
         return $groups->map(function (RA $group) use ($groupBy, $filter, $field, $limit, $orderBy): RA {
+            $filteringConditions = new RA();
+            $filteringConditions->push((new RA())
+                ->set(ParameterEnum::FILTER_FIELD, $field)
+                ->set(ParameterEnum::FILTER_VALUE, $group->get(ParameterEnum::FILTER_VALUE))
+                ->set(
+                    ParameterEnum::FILTER_OPERATOR,
+                    null === $group->get(ParameterEnum::FILTER_VALUE)
+                        ? ParameterEnum::FILTER_OPERATOR_IS_NULL
+                        : ParameterEnum::FILTER_OPERATOR_EQUAL
+                ));
             $groupConditions = (new RA())
                 ->set(ParameterEnum::FILTER_LOGIC, ParameterEnum::FILTER_LOGIC_AND)
-                ->set(ParameterEnum::FILTER, (new RA())
-                    ->set(ParameterEnum::FILTER_FIELD, $field)
-                    ->set(ParameterEnum::FILTER_VALUE, $group->get(ParameterEnum::FILTER_VALUE))
-                    ->set(
-                        ParameterEnum::FILTER_OPERATOR,
-                        null === $group->get(ParameterEnum::FILTER_VALUE)
-                            ? ParameterEnum::FILTER_OPERATOR_IS_NULL
-                            : ParameterEnum::FILTER_OPERATOR_EQUAL
-                    )
-                );
+                ->set(ParameterEnum::FILTER_CONDITIONS, $filteringConditions);
             return $group->set(
                 ParameterEnum::GROUP_BY_ITEMS,
                 $groupBy->length() > 0

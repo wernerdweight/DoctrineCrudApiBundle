@@ -81,16 +81,18 @@ class QueryBuilderDecorator
     /**
      * @param RA $conditionData
      *
-     * @return string
+     * @return Stringy
      *
      * @throws \WernerDweight\RA\Exception\RAException
      */
-    private function getFilteringField(RA $conditionData): string
+    private function getFilteringField(RA $conditionData): Stringy
     {
         if (true !== $conditionData->hasKey(ParameterEnum::FILTER_FIELD)) {
             throw new FilteringException(FilteringException::EXCEPTION_MISSING_FILTER_FIELD);
         }
-        return $conditionData->getString(ParameterEnum::FILTER_FIELD);
+        /** @var Stringy $field */
+        $field = $conditionData->get(ParameterEnum::FILTER_FIELD);
+        return $field;
     }
 
     /**
@@ -359,7 +361,7 @@ class QueryBuilderDecorator
         int $conditionKey,
         int $filteringKey
     ): string {
-        $field = new Stringy($this->getFilteringField($conditionData));
+        $field = $this->getFilteringField($conditionData);
         $operator = $this->getFilteringOperator($conditionData);
         $value = $conditionData->get(ParameterEnum::FILTER_VALUE);
 
@@ -447,7 +449,8 @@ class QueryBuilderDecorator
     public function applyOrdering(QueryBuilder $queryBuilder, RA $orderings): self
     {
         $orderings->walk(function (RA $orderData) use ($queryBuilder): void {
-            $field = new Stringy($orderData->getString(ParameterEnum::ORDER_BY_FIELD));
+            /** @var Stringy $field */
+            $field = $orderData->get(ParameterEnum::ORDER_BY_FIELD);
             $direction = $orderData->getString(ParameterEnum::ORDER_BY_DIRECTION);
 
             if (true !== in_array($direction, ParameterEnum::AVAILABLE_ORDERING_DIRECTIONS, true)) {
@@ -485,21 +488,21 @@ class QueryBuilderDecorator
 
     /**
      * @param QueryBuilder $queryBuilder
-     * @param string       $field
+     * @param Stringy      $field
      *
      * @return QueryBuilderDecorator
      *
      * @throws \Safe\Exceptions\PcreException
      * @throws \Safe\Exceptions\StringsException
      */
-    public function applyGroupping(QueryBuilder $queryBuilder, string $field): self
+    public function applyGroupping(QueryBuilder $queryBuilder, Stringy $field): self
     {
         if (true === $this->isEmbed($field)) {
             $queryBuilder->groupBy(\Safe\sprintf('%s.%s', DataManager::ROOT_ALIAS, $field));
             return $this;
         }
-        $this->joinRequiredFilteringRelations($queryBuilder, new Stringy($field));
-        $queryBuilder->groupBy($this->getFilteringPathForField($field));
+        $this->joinRequiredFilteringRelations($queryBuilder, $field);
+        $queryBuilder->groupBy((string)($this->getFilteringPathForField($field)));
         return $this;
     }
 
