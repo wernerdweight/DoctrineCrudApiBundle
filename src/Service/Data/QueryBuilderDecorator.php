@@ -4,9 +4,9 @@ declare(strict_types=1);
 namespace WernerDweight\DoctrineCrudApiBundle\Service\Data;
 
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
-use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
 use WernerDweight\DoctrineCrudApiBundle\Exception\FilteringException;
+use WernerDweight\DoctrineCrudApiBundle\Service\ConditionGenerator\ConditionGeneratorFactory;
 use WernerDweight\DoctrineCrudApiBundle\Service\Request\ParameterEnum;
 use WernerDweight\RA\RA;
 use WernerDweight\Stringy\Stringy;
@@ -48,14 +48,21 @@ class QueryBuilderDecorator
     /** @var RepositoryManager */
     private $repositoryManager;
 
+    /** @var ConditionGeneratorFactory */
+    private $conditionGeneratorFactory;
+
     /**
      * QueryBuilderDecorator constructor.
      *
-     * @param RepositoryManager $repositoryManager
+     * @param RepositoryManager         $repositoryManager
+     * @param ConditionGeneratorFactory $conditionGeneratorFactory
      */
-    public function __construct(RepositoryManager $repositoryManager)
-    {
+    public function __construct(
+        RepositoryManager $repositoryManager,
+        ConditionGeneratorFactory $conditionGeneratorFactory
+    ) {
         $this->repositoryManager = $repositoryManager;
+        $this->conditionGeneratorFactory = $conditionGeneratorFactory;
     }
 
     /**
@@ -209,81 +216,7 @@ class QueryBuilderDecorator
     private function createCondition(Stringy $field, string $operator, string $parameterName): string
     {
         $field = (string)($this->resolveFilteringConditionFieldName($field));
-
-        $expression = new Expr();
-        if (ParameterEnum::FILTER_OPERATOR_EQUAL === $operator) {
-            return (string)($expression->eq($field, $parameterName));
-        }
-        if (ParameterEnum::FILTER_OPERATOR_NOT_EQUAL === $operator) {
-            return (string)($expression->neq($field, $parameterName));
-        }
-        if (ParameterEnum::FILTER_OPERATOR_GREATER_THAN === $operator) {
-            return (string)($expression->gt($field, $parameterName));
-        }
-        if (ParameterEnum::FILTER_OPERATOR_GREATER_THAN_OR_EQUAL === $operator) {
-            return (string)($expression->gte($field, $parameterName));
-        }
-        if (ParameterEnum::FILTER_OPERATOR_GREATER_THAN_OR_EQUAL_OR_NULL === $operator) {
-            return (string)($expression->orX(
-                $expression->gte($field, $parameterName),
-                $expression->isNull($field)
-            ));
-        }
-        if (ParameterEnum::FILTER_OPERATOR_LOWER_THAN === $operator) {
-            return (string)($expression->lt($field, $parameterName));
-        }
-        if (ParameterEnum::FILTER_OPERATOR_LOWER_THAN_OR_EQUAL === $operator) {
-            return (string)($expression->lte($field, $parameterName));
-        }
-        if (ParameterEnum::FILTER_OPERATOR_BEGINS_WITH === $operator) {
-            return (string)($expression->like(
-                (string)($expression->lower($field)),
-                (string)($expression->lower($parameterName))
-            ));
-        }
-        if (ParameterEnum::FILTER_OPERATOR_CONTAINS === $operator) {
-            return (string)($expression->like(
-                (string)($expression->lower($field)),
-                (string)($expression->lower($parameterName))
-            ));
-        }
-        if (ParameterEnum::FILTER_OPERATOR_CONTAINS_NOT === $operator) {
-            return (string)($expression->notLike(
-                (string)($expression->lower($field)),
-                (string)($expression->lower($parameterName))
-            ));
-        }
-        if (ParameterEnum::FILTER_OPERATOR_ENDS_WITH === $operator) {
-            return (string)($expression->like(
-                (string)($expression->lower($field)),
-                (string)($expression->lower($parameterName))
-            ));
-        }
-        if (ParameterEnum::FILTER_OPERATOR_IS_NULL === $operator) {
-            return $expression->isNull($field);
-        }
-        if (ParameterEnum::FILTER_OPERATOR_IS_NOT_NULL === $operator) {
-            return $expression->isNotNull($field);
-        }
-        if (ParameterEnum::FILTER_OPERATOR_IS_EMPTY === $operator) {
-            return (string)($expression->orX(
-                $expression->isNull($field),
-                $expression->eq($field, $parameterName)
-            ));
-        }
-        if (ParameterEnum::FILTER_OPERATOR_IS_NOT_EMPTY === $operator) {
-            return (string)($expression->andX(
-                $expression->isNotNull($field),
-                $expression->neq($field, $parameterName)
-            ));
-        }
-        if (ParameterEnum::FILTER_OPERATOR_IN === $operator) {
-            return (string)($expression->in($field, $parameterName));
-        }
-        throw new FilteringException(
-            FilteringException::EXCEPTION_INVALID_FILTER_OPERATOR,
-            [$operator, implode(', ', ParameterEnum::AVAILABLE_FILTERING_OPERATORS)]
-        );
+        return $this->conditionGeneratorFactory->get($operator)->generate($field, $parameterName);
     }
 
     /**

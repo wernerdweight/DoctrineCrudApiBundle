@@ -48,3 +48,13 @@ services:
     WernerDweight\DoctrineCrudApiBundle\Mapping\Type\Factory\AnnotationMappingTypeFactory:
         arguments:
             $types: !tagged crud_api.mapping_type.annotation
+
+    WernerDweight\DoctrineCrudApiBundle\Service\ConditionGenerator\ConditionGeneratorFactory:
+        arguments:
+            $conditionGenerators: !tagged crud_api.condition_generator
+
+    WernerDweight\DoctrineCrudApiBundle\Service\ConditionGenerator\Generator\:
+        resource: '../../Service/ConditionGenerator/Generator/*'
+        exclude: '../../Service/ConditionGenerator/Generator/Abstract*'
+        tags:
+            - { name: 'crud_api.condition_generator' }
