@@ -188,7 +188,7 @@ class QueryBuilderDecorator
     {
         if (true === $this->isEmbed($field)) {
             return new Stringy(
-                \Safe\sprintf('%s%s%s', DataManager::ROOT_ALIAS, ParameterEnum::FILTER_FIELD_SEPARATOR, $field)
+                \Safe\sprintf('%s%s%s', DataManager::ROOT_ALIAS, ParameterEnum::FIELD_SEPARATOR, $field)
             );
         }
 
@@ -293,9 +293,9 @@ class QueryBuilderDecorator
      */
     private function isEmbed(Stringy $field): bool
     {
-        if (null !== $field->getPositionOfSubstring(ParameterEnum::FILTER_FIELD_SEPARATOR)) {
+        if (null !== $field->getPositionOfSubstring(ParameterEnum::FIELD_SEPARATOR)) {
             $embeddedEntities = $this->repositoryManager->getCurrentMetadata()->embeddedClasses;
-            return array_key_exists($field->explode(ParameterEnum::FILTER_FIELD_SEPARATOR)[0], $embeddedEntities);
+            return array_key_exists($field->explode(ParameterEnum::FIELD_SEPARATOR)[0], $embeddedEntities);
         }
         return false;
     }
@@ -313,7 +313,7 @@ class QueryBuilderDecorator
     {
         if (true === $field->pregMatch('/^[a-z\.]+$/i')) {
             $currentPrefix = clone $field;
-            $firstSeparatorPosition = $field->getPositionOfSubstring(ParameterEnum::FILTER_FIELD_SEPARATOR);
+            $firstSeparatorPosition = $field->getPositionOfSubstring(ParameterEnum::FIELD_SEPARATOR);
             if (null !== $firstSeparatorPosition) {
                 $currentPrefix = $currentPrefix->substring(0, $firstSeparatorPosition);
             }
@@ -330,7 +330,7 @@ class QueryBuilderDecorator
                     }
                     $previousPrefix = clone $currentPrefix;
                     $nextSeparatorPosition = $currentField
-                        ->getPositionOfSubstring(ParameterEnum::FILTER_FIELD_SEPARATOR);
+                        ->getPositionOfSubstring(ParameterEnum::FIELD_SEPARATOR);
                     if (null !== $nextSeparatorPosition) {
                         $currentPrefix = (clone $currentField)->substring(0, $nextSeparatorPosition);
                         $currentField = $currentField->substring($nextSeparatorPosition + 1);
@@ -340,7 +340,7 @@ class QueryBuilderDecorator
             }
 
             $currentField = (clone $field)
-                ->replace(\Safe\sprintf('%s%s', DataManager::ROOT_ALIAS, ParameterEnum::FILTER_FIELD_SEPARATOR), '');
+                ->replace(\Safe\sprintf('%s%s', DataManager::ROOT_ALIAS, ParameterEnum::FIELD_SEPARATOR), '');
             if (true === $this->isManyToManyField($currentField) &&
                 true !== in_array((string)$currentField, $queryBuilder->getAllAliases(), true)
             ) {
@@ -395,7 +395,7 @@ class QueryBuilderDecorator
 
         $parameterName = \Safe\sprintf(
             '%s_%s_%d_%d',
-            (clone $field)->replace(ParameterEnum::FILTER_FIELD_SEPARATOR, self::PARAM_NAME_SEPARATOR),
+            (clone $field)->replace(ParameterEnum::FIELD_SEPARATOR, self::PARAM_NAME_SEPARATOR),
             $operator,
             $filteringKey,
             $conditionKey
@@ -521,7 +521,7 @@ class QueryBuilderDecorator
             return $this;
         }
         $this->joinRequiredFilteringRelations($queryBuilder, $field);
-        $queryBuilder->groupBy((string)($this->getFilteringPathForField($field)));
+        $queryBuilder->addGroupBy((string)($this->getFilteringPathForField($field)));
         return $this;
     }
 

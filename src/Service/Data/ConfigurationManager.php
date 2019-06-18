@@ -69,9 +69,4 @@ class ConfigurationManager
         $className = (new Stringy(get_class($entity)))->replace(self::PROXY_PREFIX, '');
         return $this->getConfigurationForEntityClass((string)$className);
     }
-
-    public function getFieldMetadata(DoctrineCrudApiMetadata $configuration, string $field): ?RA
-    {
-        // FIXME: remove?
-    }
 }

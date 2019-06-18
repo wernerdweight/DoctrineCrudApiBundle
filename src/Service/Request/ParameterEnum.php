@@ -27,9 +27,9 @@ class ParameterEnum
         self::FILTER_LOGIC_OR,
     ];
     /** @var string */
-    public const FILTER_FIELD = 'field';
+    public const FIELD_SEPARATOR = '.';
     /** @var string */
-    public const FILTER_FIELD_SEPARATOR = '.';
+    public const FILTER_FIELD = 'field';
     /** @var string */
     public const FILTER_OPERATOR = 'operator';
     /** @var string */

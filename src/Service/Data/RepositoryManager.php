@@ -152,7 +152,7 @@ class RepositoryManager
             $mappings = $this->getCurrentMappings();
         }
 
-        $firstDotPosition = $field->getPositionOfSubstring(ParameterEnum::FILTER_FIELD_SEPARATOR);
+        $firstDotPosition = $field->getPositionOfSubstring(ParameterEnum::FIELD_SEPARATOR);
         if (null === $firstDotPosition) {
             return null;
         }
@@ -169,7 +169,7 @@ class RepositoryManager
         }
 
         $targetEntity = $mapping->getString(QueryBuilderDecorator::DOCTRINE_TARGET_ENTITY);
-        $firstDotPosition = $field->getPositionOfSubstring(ParameterEnum::FILTER_FIELD_SEPARATOR);
+        $firstDotPosition = $field->getPositionOfSubstring(ParameterEnum::FIELD_SEPARATOR);
         $fieldMappings = $this->getEntityMappings($this->getEntityMetadata($targetEntity));
         if (null !== $firstDotPosition) {
             return $this->getMappingForField($field, $fieldMappings);

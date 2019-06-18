@@ -78,13 +78,13 @@ class DataManager
         $primaryGroup = $groupBy->shift();
         /** @var Stringy $field */
         $field = $primaryGroup->get(ParameterEnum::GROUP_BY_FIELD);
-        $direction = $primaryGroup->getString(ParameterEnum::GROUP_BY_DIRECTION);
         $aggregates = $primaryGroup->getRA(ParameterEnum::GROUP_BY_AGGREGATES);
 
         $queryBuilder = $this->repositoryManager->getCurrentRepository()
             ->createQueryBuilder(self::ROOT_ALIAS)
             ->select(\Safe\sprintf('%s AS value', $field));
         $this->queryBuilderDecorator
+            ->applyFiltering($queryBuilder, $filter)
             ->applyGroupping($queryBuilder, $field)
             ->applyAggregates($queryBuilder, $aggregates)
             ->applyOrdering($queryBuilder, new RA([$primaryGroup]))
@@ -92,7 +92,7 @@ class DataManager
 
         $groups = new RA($queryBuilder->getQuery()->getResult(), RA::RECURSIVE);
 
-        return $groups->map(function (RA $group) use ($groupBy, $field, $limit, $orderBy): RA {
+        return $groups->map(function (RA $group) use ($groupBy, $filter, $field, $limit, $orderBy): RA {
             $filteringConditions = new RA();
             $filteringConditions->push((new RA())
                 ->set(ParameterEnum::FILTER_FIELD, $field)
@@ -103,6 +103,9 @@ class DataManager
                         ? ParameterEnum::FILTER_OPERATOR_IS_NULL
                         : ParameterEnum::FILTER_OPERATOR_EQUAL
                 ));
+            if ($filter->length() > 0) {
+                $filteringConditions->push($filter);
+            }
             $groupConditions = (new RA())
                 ->set(ParameterEnum::FILTER_LOGIC, ParameterEnum::FILTER_LOGIC_AND)
                 ->set(ParameterEnum::FILTER_CONDITIONS, $filteringConditions);

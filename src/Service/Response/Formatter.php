@@ -17,127 +17,35 @@ use WernerDweight\Stringy\Stringy;
 
 class Formatter
 {
-    /** @var string */
-    private const FIELD_SEPARATOR = '.';
-
     /** @var ParameterResolver */
     private $parameterResolver;
 
     /** @var ConfigurationManager */
     private $configurationManager;
 
+    /** @var OutputVoter */
+    private $outputVoter;
+
+    /** @var Printer */
+    private $printer;
+
     /**
      * Formatter constructor.
      *
      * @param ParameterResolver    $parameterResolver
      * @param ConfigurationManager $configurationManager
+     * @param OutputVoter          $outputVoter
      */
-    public function __construct(ParameterResolver $parameterResolver, ConfigurationManager $configurationManager)
-    {
+    public function __construct(
+        ParameterResolver $parameterResolver,
+        ConfigurationManager $configurationManager,
+        OutputVoter $outputVoter,
+        Printer $printer
+    ) {
         $this->parameterResolver = $parameterResolver;
         $this->configurationManager = $configurationManager;
-    }
-
-    /**
-     * @param mixed $value
-     *
-     * @return string
-     *
-     * @throws \Safe\Exceptions\PcreException
-     */
-    private function printValue($value): string
-    {
-        if (null === $value) {
-            return ParameterEnum::NULL_VALUE;
-        }
-        if (true === $value) {
-            return ParameterEnum::TRUE_VALUE;
-        }
-        if (false === $value) {
-            return ParameterEnum::FALSE_VALUE;
-        }
-        if (true === is_numeric($value)) {
-            return (string)$value;
-        }
-        if (true === is_array($value)) {
-            return ParameterEnum::ARRAY_VALUE;
-        }
-        if (true === is_object($value)) {
-            if ($value instanceof \DateTime) {
-                $formatedDateTime = new Stringy($value->format('c'));
-                return (string)($formatedDateTime->pregReplace('/:([\d]{2})$/', '$1'));
-            }
-            if (true === method_exists($value, '__toString')) {
-                return (string)$value;
-            }
-            return ParameterEnum::OBJECT_VALUE;
-        }
-        if (true === is_string($value)) {
-            return $value;
-        }
-        return ParameterEnum::UNDEFINED_VALUE;
-    }
-
-    /**
-     * @param RA      $responseStructure
-     * @param Stringy $path
-     *
-     * @return RA|null
-     */
-    private function traverseResponseStructure(RA $responseStructure, Stringy $path): ?RA
-    {
-        $segments = new RA($path->explode(self::FIELD_SEPARATOR));
-        $reducedResponseStructure = $segments->reduce(function (RA $carry, string $segment): RA {
-            if (true !== $carry->hasKey($segment)) {
-                return new RA();
-            }
-            $value = $carry->get($segment);
-            if ($value instanceof RA) {
-                return $value;
-            }
-            return new RA();
-        }, $responseStructure);
-        if (0 === $reducedResponseStructure->length()) {
-            return null;
-        }
-        return $reducedResponseStructure;
-    }
-
-    /**
-     * @param Stringy                 $field
-     * @param DoctrineCrudApiMetadata $configuration
-     * @param RA|null                 $responseStructure
-     *
-     * @return bool
-     *
-     * @throws \WernerDweight\RA\Exception\RAException
-     */
-    private function isAllowedForOutput(
-        Stringy $field,
-        DoctrineCrudApiMetadata $configuration,
-        ?RA $responseStructure = null
-    ): bool {
-        $root = new Stringy(ParameterEnum::EMPTY_VALUE);
-        $key = (clone $field);
-        $lastDotPosition = $field->getPositionOfLastSubstring(ParameterEnum::FILTER_FIELD_SEPARATOR);
-        if (null !== $lastDotPosition) {
-            $root = (clone $field)->substring(0, $lastDotPosition);
-            $key = (clone $field)->substring($lastDotPosition + 1);
-        }
-
-        $responseStructure = $this->parameterResolver->getRAOrNull(ParameterEnum::RESPONSE_STRUCTURE);
-        if (null !== $responseStructure) {
-            $responseStructure = $this->traverseResponseStructure($responseStructure, $root);
-        }
-        if (null === $responseStructure) {
-            $responseStructure = $configuration->getDefaultListableFields()->fillKeys(ParameterEnum::TRUE_VALUE);
-        }
-
-        if (true === $responseStructure->hasKey((string)$key)) {
-            $value = $responseStructure->get((string)$key);
-            return ParameterEnum::TRUE_VALUE === $value || $value instanceof RA;
-        }
-        return false;
+        $this->outputVoter = $outputVoter;
+        $this->printer = $printer;
     }
 
     /**
@@ -182,7 +90,7 @@ class Formatter
     {
         $value = $this->getEntityPropertyValue($item, $field);
         return null !== $value
-            ? $this->formatOne($value, \Safe\sprintf('%s%s%s', $prefix, $field, self::FIELD_SEPARATOR))
+            ? $this->formatOne($value, \Safe\sprintf('%s%s%s', $prefix, $field, ParameterEnum::FIELD_SEPARATOR))
             : null;
     }
 
@@ -203,15 +111,16 @@ class Formatter
         string $prefix
     ): RA {
         $fieldMetadata = $configuration->getFieldMetadata((string)$field);
-        $payload = null !== $fieldMetadata && $fieldMetadata->hasKey(
-            DoctrineCrudApiMappingTypeInterface::METADATA_PAYLOAD
-        )
+        $payload = $fieldMetadata && $fieldMetadata->hasKey(DoctrineCrudApiMappingTypeInterface::METADATA_PAYLOAD)
             ? $fieldMetadata->getRA(DoctrineCrudApiMappingTypeInterface::METADATA_PAYLOAD)->toArray()
             : [];
         /** @var Collection $fieldValue */
         $fieldValue = $this->getEntityPropertyValue($item, $field, $payload);
         return (new RA($fieldValue->getValues()))->map(function (ApiEntityInterface $entry) use ($prefix, $field) {
-            return $this->formatOne($entry, \Safe\sprintf('%s%s%s', $prefix, (string)$field, self::FIELD_SEPARATOR));
+            return $this->formatOne(
+                $entry,
+                \Safe\sprintf('%s%s%s', $prefix, (string)$field, ParameterEnum::FIELD_SEPARATOR)
+            );
         });
     }
 
@@ -254,26 +163,23 @@ class Formatter
     {
         $configuration = $this->configurationManager->getConfigurationForEntity($item);
         $result = new RA();
-        $configuration->getListableFields()->walk(function (string $field) use (
-            $item,
-            $prefix,
-            $result,
-            $configuration
-        ): void {
-            $prefixedField = new Stringy(\Safe\sprintf('%s%s', $prefix, $field));
-            if (true !== $this->isAllowedForOutput($prefixedField, $configuration)) {
-                return;
-            }
-            $metadata = $configuration->getFieldMetadata($field);
-            if (null === $metadata) {
-                $result->set($field, $this->getEntityPropertyValue($item, new Stringy($field)));
-                return;
-            }
-            $result->set(
-                $field,
-                $this->getEntityPropertyValueBasedOnMetadata($item, new Stringy($field), $configuration, $prefix)
-            );
-        });
+        $configuration
+            ->getListableFields()
+            ->walk(function (string $field) use ($item, $prefix, $result, $configuration): void {
+                $prefixed = new Stringy(\Safe\sprintf('%s%s', $prefix, $field));
+                $responseStructure = $this->parameterResolver->getRAOrNull(ParameterEnum::RESPONSE_STRUCTURE);
+                if (OutputVoter::ALLOWED !== $this->outputVoter->vote($prefixed, $configuration, $responseStructure)) {
+                    return;
+                }
+                $metadata = $configuration->getFieldMetadata($field);
+                if (null === $metadata) {
+                    $result->set($field, $this->getEntityPropertyValue($item, new Stringy($field)));
+                    return;
+                }
+                $value = $this
+                    ->getEntityPropertyValueBasedOnMetadata($item, new Stringy($field), $configuration, $prefix);
+                $result->set($field, $value);
+            });
         return $result;
     }
 
@@ -291,6 +197,35 @@ class Formatter
     }
 
     /**
+     * @param RA $aggregateFields
+     *
+     * @return RA
+     */
+    private function formatGroupAggregates(RA $aggregateFields): RA
+    {
+        return $aggregateFields
+            ->map(function ($value, string $field): ?RA {
+                $field = (new Stringy($field))
+                    ->substring((new Stringy(QueryBuilderDecorator::AGGREGATE_PREFIX))->length() + 1);
+                $lastUnderscorePosition = $field
+                    ->getPositionOfLastSubstring(QueryBuilderDecorator::AGGREGATE_FUNCTION_SEPARATOR);
+                if (null === $lastUnderscorePosition) {
+                    throw new FormatterException(
+                        FormatterException::EXCEPTION_INVALID_AGGREGATE_FIELD_NAME,
+                        [$field]
+                    );
+                }
+                $functionName = (clone $field)->substring(0, $lastUnderscorePosition);
+                $field = $field->substring($lastUnderscorePosition + 1);
+                return new RA([
+                    (string)$field => [
+                        (string)$functionName => $value,
+                    ],
+                ], RA::RECURSIVE);
+            }, $aggregateFields->keys());
+    }
+
+    /**
      * @param RA     $groups
      * @param int    $level
      * @param string $groupingField
@@ -303,37 +238,38 @@ class Formatter
             $aggregateFields = $group->filter(function (string $field): bool {
                 return 0 === (new Stringy($field))->getPositionOfSubstring(QueryBuilderDecorator::AGGREGATE_PREFIX);
             }, ARRAY_FILTER_USE_KEY);
-            $aggregates = $aggregateFields
-                ->map(function ($value, string $field): ?RA {
-                    $field = (new Stringy($field))
-                        ->substring((new Stringy(QueryBuilderDecorator::AGGREGATE_PREFIX))->length() + 1);
-                    $lastUnderscorePosition = $field
-                        ->getPositionOfLastSubstring(QueryBuilderDecorator::AGGREGATE_FUNCTION_SEPARATOR);
-                    if (null === $lastUnderscorePosition) {
-                        throw new FormatterException(
-                            FormatterException::EXCEPTION_INVALID_AGGREGATE_FIELD_NAME,
-                            [$field]
-                        );
-                    }
-                    $functionName = (clone $field)->substring(0, $lastUnderscorePosition);
-                    $field = $field->substring($lastUnderscorePosition + 1);
-                    return new RA([
-                        (string)$field => [
-                            (string)$functionName => $value,
-                        ],
-                    ], RA::RECURSIVE);
-                }, $aggregateFields->keys());
 
             return (new RA())
-                ->set(ParameterEnum::GROUP_BY_AGGREGATES, $aggregates)
+                ->set(ParameterEnum::GROUP_BY_AGGREGATES, $this->formatGroupAggregates($aggregateFields))
                 ->set(ParameterEnum::GROUP_BY_FIELD, $groupingField)
-                ->set(ParameterEnum::GROUP_BY_VALUE, $this->printValue($group->get(ParameterEnum::GROUP_BY_VALUE)))
+                ->set(ParameterEnum::GROUP_BY_VALUE, $this->printer->print($group->get(ParameterEnum::GROUP_BY_VALUE)))
                 ->set(ParameterEnum::GROUP_BY_HAS_GROUPS, $level > 1)
                 ->set(
                     ParameterEnum::GROUP_BY_ITEMS,
                     $this->formatListing($group->getRA(ParameterEnum::GROUP_BY_ITEMS), $level - 1)
                 );
         });
+    }
+
+    /**
+     * @param RA  $items
+     * @param int $level
+     * @param RA  $groupBy
+     *
+     * @return RA
+     *
+     * @throws \WernerDweight\RA\Exception\RAException
+     */
+    private function formatGrouppedListing(RA $items, int $level, RA $groupBy): RA
+    {
+        $levelConfiguration = $groupBy->getRAOrNull($groupBy->length() - $level) ?? new RA();
+        $levelGroupingField = QueryBuilderDecorator::IDENTIFIER_FIELD_NAME;
+        if (true === $levelConfiguration->hasKey(ParameterEnum::GROUP_BY_FIELD)) {
+            /** @var Stringy $field */
+            $field = $levelConfiguration->get(ParameterEnum::GROUP_BY_FIELD);
+            $levelGroupingField = (new RA($field->explode(ParameterEnum::FIELD_SEPARATOR)))->last();
+        }
+        return $this->formatGroupped($items, $level, $levelGroupingField);
     }
 
     /**
@@ -351,16 +287,9 @@ class Formatter
             $level = null !== $groupBy ? $groupBy->length() : 0;
         }
         if ($level > 0 && null !== $groupBy) {
-            $levelConfiguration = $groupBy->getRAOrNull($groupBy->length() - $level) ?? new RA();
-            $levelGroupingField = QueryBuilderDecorator::IDENTIFIER_FIELD_NAME;
-            if (true === $levelConfiguration->hasKey(ParameterEnum::GROUP_BY_FIELD)) {
-                /** @var Stringy $field */
-                $field = $levelConfiguration->get(ParameterEnum::GROUP_BY_FIELD);
-                $levelGroupingField = (new RA($field->explode(ParameterEnum::FILTER_FIELD_SEPARATOR)))->last();
-            }
-            return $this->formatGroupped($items, $level, $levelGroupingField);
+            return $this->formatGrouppedListing($items, $level, $groupBy);
         }
         $prefix = (clone $this->parameterResolver->getStringy(ParameterEnum::ENTITY_NAME))->lowercaseFirst();
-        return $this->formatMany($items, \Safe\sprintf('%s%s', (string)$prefix, self::FIELD_SEPARATOR));
+        return $this->formatMany($items, \Safe\sprintf('%s%s', (string)$prefix, ParameterEnum::FIELD_SEPARATOR));
     }
 }

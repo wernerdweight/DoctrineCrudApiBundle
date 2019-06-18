@@ -73,7 +73,7 @@ class ParameterValidator
      */
     private function fieldContainsRootAlias(Stringy $field): bool
     {
-        $rootAlias = \Safe\sprintf('%s%s', DataManager::ROOT_ALIAS, ParameterEnum::FILTER_FIELD_SEPARATOR);
+        $rootAlias = \Safe\sprintf('%s%s', DataManager::ROOT_ALIAS, ParameterEnum::FIELD_SEPARATOR);
         return 0 === $field->getPositionOfSubstring($rootAlias) ||
             0 === $field->getPositionOfSubstring((string)($this->repositoryManager->getCurrentEntityName()));
     }
@@ -148,15 +148,15 @@ class ParameterValidator
             $value = $condition->get(ParameterEnum::FILTER_VALUE);
 
             if (true === $this->fieldContainsRootAlias($field)) {
-                $field = $field->substring($field->getPositionOfSubstring(ParameterEnum::FILTER_FIELD_SEPARATOR) + 1);
+                $field = $field->substring($field->getPositionOfSubstring(ParameterEnum::FIELD_SEPARATOR) + 1);
             }
 
             return new RA([
                 ParameterEnum::FILTER_FIELD => null === $field->getPositionOfSubstring(
-                    ParameterEnum::FILTER_FIELD_SEPARATOR
+                    ParameterEnum::FIELD_SEPARATOR
                 )
                     ? new Stringy(
-                        \Safe\sprintf('%s%s%s', DataManager::ROOT_ALIAS, ParameterEnum::FILTER_FIELD_SEPARATOR, $field)
+                        \Safe\sprintf('%s%s%s', DataManager::ROOT_ALIAS, ParameterEnum::FIELD_SEPARATOR, $field)
                     )
                     : clone $field,
                 ParameterEnum::FILTER_OPERATOR => $operator,
@@ -229,9 +229,9 @@ class ParameterValidator
                 ) ?? ParameterEnum::ORDER_BY_DIRECTION_ASC
             );
             $field = new Stringy($entry->getString(ParameterEnum::ORDER_BY_FIELD));
-            if (null === $field->getPositionOfSubstring(ParameterEnum::FILTER_FIELD_SEPARATOR)) {
+            if (null === $field->getPositionOfSubstring(ParameterEnum::FIELD_SEPARATOR)) {
                 $field = new Stringy(
-                    \Safe\sprintf('%s%s%s', DataManager::ROOT_ALIAS, ParameterEnum::FILTER_FIELD_SEPARATOR, $field)
+                    \Safe\sprintf('%s%s%s', DataManager::ROOT_ALIAS, ParameterEnum::FIELD_SEPARATOR, $field)
                 );
             }
             return new RA(compact('field', 'direction'));
@@ -255,9 +255,9 @@ class ParameterValidator
                 $entry->getStringOrNull(ParameterEnum::GROUP_BY_DIRECTION) ?? ParameterEnum::GROUP_BY_DIRECTION_ASC
             );
             $field = new Stringy($entry->getString(ParameterEnum::GROUP_BY_FIELD));
-            if (null === $field->getPositionOfSubstring(ParameterEnum::FILTER_FIELD_SEPARATOR)) {
+            if (null === $field->getPositionOfSubstring(ParameterEnum::FIELD_SEPARATOR)) {
                 $field = new Stringy(
-                    \Safe\sprintf('%s%s%s', DataManager::ROOT_ALIAS, ParameterEnum::FILTER_FIELD_SEPARATOR, $field)
+                    \Safe\sprintf('%s%s%s', DataManager::ROOT_ALIAS, ParameterEnum::FIELD_SEPARATOR, $field)
                 );
             }
             $aggregates = (

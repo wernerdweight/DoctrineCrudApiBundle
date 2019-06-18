@@ -14,6 +14,8 @@ abstract class AbstractType implements DoctrineCrudApiMappingTypeInterface
      * @param RA                $config
      *
      * @return RA
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     protected function readExtraConfiguration(
         \SimpleXMLElement $propertyMapping,
