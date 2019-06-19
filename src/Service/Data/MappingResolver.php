@@ -115,10 +115,10 @@ class MappingResolver
      */
     public function resolveValue(RA $configuration, $value)
     {
-        if (true !== $configuration->hasKey(QueryBuilderDecorator::DOCTRINE_ASSOCIATION_TYPE)) {
+        if (true !== $configuration->hasKey(FilteringHelper::DOCTRINE_ASSOCIATION_TYPE)) {
             throw new MappingResolverException(MappingResolverException::EXCEPTION_MISSING_MAPPING_TYPE);
         }
-        $type = (string)$configuration->get(QueryBuilderDecorator::DOCTRINE_ASSOCIATION_TYPE);
+        $type = (string)$configuration->get(FilteringHelper::DOCTRINE_ASSOCIATION_TYPE);
 
         return $this->resolveValueByType($configuration, $value, $type);
     }

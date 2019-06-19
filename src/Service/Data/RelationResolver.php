@@ -35,7 +35,7 @@ class RelationResolver
      */
     private function resolveEntity(RA $itemData, string $className): ApiEntityInterface
     {
-        $id = $itemData->get(QueryBuilderDecorator::IDENTIFIER_FIELD_NAME);
+        $id = $itemData->get(FilteringHelper::IDENTIFIER_FIELD_NAME);
         /** @var ApiEntityInterface|null $item */
         $item = $this->entityManager->find($className, $id);
         if (null === $item) {
@@ -76,7 +76,7 @@ class RelationResolver
             return $this->resolveEntity($value, $className);
         }
 
-        return $this->resolveEntity(new RA([QueryBuilderDecorator::IDENTIFIER_FIELD_NAME => $value]), $className);
+        return $this->resolveEntity(new RA([FilteringHelper::IDENTIFIER_FIELD_NAME => $value]), $className);
     }
 
     /**

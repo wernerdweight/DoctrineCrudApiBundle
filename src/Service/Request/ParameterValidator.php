@@ -5,6 +5,7 @@ namespace WernerDweight\DoctrineCrudApiBundle\Service\Request;
 
 use WernerDweight\DoctrineCrudApiBundle\Exception\FilteringException;
 use WernerDweight\DoctrineCrudApiBundle\Service\Data\DataManager;
+use WernerDweight\DoctrineCrudApiBundle\Service\Data\FilteringDecorator;
 use WernerDweight\DoctrineCrudApiBundle\Service\Data\MappingResolver;
 use WernerDweight\DoctrineCrudApiBundle\Service\Data\QueryBuilderDecorator;
 use WernerDweight\DoctrineCrudApiBundle\Service\Data\RepositoryManager;
@@ -100,19 +101,19 @@ class ParameterValidator
         }
 
         if (ParameterEnum::FILTER_OPERATOR_BEGINS_WITH === $operator) {
-            return \Safe\sprintf('%s%s', $value, QueryBuilderDecorator::SQL_WILDCARD);
+            return \Safe\sprintf('%s%s', $value, FilteringDecorator::SQL_WILDCARD);
         }
         $containsOperators = [ParameterEnum::FILTER_OPERATOR_CONTAINS, ParameterEnum::FILTER_OPERATOR_CONTAINS_NOT];
         if (true === in_array($operator, $containsOperators, true)) {
             return \Safe\sprintf(
                 '%s%s%s',
-                QueryBuilderDecorator::SQL_WILDCARD,
+                FilteringDecorator::SQL_WILDCARD,
                 $value,
-                QueryBuilderDecorator::SQL_WILDCARD
+                FilteringDecorator::SQL_WILDCARD
             );
         }
         if (ParameterEnum::FILTER_OPERATOR_ENDS_WITH === $operator) {
-            return \Safe\sprintf('%s%s', QueryBuilderDecorator::SQL_WILDCARD, $value);
+            return \Safe\sprintf('%s%s', FilteringDecorator::SQL_WILDCARD, $value);
         }
         $emptyOperators = [ParameterEnum::FILTER_OPERATOR_IS_EMPTY, ParameterEnum::FILTER_OPERATOR_IS_NOT_EMPTY];
         if (true === in_array($operator, $emptyOperators, true)) {

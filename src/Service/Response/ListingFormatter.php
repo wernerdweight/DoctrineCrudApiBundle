@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace WernerDweight\DoctrineCrudApiBundle\Service\Response;
 
 use WernerDweight\DoctrineCrudApiBundle\Exception\FormatterException;
+use WernerDweight\DoctrineCrudApiBundle\Service\Data\FilteringHelper;
 use WernerDweight\DoctrineCrudApiBundle\Service\Data\QueryBuilderDecorator;
 use WernerDweight\DoctrineCrudApiBundle\Service\Request\ParameterEnum;
 use WernerDweight\DoctrineCrudApiBundle\Service\Request\ParameterResolver;
@@ -105,7 +106,7 @@ class ListingFormatter
     private function formatGrouppedListing(RA $items, int $level, RA $groupBy): RA
     {
         $levelConfiguration = $groupBy->getRAOrNull($groupBy->length() - $level) ?? new RA();
-        $levelGroupingField = QueryBuilderDecorator::IDENTIFIER_FIELD_NAME;
+        $levelGroupingField = FilteringHelper::IDENTIFIER_FIELD_NAME;
         if (true === $levelConfiguration->hasKey(ParameterEnum::GROUP_BY_FIELD)) {
             /** @var Stringy $field */
             $field = $levelConfiguration->get(ParameterEnum::GROUP_BY_FIELD);

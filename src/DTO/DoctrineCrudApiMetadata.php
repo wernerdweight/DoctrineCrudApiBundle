@@ -6,6 +6,7 @@ namespace WernerDweight\DoctrineCrudApiBundle\DTO;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
 use WernerDweight\DoctrineCrudApiBundle\Mapping\Type\DoctrineCrudApiMappingTypeInterface;
+use WernerDweight\DoctrineCrudApiBundle\Service\Data\FilteringHelper;
 use WernerDweight\DoctrineCrudApiBundle\Service\Data\QueryBuilderDecorator;
 use WernerDweight\RA\RA;
 
@@ -115,7 +116,7 @@ class DoctrineCrudApiMetadata
         if (true !== $extendedFieldMetadata->hasKey(DoctrineCrudApiMappingTypeInterface::METADATA_TYPE) ||
             null === $extendedFieldMetadata->getStringOrNull(DoctrineCrudApiMappingTypeInterface::METADATA_TYPE)
         ) {
-            $type = $doctrineMetadata[QueryBuilderDecorator::DOCTRINE_ASSOCIATION_TYPE] & ClassMetadataInfo::TO_MANY
+            $type = $doctrineMetadata[FilteringHelper::DOCTRINE_ASSOCIATION_TYPE] & ClassMetadataInfo::TO_MANY
                 ? DoctrineCrudApiMappingTypeInterface::METADATA_TYPE_COLLECTION
                 : DoctrineCrudApiMappingTypeInterface::METADATA_TYPE_ENTITY;
             $extendedFieldMetadata->set(DoctrineCrudApiMappingTypeInterface::METADATA_TYPE, $type);
