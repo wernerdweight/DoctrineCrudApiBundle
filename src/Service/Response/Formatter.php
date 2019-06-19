@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace WernerDweight\DoctrineCrudApiBundle\Service\Response;
 
-use Doctrine\Common\Collections\Collection;
 use WernerDweight\DoctrineCrudApiBundle\DTO\DoctrineCrudApiMetadata;
 use WernerDweight\DoctrineCrudApiBundle\Entity\ApiEntityInterface;
 use WernerDweight\DoctrineCrudApiBundle\Exception\FormatterException;
@@ -25,97 +24,27 @@ class Formatter
     /** @var OutputVoter */
     private $outputVoter;
 
+    /** @var ValueGetter */
+    private $valueGetter;
+
     /**
      * Formatter constructor.
      *
      * @param ParameterResolver    $parameterResolver
      * @param ConfigurationManager $configurationManager
      * @param OutputVoter          $outputVoter
+     * @param ValueGetter          $valueGetter
      */
     public function __construct(
         ParameterResolver $parameterResolver,
         ConfigurationManager $configurationManager,
-        OutputVoter $outputVoter
+        OutputVoter $outputVoter,
+        ValueGetter $valueGetter
     ) {
         $this->parameterResolver = $parameterResolver;
         $this->configurationManager = $configurationManager;
         $this->outputVoter = $outputVoter;
-    }
-
-    /**
-     * @param ApiEntityInterface $item
-     * @param Stringy            $field
-     * @param array              $args
-     *
-     * @return mixed
-     */
-    private function getEntityPropertyValue(ApiEntityInterface $item, Stringy $field, array $args = [])
-    {
-        $propertyName = (clone $field)->uppercaseFirst();
-        $field = (string)$field;
-        if (true === method_exists($item, 'get' . $propertyName)) {
-            return $item->{'get' . $propertyName}(...$args);
-        }
-        if (true === method_exists($item, 'is' . $propertyName)) {
-            return $item->{'is' . $propertyName}(...$args);
-        }
-        if (true === method_exists($item, $field)) {
-            return $item->{$field}(...$args);
-        }
-        if (true === property_exists($item, $field)) {
-            return $item->$field;
-        }
-        throw new FormatterException(
-            FormatterException::EXCEPTION_NO_PROPERTY_GETTER,
-            [$field, get_class($item)]
-        );
-    }
-
-    /**
-     * @param ApiEntityInterface $item
-     * @param Stringy            $field
-     * @param string             $prefix
-     *
-     * @return RA|null
-     *
-     * @throws \Safe\Exceptions\StringsException
-     */
-    private function getRelatedEntityValue(ApiEntityInterface $item, Stringy $field, string $prefix): ?RA
-    {
-        $value = $this->getEntityPropertyValue($item, $field);
-        return null !== $value
-            ? $this->formatOne($value, \Safe\sprintf('%s%s%s', $prefix, $field, ParameterEnum::FIELD_SEPARATOR))
-            : null;
-    }
-
-    /**
-     * @param ApiEntityInterface      $item
-     * @param Stringy                 $field
-     * @param DoctrineCrudApiMetadata $configuration
-     * @param string                  $prefix
-     *
-     * @return RA
-     *
-     * @throws \WernerDweight\RA\Exception\RAException
-     */
-    private function getRelatedCollectionValue(
-        ApiEntityInterface $item,
-        Stringy $field,
-        DoctrineCrudApiMetadata $configuration,
-        string $prefix
-    ): RA {
-        $fieldMetadata = $configuration->getFieldMetadata((string)$field);
-        $payload = $fieldMetadata && $fieldMetadata->hasKey(DoctrineCrudApiMappingTypeInterface::METADATA_PAYLOAD)
-            ? $fieldMetadata->getRA(DoctrineCrudApiMappingTypeInterface::METADATA_PAYLOAD)->toArray()
-            : [];
-        /** @var Collection $fieldValue */
-        $fieldValue = $this->getEntityPropertyValue($item, $field, $payload);
-        return (new RA($fieldValue->getValues()))->map(function (ApiEntityInterface $entry) use ($prefix, $field) {
-            return $this->formatOne(
-                $entry,
-                \Safe\sprintf('%s%s%s', $prefix, (string)$field, ParameterEnum::FIELD_SEPARATOR)
-            );
-        });
+        $this->valueGetter = $valueGetter;
     }
 
     /**
@@ -136,13 +65,23 @@ class Formatter
     ) {
         $type = $configuration->getFieldType((string)$field);
         if (null === $type) {
-            return $this->getEntityPropertyValue($item, $field);
+            return $this->valueGetter->getEntityPropertyValue($item, $field);
         }
         if (DoctrineCrudApiMappingTypeInterface::METADATA_TYPE_ENTITY === $type) {
-            return $this->getRelatedEntityValue($item, $field, $prefix);
+            $value = $this->valueGetter->getRelatedEntityValue($item, $field);
+            return null !== $value
+                ? $this->format($value, \Safe\sprintf('%s%s%s', $prefix, $field, ParameterEnum::FIELD_SEPARATOR))
+                : null;
         }
         if (DoctrineCrudApiMappingTypeInterface::METADATA_TYPE_COLLECTION === $type) {
-            return $this->getRelatedCollectionValue($item, $field, $configuration, $prefix);
+            return $this->valueGetter
+                ->getRelatedCollectionValue($item, $field, $configuration)
+                ->map(function (ApiEntityInterface $entry) use ($prefix, $field) {
+                    return $this->format(
+                        $entry,
+                        \Safe\sprintf('%s%s%s', $prefix, (string)$field, ParameterEnum::FIELD_SEPARATOR)
+                    );
+                });
         }
         throw new FormatterException(FormatterException::EXCEPTION_INVALID_METADATA_TYPE, [$type]);
     }
@@ -153,7 +92,7 @@ class Formatter
      *
      * @return RA
      */
-    public function formatOne(ApiEntityInterface $item, string $prefix = ParameterEnum::EMPTY_VALUE): RA
+    public function format(ApiEntityInterface $item, string $prefix = ParameterEnum::EMPTY_VALUE): RA
     {
         $configuration = $this->configurationManager->getConfigurationForEntity($item);
         $result = new RA();
@@ -167,7 +106,7 @@ class Formatter
                 }
                 $metadata = $configuration->getFieldMetadata($field);
                 if (null === $metadata) {
-                    $result->set($field, $this->getEntityPropertyValue($item, new Stringy($field)));
+                    $result->set($field, $this->valueGetter->getEntityPropertyValue($item, new Stringy($field)));
                     return;
                 }
                 $value = $this
@@ -175,18 +114,5 @@ class Formatter
                 $result->set($field, $value);
             });
         return $result;
-    }
-
-    /**
-     * @param RA     $items
-     * @param string $prefix
-     *
-     * @return RA
-     */
-    public function formatMany(RA $items, string $prefix): RA
-    {
-        return $items->map(function (ApiEntityInterface $item) use ($prefix): RA {
-            return $this->formatOne($item, $prefix);
-        });
     }
 }

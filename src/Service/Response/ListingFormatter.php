@@ -19,7 +19,7 @@ class ListingFormatter
     /** @var Printer */
     private $printer;
 
-    /** @var Formatter */
+    /** @var ManyFormatter */
     private $formatter;
 
     /**
@@ -27,12 +27,12 @@ class ListingFormatter
      *
      * @param ParameterResolver $parameterResolver
      * @param Printer           $printer
-     * @param Formatter         $formatter
+     * @param ManyFormatter     $formatter
      */
     public function __construct(
         ParameterResolver $parameterResolver,
         Printer $printer,
-        Formatter $formatter
+        ManyFormatter $formatter
     ) {
         $this->parameterResolver = $parameterResolver;
         $this->printer = $printer;
@@ -134,6 +134,6 @@ class ListingFormatter
         }
         $prefix = (clone $this->parameterResolver->getStringy(ParameterEnum::ENTITY_NAME))->lowercaseFirst();
         return $this->formatter
-            ->formatMany($items, \Safe\sprintf('%s%s', (string)$prefix, ParameterEnum::FIELD_SEPARATOR));
+            ->format($items, \Safe\sprintf('%s%s', (string)$prefix, ParameterEnum::FIELD_SEPARATOR));
     }
 }
