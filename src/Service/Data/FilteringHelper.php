@@ -4,9 +4,7 @@ declare(strict_types=1);
 namespace WernerDweight\DoctrineCrudApiBundle\Service\Data;
 
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
-use Doctrine\ORM\QueryBuilder;
 use WernerDweight\DoctrineCrudApiBundle\Exception\FilteringException;
-use WernerDweight\DoctrineCrudApiBundle\Service\ConditionGenerator\ConditionGeneratorFactory;
 use WernerDweight\DoctrineCrudApiBundle\Service\Request\ParameterEnum;
 use WernerDweight\RA\RA;
 use WernerDweight\Stringy\Stringy;
@@ -40,6 +38,7 @@ class FilteringHelper
 
     /**
      * FilteringHelper constructor.
+     *
      * @param RepositoryManager $repositoryManager
      */
     public function __construct(RepositoryManager $repositoryManager)

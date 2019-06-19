@@ -3,12 +3,8 @@ declare(strict_types=1);
 
 namespace WernerDweight\DoctrineCrudApiBundle\Service\Data;
 
-use Doctrine\ORM\Mapping\ClassMetadataInfo;
 use Doctrine\ORM\QueryBuilder;
-use WernerDweight\DoctrineCrudApiBundle\Exception\FilteringException;
-use WernerDweight\DoctrineCrudApiBundle\Service\ConditionGenerator\ConditionGeneratorFactory;
 use WernerDweight\DoctrineCrudApiBundle\Service\Request\ParameterEnum;
-use WernerDweight\RA\RA;
 use WernerDweight\Stringy\Stringy;
 
 class RelationJoiner
@@ -18,6 +14,7 @@ class RelationJoiner
 
     /**
      * RelationJoiner constructor.
+     *
      * @param FilteringHelper $filteringHelper
      */
     public function __construct(FilteringHelper $filteringHelper)
@@ -29,7 +26,7 @@ class RelationJoiner
      * @param QueryBuilder $queryBuilder
      * @param Stringy      $field
      *
-     * @return QueryBuilderDecorator
+     * @return RelationJoiner
      *
      * @throws \Safe\Exceptions\PcreException
      * @throws \Safe\Exceptions\StringsException

@@ -7,7 +7,6 @@ use WernerDweight\DoctrineCrudApiBundle\Exception\FilteringException;
 use WernerDweight\DoctrineCrudApiBundle\Service\Data\DataManager;
 use WernerDweight\DoctrineCrudApiBundle\Service\Data\FilteringDecorator;
 use WernerDweight\DoctrineCrudApiBundle\Service\Data\MappingResolver;
-use WernerDweight\DoctrineCrudApiBundle\Service\Data\QueryBuilderDecorator;
 use WernerDweight\DoctrineCrudApiBundle\Service\Data\RepositoryManager;
 use WernerDweight\RA\RA;
 use WernerDweight\Stringy\Stringy;

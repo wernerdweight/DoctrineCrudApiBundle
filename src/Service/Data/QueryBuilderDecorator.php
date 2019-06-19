@@ -3,10 +3,8 @@ declare(strict_types=1);
 
 namespace WernerDweight\DoctrineCrudApiBundle\Service\Data;
 
-use Doctrine\ORM\Mapping\ClassMetadataInfo;
 use Doctrine\ORM\QueryBuilder;
 use WernerDweight\DoctrineCrudApiBundle\Exception\FilteringException;
-use WernerDweight\DoctrineCrudApiBundle\Service\ConditionGenerator\ConditionGeneratorFactory;
 use WernerDweight\DoctrineCrudApiBundle\Service\Request\ParameterEnum;
 use WernerDweight\RA\RA;
 use WernerDweight\Stringy\Stringy;
@@ -31,9 +29,10 @@ class QueryBuilderDecorator
 
     /**
      * QueryBuilderDecorator constructor.
+     *
      * @param FilteringDecorator $filteringDecorator
-     * @param FilteringHelper $filteringHelper
-     * @param RelationJoiner $relationJoiner
+     * @param FilteringHelper    $filteringHelper
+     * @param RelationJoiner     $relationJoiner
      */
     public function __construct(
         FilteringDecorator $filteringDecorator,
