@@ -133,7 +133,8 @@ class ListingFormatter
             return $this->formatGrouppedListing($items, $level, $groupBy);
         }
         $prefix = (clone $this->parameterResolver->getStringy(ParameterEnum::ENTITY_NAME))->lowercaseFirst();
+        $responseStructure = $this->parameterResolver->getRAOrNull(ParameterEnum::RESPONSE_STRUCTURE);
         return $this->formatter
-            ->format($items, \Safe\sprintf('%s%s', (string)$prefix, ParameterEnum::FIELD_SEPARATOR));
+            ->format($items, $responseStructure, \Safe\sprintf('%s%s', $prefix, ParameterEnum::FIELD_SEPARATOR));
     }
 }

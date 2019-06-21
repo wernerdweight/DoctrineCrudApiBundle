@@ -22,15 +22,16 @@ class ManyFormatter
     }
 
     /**
-     * @param RA     $items
-     * @param string $prefix
+     * @param RA      $items
+     * @param RA|null $responseStructure
+     * @param string  $prefix
      *
      * @return RA
      */
-    public function format(RA $items, string $prefix): RA
+    public function format(RA $items, ?RA $responseStructure, string $prefix): RA
     {
-        return $items->map(function (ApiEntityInterface $item) use ($prefix): RA {
-            return $this->formatter->format($item, $prefix);
+        return $items->map(function (ApiEntityInterface $item) use ($prefix, $responseStructure): RA {
+            return $this->formatter->format($item, $responseStructure, $prefix);
         });
     }
 }
