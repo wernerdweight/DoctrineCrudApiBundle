@@ -10,6 +10,8 @@ use WernerDweight\Stringy\Stringy;
 class DataManager
 {
     /** @var string */
+    private const NULL_GROUP = 'N/A';
+    /** @var string */
     public const ROOT_ALIAS = 'this';
 
     /** @var RepositoryManager */
@@ -116,5 +118,35 @@ class DataManager
                     : $this->getPortion(0, $limit, $orderBy, $groupConditions)
             );
         });
+    }
+
+    /**
+     * @param RA      $filter
+     * @param RA|null $groupBy
+     *
+     * @return int
+     *
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     * @throws \Safe\Exceptions\PcreException
+     * @throws \Safe\Exceptions\StringsException
+     * @throws \WernerDweight\RA\Exception\RAException
+     */
+    public function getCount(RA $filter, ?RA $groupBy): int
+    {
+        $queryBuilder = $this->repositoryManager->getCurrentRepository()
+            ->createQueryBuilder(self::ROOT_ALIAS)
+            ->select('COUNT(DISTINCT(this))');
+        $this->queryBuilderDecorator->applyFiltering($queryBuilder, $filter);
+
+        if (null !== $groupBy) {
+            /** @var RA $primaryGroup */
+            $primaryGroup = $groupBy->first();
+            $field = $primaryGroup->get(ParameterEnum::GROUP_BY_FIELD);
+            $this->queryBuilderDecorator->applyGroupping($queryBuilder, $field);
+            $queryBuilder->select(\Safe\sprintf('COUNT(DISTINCT(%s))', $field, self::NULL_GROUP));
+            $queryBuilder->resetDQLPart(ParameterEnum::GROUP_BY);
+        }
+
+        return (int)($queryBuilder->getQuery()->getSingleScalarResult());
     }
 }

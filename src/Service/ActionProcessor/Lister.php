@@ -74,8 +74,32 @@ class Lister
         return $this->formatter->formatListing($items);
     }
 
-    public function getItemCount(): RA
+    /**
+     * @return int
+     *
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     * @throws \Safe\Exceptions\PcreException
+     * @throws \Safe\Exceptions\StringsException
+     * @throws \WernerDweight\RA\Exception\RAException
+     */
+    private function fetchCount(): int
     {
-        // TODO:
+        $filter = $this->parameterResolver->getRA(ParameterEnum::FILTER);
+        $groupBy = $this->parameterResolver->getRAOrNull(ParameterEnum::GROUP_BY);
+        return $this->dataManager->getCount($filter, $groupBy);
+    }
+
+    /**
+     * @return int
+     *
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     * @throws \Safe\Exceptions\PcreException
+     * @throws \Safe\Exceptions\StringsException
+     * @throws \WernerDweight\RA\Exception\RAException
+     */
+    public function getItemCount(): int
+    {
+        $this->parameterResolver->resolveList();
+        return $this->fetchCount();
     }
 }
