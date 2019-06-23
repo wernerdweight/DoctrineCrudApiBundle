@@ -147,4 +147,7 @@ class ParameterEnum
     public const OBJECT_VALUE = 'object';
     /** @var string */
     public const UNDEFINED_VALUE = 'undefined';
+
+    /** @var string */
+    public const PRIMARY_KEY = 'id';
 }

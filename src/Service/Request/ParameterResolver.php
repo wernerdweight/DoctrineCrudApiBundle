@@ -332,4 +332,25 @@ class ParameterResolver
         ;
         return $this;
     }
+
+    /**
+     * @return ParameterResolver
+     */
+    public function resolveDetail(): self
+    {
+        $this->resolveCommon();
+        $query = $this->request->query;
+        $attributes = $this->request->attributes;
+        $this->parameters
+            ->set(ParameterEnum::PRIMARY_KEY, $attributes->get(ParameterEnum::PRIMARY_KEY))
+            ->set(
+                ParameterEnum::RESPONSE_STRUCTURE,
+                $this->parameterValidator->validateResponseStructure(
+                    $query->get(ParameterEnum::RESPONSE_STRUCTURE),
+                    (clone $this->getStringy(ParameterEnum::ENTITY_NAME))->lowercaseFirst()
+                )
+            )
+        ;
+        return $this;
+    }
 }

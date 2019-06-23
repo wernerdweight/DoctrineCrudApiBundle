@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace WernerDweight\DoctrineCrudApiBundle\Service\Data;
 
+use WernerDweight\DoctrineCrudApiBundle\Entity\ApiEntityInterface;
+use WernerDweight\DoctrineCrudApiBundle\Exception\DataManagerException;
 use WernerDweight\DoctrineCrudApiBundle\Service\Request\ParameterEnum;
 use WernerDweight\RA\RA;
 use WernerDweight\Stringy\Stringy;
@@ -148,5 +150,22 @@ class DataManager
         }
 
         return (int)($queryBuilder->getQuery()->getSingleScalarResult());
+    }
+
+    /**
+     * @param string $primaryKey
+     *
+     * @return ApiEntityInterface
+     *
+     * @throws \WernerDweight\RA\Exception\RAException
+     */
+    public function getItem(string $primaryKey): ApiEntityInterface
+    {
+        /** @var ApiEntityInterface|null $item */
+        $item = $this->repositoryManager->getCurrentRepository()->find($primaryKey);
+        if (null === $item) {
+            throw new DataManagerException(DataManagerException::UNKNOWN_ENTITY_REQUESTED);
+        }
+        return $item;
     }
 }
