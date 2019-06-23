@@ -59,7 +59,12 @@ class Detailer
     {
         $this->parameterResolver->resolveDetail();
         $item = $this->fetch();
+        $prefix = \Safe\sprintf(
+            '%s%s',
+            (clone $this->parameterResolver->getStringy(ParameterEnum::ENTITY_NAME))->lowercaseFirst(),
+            ParameterEnum::FIELD_SEPARATOR
+        );
         return $this->formatter
-            ->format($item, $this->parameterResolver->getRAOrNull(ParameterEnum::RESPONSE_STRUCTURE));
+            ->format($item, $this->parameterResolver->getRAOrNull(ParameterEnum::RESPONSE_STRUCTURE), $prefix);
     }
 }
