@@ -52,6 +52,26 @@ final class Annotation extends AbstractDriver implements DoctrineCrudApiDriverIn
     }
 
     /**
+     * @param \ReflectionClass $reflectedEntity
+     *
+     * @return bool
+     *
+     * @throws \Safe\Exceptions\StringsException
+     */
+    private function isAccessible(\ReflectionClass $reflectedEntity): bool
+    {
+        $accessibleAnnotation = $this->annotationReader->getClassAnnotation(
+            $reflectedEntity,
+            \Safe\sprintf(
+                '%s\\%s',
+                DoctrineCrudApiMappingTypeInterface::ANNOTATION_NAMESPACE,
+                ucfirst(DoctrineCrudApiMappingTypeInterface::ACCESSIBLE)
+            )
+        );
+        return null !== $accessibleAnnotation;
+    }
+
+    /**
      * @param ClassMetadata $metadata
      * @param RA            $config
      *
@@ -63,6 +83,12 @@ final class Annotation extends AbstractDriver implements DoctrineCrudApiDriverIn
     public function readMetadata(ClassMetadata $metadata, RA $config): RA
     {
         $reflectedEntity = $metadata->getReflectionClass();
+
+        if (true !== $this->isAccessible($reflectedEntity)) {
+            return $config;
+        }
+
+        $config->set(DoctrineCrudApiMappingTypeInterface::ACCESSIBLE, true);
 
         foreach ($reflectedEntity->getProperties() as $reflectedProperty) {
             foreach (DoctrineCrudApiMappingTypeInterface::MAPPING_TYPES as $mappingType) {

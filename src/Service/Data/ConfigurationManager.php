@@ -47,11 +47,18 @@ class ConfigurationManager
      */
     public function getConfigurationForEntityClass(string $class): DoctrineCrudApiMetadata
     {
+        if (true !== $this->configuration->hasKey($class)) {
+            throw new ConfigurationManagerException(
+                ConfigurationManagerException::EXCEPTION_NO_CONFIGURATION_FOR_ENTITY,
+                [$class]
+            );
+        }
+
         /** @var DoctrineCrudApiMetadata|null $configuration */
         $configuration = $this->configuration->get($class);
         if (null === $configuration) {
             throw new ConfigurationManagerException(
-                ConfigurationManagerException::EXCEPTION_NO_CONFIGURATION_FOR_ENTITY,
+                ConfigurationManagerException::EXCEPTION_INVALID_CONFIGURATION_FOR_ENTITY,
                 [$class]
             );
         }
@@ -77,6 +84,7 @@ class ConfigurationManager
     public function createConfigurationObject(): RA
     {
         return (new RA())
+            ->set(DoctrineCrudApiMappingTypeInterface::ACCESSIBLE, false)
             ->set(DoctrineCrudApiMappingTypeInterface::LISTABLE, new RA())
             ->set(DoctrineCrudApiMappingTypeInterface::DEFAULT_LISTABLE, new RA())
             ->set(DoctrineCrudApiMappingTypeInterface::CREATABLE, new RA())

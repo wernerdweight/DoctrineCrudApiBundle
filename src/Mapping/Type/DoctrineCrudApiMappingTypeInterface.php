@@ -11,6 +11,8 @@ interface DoctrineCrudApiMappingTypeInterface
     public const ANNOTATION_NAMESPACE = 'WernerDweight\\DoctrineCrudApiBundle\\Mapping\\Annotation';
 
     /** @var string */
+    public const ACCESSIBLE = 'accessible';
+    /** @var string */
     public const LISTABLE = 'listable';
     /** @var string */
     public const DEFAULT_LISTABLE = 'default-listable';

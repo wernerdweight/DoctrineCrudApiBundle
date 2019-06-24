@@ -7,6 +7,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\Mapping\ClassMetadataFactory;
 use WernerDweight\DoctrineCrudApiBundle\DTO\DoctrineCrudApiMetadata;
+use WernerDweight\DoctrineCrudApiBundle\Mapping\Type\DoctrineCrudApiMappingTypeInterface;
 use WernerDweight\DoctrineCrudApiBundle\Service\Data\ConfigurationManager;
 use WernerDweight\RA\RA;
 
@@ -77,10 +78,12 @@ class MetadataFactory
             $cacheDriver->save($cacheKey, $config->toArray());
         }
 
-        $this->configurationManager->setConfiguration(
-            $metadata->name,
-            new DoctrineCrudApiMetadata($metadata->name, $metadata, $config)
-        );
+        if (true === $config->getBool(DoctrineCrudApiMappingTypeInterface::ACCESSIBLE)) {
+            $this->configurationManager->setConfiguration(
+                $metadata->name,
+                new DoctrineCrudApiMetadata($metadata->name, $metadata, $config)
+            );
+        }
         return $this;
     }
 }
