@@ -7,11 +7,12 @@ use Doctrine\DBAL\Types\Type;
 use WernerDweight\DoctrineCrudApiBundle\Service\Request\ParameterEnum;
 use WernerDweight\RA\RA;
 
-class FloatValueResolver implements PropertyValueResolverInterface
+final class FloatValueResolver implements PropertyValueResolverInterface
 {
     /**
      * @param mixed $value
-     * @param RA $configuration
+     * @param RA    $configuration
+     *
      * @return float|null
      */
     public function getPropertyValue($value, RA $configuration): ?float

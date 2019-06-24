@@ -21,8 +21,9 @@ class ParameterValidator
 
     /**
      * ParameterValidator constructor.
+     *
      * @param RepositoryManager $repositoryManager
-     * @param MappingResolver $mappingResolver
+     * @param MappingResolver   $mappingResolver
      */
     public function __construct(RepositoryManager $repositoryManager, MappingResolver $mappingResolver)
     {
@@ -284,6 +285,7 @@ class ParameterValidator
 
     /**
      * @param array|null $fields
+     *
      * @return RA
      */
     public function validateFields(?array $fields): RA

@@ -16,6 +16,7 @@ class PostRemoveEvent extends Event
 
     /**
      * PostRemoveEvent constructor.
+     *
      * @param ApiEntityInterface $item
      */
     public function __construct(ApiEntityInterface $item)

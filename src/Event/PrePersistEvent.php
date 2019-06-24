@@ -16,6 +16,7 @@ class PrePersistEvent extends Event
 
     /**
      * PrePersistEvent constructor.
+     *
      * @param ApiEntityInterface $item
      */
     public function __construct(ApiEntityInterface $item)

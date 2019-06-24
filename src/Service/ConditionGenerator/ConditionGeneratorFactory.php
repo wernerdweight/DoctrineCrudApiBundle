@@ -16,7 +16,7 @@ class ConditionGeneratorFactory
 
     /**
      * ConditionGeneratorFactory constructor.
-     * 
+     *
      * @param RewindableGenerator $conditionGenerators
      */
     public function __construct(RewindableGenerator $conditionGenerators)

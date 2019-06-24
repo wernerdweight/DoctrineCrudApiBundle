@@ -3,13 +3,9 @@ declare(strict_types=1);
 
 namespace WernerDweight\DoctrineCrudApiBundle\Service\Data;
 
-use Doctrine\DBAL\Types\Type;
-use Doctrine\ORM\Mapping\ClassMetadataInfo;
 use WernerDweight\DoctrineCrudApiBundle\Exception\MappingResolverException;
 use WernerDweight\DoctrineCrudApiBundle\Service\PropertyValueResolver\PropertyValueResolverFactory;
-use WernerDweight\DoctrineCrudApiBundle\Service\Request\ParameterEnum;
 use WernerDweight\RA\RA;
-use WernerDweight\Stringy\Stringy;
 
 class MappingResolver
 {
@@ -18,6 +14,7 @@ class MappingResolver
 
     /**
      * MappingResolver constructor.
+     *
      * @param PropertyValueResolverFactory $propertyValueResolverFactory
      */
     public function __construct(PropertyValueResolverFactory $propertyValueResolverFactory)

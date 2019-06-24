@@ -16,6 +16,7 @@ class PreRemoveEvent extends Event
 
     /**
      * PreRemoveEvent constructor.
+     *
      * @param ApiEntityInterface $item
      */
     public function __construct(ApiEntityInterface $item)

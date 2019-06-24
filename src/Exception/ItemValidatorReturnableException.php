@@ -3,9 +3,6 @@ declare(strict_types=1);
 
 namespace WernerDweight\DoctrineCrudApiBundle\Exception;
 
-use WernerDweight\EnhancedException\Exception\AbstractEnhancedException;
-use WernerDweight\RA\RA;
-
 class ItemValidatorReturnableException extends AbstractReturnableException
 {
     /** @var int */

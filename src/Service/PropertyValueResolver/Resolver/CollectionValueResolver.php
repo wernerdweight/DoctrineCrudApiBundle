@@ -4,20 +4,20 @@ declare(strict_types=1);
 namespace WernerDweight\DoctrineCrudApiBundle\Service\PropertyValueResolver\Resolver;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
 use WernerDweight\DoctrineCrudApiBundle\Entity\ApiEntityInterface;
 use WernerDweight\DoctrineCrudApiBundle\Exception\MappingResolverException;
 use WernerDweight\DoctrineCrudApiBundle\Service\Data\QueryBuilderDecorator;
 use WernerDweight\RA\RA;
 
-class CollectionValueResolver implements PropertyValueResolverInterface
+final class CollectionValueResolver implements PropertyValueResolverInterface
 {
     /** @var EntityValueResolver */
     private $entityValueResolver;
 
     /**
      * CollectionValueResolver constructor.
+     *
      * @param EntityValueResolver $entityValueResolver
      */
     public function __construct(EntityValueResolver $entityValueResolver)
@@ -28,6 +28,7 @@ class CollectionValueResolver implements PropertyValueResolverInterface
     /**
      * @param RA $value
      * @param RA $configuration
+     *
      * @return ArrayCollection|null
      */
     public function getPropertyValue($value, RA $configuration): ?ArrayCollection

@@ -339,7 +339,7 @@ class ParameterResolver
     public function resolveDetail(): self
     {
         $this->resolveCommon();
-        
+
         $query = $this->request->query;
         $attributes = $this->request->attributes;
         $this->parameters

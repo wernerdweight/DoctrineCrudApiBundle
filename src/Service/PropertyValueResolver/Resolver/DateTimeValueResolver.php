@@ -8,11 +8,12 @@ use WernerDweight\DoctrineCrudApiBundle\Service\Request\ParameterEnum;
 use WernerDweight\RA\RA;
 use WernerDweight\Stringy\Stringy;
 
-class DateTimeValueResolver implements PropertyValueResolverInterface
+final class DateTimeValueResolver implements PropertyValueResolverInterface
 {
     /**
      * @param mixed $value
-     * @param RA $configuration
+     * @param RA    $configuration
+     *
      * @return \DateTime|null
      */
     public function getPropertyValue($value, RA $configuration): ?\DateTime

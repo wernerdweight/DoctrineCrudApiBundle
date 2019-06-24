@@ -4,9 +4,7 @@ declare(strict_types=1);
 namespace WernerDweight\DoctrineCrudApiBundle\Service\PropertyValueResolver;
 
 use Symfony\Component\DependencyInjection\Argument\RewindableGenerator;
-use WernerDweight\DoctrineCrudApiBundle\Exception\PropertyValueResolverFactoryException;
 use WernerDweight\DoctrineCrudApiBundle\Service\PropertyValueResolver\Resolver\PropertyValueResolverInterface;
-use WernerDweight\DoctrineCrudApiBundle\Service\Request\ParameterEnum;
 use WernerDweight\RA\RA;
 
 class PropertyValueResolverFactory

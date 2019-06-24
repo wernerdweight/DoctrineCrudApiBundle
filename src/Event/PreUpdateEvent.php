@@ -16,6 +16,7 @@ class PreUpdateEvent extends Event
 
     /**
      * PreUpdateEvent constructor.
+     *
      * @param ApiEntityInterface $item
      */
     public function __construct(ApiEntityInterface $item)

@@ -11,19 +11,20 @@ class PreSetPropertyEvent extends Event
     /** @var string */
     public const NAME = 'wds.doctrine_crud_api_bundle.item.pre_set_property';
 
-    /** @var ApiEntityInterface */
-    private $item;
+    /** @var mixed */
+    private $value;
 
     /** @var string */
     private $propertyName;
 
-    /** @var mixed */
-    private $value;
+    /** @var ApiEntityInterface */
+    private $item;
 
     /**
      * PreSetPropertyEvent constructor.
+     *
      * @param ApiEntityInterface $item
-     * @param string $propertyName
+     * @param string             $propertyName
      * @param $value
      */
     public function __construct(ApiEntityInterface $item, string $propertyName, $value)

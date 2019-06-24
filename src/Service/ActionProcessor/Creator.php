@@ -30,7 +30,7 @@ class Creator
 
     /** @var Formatter */
     private $formatter;
-    
+
     /** @var EventDispatcherInterface */
     private $eventDispatcher;
 
@@ -48,14 +48,15 @@ class Creator
 
     /**
      * Creator constructor.
-     * @param ParameterResolver $parameterResolver
-     * @param DataManager $dataManager
-     * @param Formatter $formatter
+     *
+     * @param ParameterResolver        $parameterResolver
+     * @param DataManager              $dataManager
+     * @param Formatter                $formatter
      * @param EventDispatcherInterface $eventDispatcher
-     * @param EntityManagerInterface $entityManager
-     * @param ItemValidator $itemValidator
-     * @param CurrentEntityResolver $currentEntityResolver
-     * @param ConfigurationManager $configurationManager
+     * @param EntityManagerInterface   $entityManager
+     * @param ItemValidator            $itemValidator
+     * @param CurrentEntityResolver    $currentEntityResolver
+     * @param ConfigurationManager     $configurationManager
      */
     public function __construct(
         ParameterResolver $parameterResolver,
@@ -79,8 +80,9 @@ class Creator
 
     /**
      * @param ApiEntityInterface $item
-     * @param string $field
+     * @param string             $field
      * @param $value
+     *
      * @return mixed
      */
     private function getPreSetValue(ApiEntityInterface $item, string $field, $value)
@@ -98,7 +100,6 @@ class Creator
         }
 
         $fieldMetadata = $metadata->getFieldMetadata($field);
-        
     }
 
     private function create(): ApiEntityInterface
@@ -109,7 +110,10 @@ class Creator
         // TODO: iterate over creatable fields and look for data in request (parameter resolver)
         $fieldValues = $this->parameterResolver->getRA(ParameterEnum::FIELDS);
         $configuration = $this->configurationManager->getConfigurationForEntityClass($itemClassName);
-        $configuration->getCreatableFields()->walk(function ($value, string $field) use ($fieldValues, $configuration): void {
+        $configuration->getCreatableFields()->walk(function ($value, string $field) use (
+            $fieldValues,
+            $configuration
+        ): void {
             dump($field, $value);
             if (true !== $fieldValues->hasKey($field)) {
                 return;

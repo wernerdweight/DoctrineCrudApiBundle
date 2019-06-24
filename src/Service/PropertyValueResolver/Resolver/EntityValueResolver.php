@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace WernerDweight\DoctrineCrudApiBundle\Service\PropertyValueResolver\Resolver;
 
-use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
 use WernerDweight\DoctrineCrudApiBundle\Entity\ApiEntityInterface;
@@ -12,13 +11,14 @@ use WernerDweight\DoctrineCrudApiBundle\Service\Data\FilteringHelper;
 use WernerDweight\DoctrineCrudApiBundle\Service\Data\QueryBuilderDecorator;
 use WernerDweight\RA\RA;
 
-class EntityValueResolver implements PropertyValueResolverInterface
+final class EntityValueResolver implements PropertyValueResolverInterface
 {
     /** @var EntityManagerInterface */
     private $entityManager;
 
     /**
      * EntityValueResolver constructor.
+     *
      * @param EntityManagerInterface $entityManager
      */
     public function __construct(EntityManagerInterface $entityManager)
@@ -27,8 +27,9 @@ class EntityValueResolver implements PropertyValueResolverInterface
     }
 
     /**
-     * @param RA $itemData
+     * @param RA     $itemData
      * @param string $className
+     *
      * @return ApiEntityInterface
      */
     public function resolve(RA $itemData, string $className): ApiEntityInterface
@@ -47,7 +48,8 @@ class EntityValueResolver implements PropertyValueResolverInterface
 
     /**
      * @param RA|string|int $value
-     * @param RA $configuration
+     * @param RA            $configuration
+     *
      * @return ApiEntityInterface|null
      */
     public function getPropertyValue($value, RA $configuration): ?ApiEntityInterface

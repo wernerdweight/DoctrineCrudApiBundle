@@ -9,7 +9,8 @@ interface PropertyValueResolverInterface
 {
     /**
      * @param mixed $value
-     * @param RA $configuration
+     * @param RA    $configuration
+     *
      * @return mixed
      */
     public function getPropertyValue($value, RA $configuration);

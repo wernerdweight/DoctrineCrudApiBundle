@@ -7,11 +7,12 @@ use Doctrine\DBAL\Types\Type;
 use WernerDweight\DoctrineCrudApiBundle\Service\Request\ParameterEnum;
 use WernerDweight\RA\RA;
 
-class StringValueResolver implements PropertyValueResolverInterface
+final class StringValueResolver implements PropertyValueResolverInterface
 {
     /**
      * @param mixed $value
-     * @param RA $configuration
+     * @param RA    $configuration
+     *
      * @return string|null
      */
     public function getPropertyValue($value, RA $configuration): ?string
