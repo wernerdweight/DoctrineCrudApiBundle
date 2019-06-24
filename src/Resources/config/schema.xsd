@@ -9,10 +9,13 @@
         <xs:documentation>This is the XML Schema for the DoctrineCrudApiBundle by Werner Dweight Solutions</xs:documentation>
     </xs:annotation>
 
+    <xs:element name="accessible" type="wds:accessible"/>
     <xs:element name="listable" type="wds:listable"/>
     <xs:element name="creatable" type="wds:creatable"/>
     <xs:element name="updatable" type="wds:updatable"/>
     <xs:element name="metadata" type="wds:metadata"/>
+
+    <xs:complexType name="accessible"/>
 
     <xs:complexType name="listable">
         <xs:attribute name="default" type="xs:boolean" use="optional" default="false"/>

@@ -108,6 +108,16 @@ final class Xml extends AbstractDriver implements DoctrineCrudApiDriverInterface
     }
 
     /**
+     * @param \SimpleXMLElement $mapping
+     *
+     * @return bool
+     */
+    private function isAccessible(object $mapping): bool
+    {
+        return isset($mapping->children(self::WDS_NAMESPACE_URI)[DoctrineCrudApiMappingTypeInterface::ACCESSIBLE]);
+    }
+
+    /**
      * @param ClassMetadata $metadata
      * @param RA            $config
      *
@@ -119,9 +129,18 @@ final class Xml extends AbstractDriver implements DoctrineCrudApiDriverInterface
      */
     public function readMetadata(ClassMetadata $metadata, RA $config): RA
     {
+        /** @var \SimpleXMLElement $mapping */
         $mapping = $this->getXmlMapping($metadata->name);
+
+        if (true !== $this->isAccessible($mapping)) {
+            return $config;
+        }
+
+        $config->set(DoctrineCrudApiMappingTypeInterface::ACCESSIBLE, true);
+
         foreach (DoctrineCrudApiDriverInterface::INSPECTABLE_PROPERTIES as $property) {
             if (true === isset($mapping->$property)) {
+                /** @var \SimpleXMLElement $propertyMapping */
                 foreach ($mapping->$property as $propertyMapping) {
                     $filteredMapping = $propertyMapping->children(self::WDS_NAMESPACE_URI);
                     foreach (DoctrineCrudApiMappingTypeInterface::MAPPING_TYPES as $mappingType) {
