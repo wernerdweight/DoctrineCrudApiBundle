@@ -6,7 +6,7 @@ services:
 
     WernerDweight\DoctrineCrudApiBundle\:
         resource: '../../*'
-        exclude: '../../{DependencyInjection,Exception}'
+        exclude: '../../{DependencyInjection,Event,Exception}'
 
     WernerDweight\DoctrineCrudApiBundle\Controller\:
         resource: '../../Controller'
@@ -58,3 +58,13 @@ services:
         exclude: '../../Service/ConditionGenerator/Generator/Abstract*'
         tags:
             - { name: 'crud_api.condition_generator' }
+
+    WernerDweight\DoctrineCrudApiBundle\Service\PropertyValueResolver\PropertyValueResolverFactory:
+        arguments:
+            $propertyValueResolvers: !tagged crud_api.property_value_resolver
+
+    WernerDweight\DoctrineCrudApiBundle\Service\PropertyValueResolver\Resolver\:
+        resource: '../../Service/PropertyValueResolver/Resolver/*'
+        exclude: '../../Service/PropertyValueResolver/Resolver/Abstract*'
+        tags:
+            - { name: 'crud_api.property_value_resolver' }

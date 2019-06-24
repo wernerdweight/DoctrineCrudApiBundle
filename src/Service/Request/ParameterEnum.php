@@ -150,4 +150,7 @@ class ParameterEnum
 
     /** @var string */
     public const PRIMARY_KEY = 'id';
+
+    /** @var string */
+    public const FIELDS = 'fields';
 }

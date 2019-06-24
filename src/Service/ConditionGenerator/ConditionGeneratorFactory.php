@@ -15,8 +15,8 @@ class ConditionGeneratorFactory
     private $conditionGenerators;
 
     /**
-     * ApiFactory constructor.
-     *
+     * ConditionGeneratorFactory constructor.
+     * 
      * @param RewindableGenerator $conditionGenerators
      */
     public function __construct(RewindableGenerator $conditionGenerators)

@@ -339,6 +339,7 @@ class ParameterResolver
     public function resolveDetail(): self
     {
         $this->resolveCommon();
+        
         $query = $this->request->query;
         $attributes = $this->request->attributes;
         $this->parameters
@@ -352,5 +353,31 @@ class ParameterResolver
             )
         ;
         return $this;
+    }
+
+    /**
+     * @return ParameterResolver
+     */
+    public function resolveCreate(): self
+    {
+        $this->resolveCommon();
+
+        $query = $this->request->query;
+        $request = $this->request->request;
+        $this->parameters
+            ->set(
+                ParameterEnum::FIELDS,
+                $this->parameterValidator->validateFields(
+                    $request->get(ParameterEnum::FIELDS)
+                )
+            )
+            ->set(
+                ParameterEnum::RESPONSE_STRUCTURE,
+                $this->parameterValidator->validateResponseStructure(
+                    $query->get(ParameterEnum::RESPONSE_STRUCTURE),
+                    (clone $this->getStringy(ParameterEnum::ENTITY_NAME))->lowercaseFirst()
+                )
+            )
+        ;
     }
 }
