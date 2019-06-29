@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace WernerDweight\DoctrineCrudApiBundle\Service\PropertyValueResolver;
 
 use Symfony\Component\DependencyInjection\Argument\RewindableGenerator;
+use WernerDweight\DoctrineCrudApiBundle\Exception\PropertyValueResolverFactoryException;
 use WernerDweight\DoctrineCrudApiBundle\Service\PropertyValueResolver\Resolver\PropertyValueResolverInterface;
 use WernerDweight\RA\RA;
 
@@ -42,8 +43,8 @@ class PropertyValueResolverFactory
     public function get(string $type): PropertyValueResolverInterface
     {
         if (true !== $this->propertyValueResolvers->hasKey($type)) {
-            throw new PropertySetterFactoryException(
-                PropertySetterFactoryException::EXCEPTION_INVALID_PROPERTY_TYPE,
+            throw new PropertyValueResolverFactoryException(
+                PropertyValueResolverFactoryException::INVALID_PROPERTY_TYPE,
                 [$type]
             );
         }

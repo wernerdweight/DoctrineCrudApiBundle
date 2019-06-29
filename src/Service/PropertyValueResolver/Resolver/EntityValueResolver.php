@@ -7,8 +7,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
 use WernerDweight\DoctrineCrudApiBundle\Entity\ApiEntityInterface;
 use WernerDweight\DoctrineCrudApiBundle\Exception\MappingResolverException;
+use WernerDweight\DoctrineCrudApiBundle\Mapping\Type\DoctrineCrudApiMappingTypeInterface;
 use WernerDweight\DoctrineCrudApiBundle\Service\Data\FilteringHelper;
-use WernerDweight\DoctrineCrudApiBundle\Service\Data\QueryBuilderDecorator;
 use WernerDweight\RA\RA;
 
 final class EntityValueResolver implements PropertyValueResolverInterface
@@ -54,13 +54,13 @@ final class EntityValueResolver implements PropertyValueResolverInterface
      */
     public function getPropertyValue($value, RA $configuration): ?ApiEntityInterface
     {
-        if (true !== $configuration->hasKey(QueryBuilderDecorator::DOCTRINE_TARGET_ENTITY)) {
+        if (true !== $configuration->hasKey(DoctrineCrudApiMappingTypeInterface::METADATA_CLASS)) {
             throw new MappingResolverException(
                 MappingResolverException::EXCEPTION_MISSING_TARGET_ENTITY,
                 [implode(', ', $this->getPropertyTypes())]
             );
         }
-        $className = $configuration->getString(QueryBuilderDecorator::DOCTRINE_TARGET_ENTITY);
+        $className = $configuration->getString(DoctrineCrudApiMappingTypeInterface::METADATA_CLASS);
 
         if ($value instanceof RA) {
             return $this->resolve($value, $className);
@@ -74,6 +74,7 @@ final class EntityValueResolver implements PropertyValueResolverInterface
     public function getPropertyTypes(): array
     {
         return [
+            DoctrineCrudApiMappingTypeInterface::METADATA_TYPE_ENTITY,
             ClassMetadataInfo::TO_ONE,
             ClassMetadataInfo::ONE_TO_ONE,
             ClassMetadataInfo::MANY_TO_ONE,

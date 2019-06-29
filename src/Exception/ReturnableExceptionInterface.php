@@ -13,4 +13,9 @@ interface ReturnableExceptionInterface
      * @return RA
      */
     public function getResponseData(): RA;
+
+    /**
+     * @return int
+     */
+    public function getStatusCode(): int;
 }

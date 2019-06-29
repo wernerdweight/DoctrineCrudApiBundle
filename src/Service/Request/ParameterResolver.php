@@ -379,5 +379,6 @@ class ParameterResolver
                 )
             )
         ;
+        return $this;
     }
 }

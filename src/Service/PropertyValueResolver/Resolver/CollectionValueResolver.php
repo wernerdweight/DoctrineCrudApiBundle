@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
 use WernerDweight\DoctrineCrudApiBundle\Entity\ApiEntityInterface;
 use WernerDweight\DoctrineCrudApiBundle\Exception\MappingResolverException;
+use WernerDweight\DoctrineCrudApiBundle\Mapping\Type\DoctrineCrudApiMappingTypeInterface;
 use WernerDweight\DoctrineCrudApiBundle\Service\Data\QueryBuilderDecorator;
 use WernerDweight\RA\RA;
 
@@ -56,6 +57,7 @@ final class CollectionValueResolver implements PropertyValueResolverInterface
     public function getPropertyTypes(): array
     {
         return [
+            DoctrineCrudApiMappingTypeInterface::METADATA_TYPE_COLLECTION,
             ClassMetadataInfo::TO_MANY,
             ClassMetadataInfo::ONE_TO_MANY,
             ClassMetadataInfo::MANY_TO_MANY,

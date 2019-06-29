@@ -11,9 +11,11 @@ use WernerDweight\DoctrineCrudApiBundle\Event\PostCreateEvent;
 use WernerDweight\DoctrineCrudApiBundle\Event\PrePersistEvent;
 use WernerDweight\DoctrineCrudApiBundle\Event\PreSetPropertyEvent;
 use WernerDweight\DoctrineCrudApiBundle\Event\PreValidateEvent;
+use WernerDweight\DoctrineCrudApiBundle\Mapping\Type\DoctrineCrudApiMappingTypeInterface;
 use WernerDweight\DoctrineCrudApiBundle\Service\Data\ConfigurationManager;
 use WernerDweight\DoctrineCrudApiBundle\Service\Data\DataManager;
 use WernerDweight\DoctrineCrudApiBundle\Service\Data\ItemValidator;
+use WernerDweight\DoctrineCrudApiBundle\Service\Data\MappingResolver;
 use WernerDweight\DoctrineCrudApiBundle\Service\Request\CurrentEntityResolver;
 use WernerDweight\DoctrineCrudApiBundle\Service\Request\ParameterEnum;
 use WernerDweight\DoctrineCrudApiBundle\Service\Request\ParameterResolver;
@@ -46,6 +48,9 @@ class Creator
     /** @var ConfigurationManager */
     private $configurationManager;
 
+    /** @var MappingResolver */
+    private $mappingResolver;
+
     /**
      * Creator constructor.
      *
@@ -57,6 +62,7 @@ class Creator
      * @param ItemValidator            $itemValidator
      * @param CurrentEntityResolver    $currentEntityResolver
      * @param ConfigurationManager     $configurationManager
+     * @param MappingResolver          $mappingResolver
      */
     public function __construct(
         ParameterResolver $parameterResolver,
@@ -66,7 +72,8 @@ class Creator
         EntityManagerInterface $entityManager,
         ItemValidator $itemValidator,
         CurrentEntityResolver $currentEntityResolver,
-        ConfigurationManager $configurationManager
+        ConfigurationManager $configurationManager,
+        MappingResolver $mappingResolver
     ) {
         $this->parameterResolver = $parameterResolver;
         $this->dataManager = $dataManager;
@@ -76,6 +83,7 @@ class Creator
         $this->itemValidator = $itemValidator;
         $this->currentEntityResolver = $currentEntityResolver;
         $this->configurationManager = $configurationManager;
+        $this->mappingResolver = $mappingResolver;
     }
 
     /**
@@ -92,42 +100,65 @@ class Creator
         return $event->getValue();
     }
 
+    /**
+     * @param string                  $field
+     * @param mixed                   $value
+     * @param DoctrineCrudApiMetadata $metadata
+     *
+     * @return mixed
+     *
+     * @throws \WernerDweight\RA\Exception\RAException
+     */
     private function resolveValue(string $field, $value, DoctrineCrudApiMetadata $metadata)
     {
         $type = $metadata->getFieldType($field);
-        if (null === $fieldMetadata || null === $type) {
-            return $value;
-        }
-
         $fieldMetadata = $metadata->getFieldMetadata($field);
+        if (null === $type) {
+            $type = $metadata->getInternalFieldType($field);
+            $fieldMetadata = (new RA())->set(DoctrineCrudApiMappingTypeInterface::METADATA_TYPE, $type);
+            if (null === $type) {
+                return $value;
+            }
+        }
+        return $this->mappingResolver->resolveValue($fieldMetadata, $value);
     }
 
+    /**
+     * @return ApiEntityInterface
+     *
+     * @throws \Safe\Exceptions\StringsException
+     * @throws \WernerDweight\RA\Exception\RAException
+     */
     private function create(): ApiEntityInterface
     {
-        $itemClassName = $this->currentEntityResolver->getCurrentEntityFQCN();
+        $itemClassName = (string)$this->currentEntityResolver->getCurrentEntityFQCN();
         $item = new $itemClassName();
 
-        // TODO: iterate over creatable fields and look for data in request (parameter resolver)
         $fieldValues = $this->parameterResolver->getRA(ParameterEnum::FIELDS);
         $configuration = $this->configurationManager->getConfigurationForEntityClass($itemClassName);
-        $configuration->getCreatableFields()->walk(function ($value, string $field) use (
+        $configuration->getCreatableFields()->walk(function (string $field) use (
+            $item,
             $fieldValues,
             $configuration
         ): void {
-            dump($field, $value);
             if (true !== $fieldValues->hasKey($field)) {
                 return;
             }
-            $value = $this->getPreSetValue($item, $field, $value);
-            $this->{\Safe\sprintf('set%s', ucfirst($field))}(
+            $value = $this->getPreSetValue($item, $field, $fieldValues->get($field));
+            $item->{\Safe\sprintf('set%s', ucfirst($field))}(
                 $this->resolveValue($field, $value, $configuration)
             );
         });
-        exit;
 
         return $item;
     }
 
+    /**
+     * @return RA
+     *
+     * @throws \Safe\Exceptions\StringsException
+     * @throws \WernerDweight\RA\Exception\RAException
+     */
     public function createItem(): RA
     {
         $this->parameterResolver->resolveCreate();

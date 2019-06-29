@@ -186,4 +186,18 @@ class DoctrineCrudApiMetadata
         }
         return null;
     }
+
+    /**
+     * @param string $field
+     *
+     * @return string|null
+     */
+    public function getInternalFieldType(string $field): ?string
+    {
+        $dotrineMetadata = $this->getDoctrineMetadata()->fieldMappings;
+        if (true !== array_key_exists($field, $dotrineMetadata)) {
+            return null;
+        }
+        return $dotrineMetadata[$field][DoctrineCrudApiMappingTypeInterface::METADATA_TYPE];
+    }
 }
