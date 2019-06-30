@@ -116,6 +116,7 @@ class ModifyHelper
             $nestedEntity = $this->mappingResolver->resolveValue($fieldMetadata, $value);
             return $this->updateExistingEntity($nestedEntity, $value, $metadata, $field);
         }
+        // TODO: existing items in collections are not fetched correctly (id instead of entity)
         if (DoctrineCrudApiMappingTypeInterface::METADATA_TYPE_COLLECTION === $type && $value instanceof RA) {
             return new ArrayCollection($value->map(function ($collectionValue) use (
                 $field,

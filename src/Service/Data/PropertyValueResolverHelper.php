@@ -83,7 +83,8 @@ class PropertyValueResolverHelper
         return self::UPDATE_ROUTE_NAME === $this->request->attributes->get(self::ROUTE_KEY) &&
             DoctrineCrudApiMappingTypeInterface::METADATA_TYPE_ENTITY === $type &&
             $value instanceof RA &&
-            true === $value->hasKey(FilteringHelper::IDENTIFIER_FIELD_NAME);
+            true === $value->hasKey(FilteringHelper::IDENTIFIER_FIELD_NAME) &&
+            $value->length() !== 1;     // more data than ID present
     }
 
     /**
@@ -95,7 +96,8 @@ class PropertyValueResolverHelper
     {
         return self::UPDATE_ROUTE_NAME === $this->request->attributes->get(self::ROUTE_KEY) &&
             $collectionValue instanceof RA &&
-            true === $collectionValue->hasKey(FilteringHelper::IDENTIFIER_FIELD_NAME);
+            true === $collectionValue->hasKey(FilteringHelper::IDENTIFIER_FIELD_NAME) &&
+            $collectionValue->length() !== 1;     // more data than ID present
     }
 
     /**
@@ -130,7 +132,7 @@ class PropertyValueResolverHelper
             $currentValue = $item->{\Safe\sprintf('get%s', ucfirst($field))}();
             foreach ($currentValue as $collectionValue) {
                 if (true !== $resolvedValue->contains($collectionValue)) {
-                    $item->{\Safe\sprintf('remove%s', $singularPropertyName)}();
+                    $item->{\Safe\sprintf('remove%s', $singularPropertyName)}($collectionValue);
                 }
             }
             foreach ($resolvedValue as $collectionValue) {
