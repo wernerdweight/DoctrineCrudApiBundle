@@ -13,6 +13,7 @@ use WernerDweight\DoctrineCrudApiBundle\Entity\ApiEntityInterface;
 use WernerDweight\DoctrineCrudApiBundle\Event\PreSetPropertyEvent;
 use WernerDweight\DoctrineCrudApiBundle\Exception\CreatorReturnableException;
 use WernerDweight\DoctrineCrudApiBundle\Exception\InvalidRequestException;
+use WernerDweight\DoctrineCrudApiBundle\Exception\UpdaterReturnableException;
 use WernerDweight\DoctrineCrudApiBundle\Mapping\Type\DoctrineCrudApiMappingTypeInterface;
 use WernerDweight\DoctrineCrudApiBundle\Service\Event\DoctrineCrudApiEventDispatcher;
 use WernerDweight\RA\RA;
@@ -141,6 +142,35 @@ class PropertyValueResolverHelper
         }
 
         $item->{\Safe\sprintf('set%s', ucfirst($field))}($resolvedValue);
+        return $item;
+    }
+
+    /**
+     * @param ApiEntityInterface      $item
+     * @param DoctrineCrudApiMetadata $metadata
+     * @param string                  $field
+     * @param mixed                   $value
+     *
+     * @return ApiEntityInterface
+     *
+     * @throws \WernerDweight\RA\Exception\RAException
+     */
+    public function getNestedUpdatable(
+        ApiEntityInterface $item,
+        DoctrineCrudApiMetadata $metadata,
+        string $field,
+        $value
+    ): ApiEntityInterface {
+        if (true !== $metadata->getUpdatableNested()->contains($field)) {
+            throw new UpdaterReturnableException(
+                UpdaterReturnableException::INVALID_NESTING,
+                [
+                    'root' => $metadata->getShortName(),
+                    'nested' => $field,
+                    'value' => $value instanceof RA ? $value->toArray(RA::RECURSIVE) : $value,
+                ]
+            );
+        }
         return $item;
     }
 

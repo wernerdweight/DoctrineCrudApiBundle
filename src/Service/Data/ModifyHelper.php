@@ -74,6 +74,26 @@ class ModifyHelper
     }
 
     /**
+     * @param ApiEntityInterface      $item
+     * @param mixed                   $value
+     * @param DoctrineCrudApiMetadata $metadata
+     * @param string                  $field
+     *
+     * @return ApiEntityInterface
+     *
+     * @throws \WernerDweight\RA\Exception\RAException
+     */
+    private function updateExistingEntity(
+        ApiEntityInterface $item,
+        $value,
+        DoctrineCrudApiMetadata $metadata,
+        string $field
+    ): ApiEntityInterface {
+        $nestedEntity = $this->propertyValueResolverHelper->getNestedUpdatable($item, $metadata, $field, $value);
+        return $this->update($nestedEntity, $value);
+    }
+
+    /**
      * @param string                  $field
      * @param mixed                   $value
      * @param DoctrineCrudApiMetadata $metadata
@@ -94,7 +114,7 @@ class ModifyHelper
         if (true === $this->propertyValueResolverHelper->isUpdatableEntity($value, $type)) {
             /** @var ApiEntityInterface $nestedEntity */
             $nestedEntity = $this->mappingResolver->resolveValue($fieldMetadata, $value);
-            return $this->update($nestedEntity, $value);
+            return $this->updateExistingEntity($nestedEntity, $value, $metadata, $field);
         }
         if (DoctrineCrudApiMappingTypeInterface::METADATA_TYPE_COLLECTION === $type && $value instanceof RA) {
             return new ArrayCollection($value->map(function ($collectionValue) use (
@@ -108,7 +128,7 @@ class ModifyHelper
                 if ($this->propertyValueResolverHelper->isUpdatableCollectionItem($collectionValue)) {
                     /** @var ApiEntityInterface $nestedEntity */
                     $nestedEntity = $this->mappingResolver->resolveValue($fieldMetadata, $collectionValue);
-                    return $this->update($nestedEntity, $collectionValue);
+                    return $this->updateExistingEntity($nestedEntity, $collectionValue, $metadata, $field);
                 }
                 return $this->mappingResolver->resolveValue($fieldMetadata, $collectionValue);
             })->toArray());
