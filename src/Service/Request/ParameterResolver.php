@@ -295,6 +295,7 @@ class ParameterResolver
 
     /**
      * @return string
+     *
      * @throws \Safe\Exceptions\StringsException
      */
     public function getEntityPrefix(): string

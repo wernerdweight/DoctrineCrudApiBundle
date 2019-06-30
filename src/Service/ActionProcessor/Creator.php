@@ -112,11 +112,12 @@ class Creator
     /**
      * @param $value
      * @param string|null $type
+     *
      * @return bool
      */
     private function isNewEntity($value, ?string $type): bool
     {
-        return $type === DoctrineCrudApiMappingTypeInterface::METADATA_TYPE_ENTITY &&
+        return DoctrineCrudApiMappingTypeInterface::METADATA_TYPE_ENTITY === $type &&
             $value instanceof RA &&
             true !== $value->hasKey(FilteringHelper::IDENTIFIER_FIELD_NAME);
     }
@@ -125,13 +126,19 @@ class Creator
      * @param string $field
      * @param $value
      * @param DoctrineCrudApiMetadata $metadata
-     * @param RA|null $fieldMetadata
+     * @param RA|null                 $fieldMetadata
+     *
      * @return ApiEntityInterface
+     *
      * @throws \Safe\Exceptions\StringsException
      * @throws \WernerDweight\RA\Exception\RAException
      */
-    private function createNewEntity(string $field, $value, DoctrineCrudApiMetadata $metadata, ?RA $fieldMetadata): ApiEntityInterface
-    {
+    private function createNewEntity(
+        string $field,
+        $value,
+        DoctrineCrudApiMetadata $metadata,
+        ?RA $fieldMetadata
+    ): ApiEntityInterface {
         if (true !== $metadata->getCreatableNested()->contains($field)) {
             throw new CreatorReturnableException(
                 CreatorReturnableException::INVALID_NESTING,
@@ -171,9 +178,15 @@ class Creator
         if (true === $this->isNewEntity($value, $type)) {
             return $this->createNewEntity($field, $value, $metadata, $fieldMetadata);
         }
-        if ($type === DoctrineCrudApiMappingTypeInterface::METADATA_TYPE_COLLECTION && $value instanceof RA) {
-            return new ArrayCollection($value->map(function ($collectionValue) use ($field, $metadata, $fieldMetadata): ApiEntityInterface {
-                if ($collectionValue instanceof RA && true !== $collectionValue->hasKey(FilteringHelper::IDENTIFIER_FIELD_NAME)) {
+        if (DoctrineCrudApiMappingTypeInterface::METADATA_TYPE_COLLECTION === $type && $value instanceof RA) {
+            return new ArrayCollection($value->map(function ($collectionValue) use (
+                $field,
+                $metadata,
+                $fieldMetadata
+            ): ApiEntityInterface {
+                if ($collectionValue instanceof RA && true !== $collectionValue->hasKey(
+                    FilteringHelper::IDENTIFIER_FIELD_NAME
+                )) {
                     return $this->createNewEntity($field, $collectionValue, $metadata, $fieldMetadata);
                 }
                 return $this->mappingResolver->resolveValue($fieldMetadata, $collectionValue);

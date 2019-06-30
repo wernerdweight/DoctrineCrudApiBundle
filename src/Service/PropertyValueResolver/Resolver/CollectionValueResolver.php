@@ -8,7 +8,6 @@ use Doctrine\ORM\Mapping\ClassMetadataInfo;
 use WernerDweight\DoctrineCrudApiBundle\Entity\ApiEntityInterface;
 use WernerDweight\DoctrineCrudApiBundle\Exception\MappingResolverException;
 use WernerDweight\DoctrineCrudApiBundle\Mapping\Type\DoctrineCrudApiMappingTypeInterface;
-use WernerDweight\DoctrineCrudApiBundle\Service\Data\QueryBuilderDecorator;
 use WernerDweight\RA\RA;
 
 final class CollectionValueResolver implements PropertyValueResolverInterface
