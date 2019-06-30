@@ -4,37 +4,56 @@ declare(strict_types=1);
 namespace WernerDweight\DoctrineCrudApiBundle\Service\Data;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Inflector\Inflector;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use WernerDweight\DoctrineCrudApiBundle\DTO\DoctrineCrudApiMetadata;
 use WernerDweight\DoctrineCrudApiBundle\Entity\ApiEntityInterface;
 use WernerDweight\DoctrineCrudApiBundle\Event\PreSetPropertyEvent;
 use WernerDweight\DoctrineCrudApiBundle\Exception\CreatorReturnableException;
+use WernerDweight\DoctrineCrudApiBundle\Exception\InvalidRequestException;
 use WernerDweight\DoctrineCrudApiBundle\Mapping\Type\DoctrineCrudApiMappingTypeInterface;
 use WernerDweight\DoctrineCrudApiBundle\Service\Event\DoctrineCrudApiEventDispatcher;
 use WernerDweight\RA\RA;
 
 class PropertyValueResolverHelper
 {
+    /** @var string */
+    private const ROUTE_KEY = '_route';
+    /** @var string */
+    private const UPDATE_ROUTE_NAME = 'wds_doctrine_crud_api_update';
+
     /** @var DoctrineCrudApiEventDispatcher */
     private $eventDispatcher;
 
+    /** @var Request */
+    private $request;
+
     /**
-     * CreateHelper constructor.
+     * PropertyValueResolverHelper constructor.
      *
      * @param DoctrineCrudApiEventDispatcher $eventDispatcher
+     * @param RequestStack $requestStack
      */
-    public function __construct(DoctrineCrudApiEventDispatcher $eventDispatcher)
+    public function __construct(DoctrineCrudApiEventDispatcher $eventDispatcher, RequestStack $requestStack)
     {
         $this->eventDispatcher = $eventDispatcher;
+
+        $request = $requestStack->getCurrentRequest();
+        if (null === $request) {
+            throw new InvalidRequestException(InvalidRequestException::EXCEPTION_NO_REQUEST);
+        }
+        $this->request = $request;
     }
 
     /**
-     * @param mixed       $value
-     * @param string|null $type
+     * @param mixed  $value
+     * @param string $type
      *
      * @return bool
      */
-    public function isNewEntity($value, ?string $type): bool
+    public function isNewEntity($value, string $type): bool
     {
         return DoctrineCrudApiMappingTypeInterface::METADATA_TYPE_ENTITY === $type &&
             $value instanceof RA &&
@@ -50,6 +69,30 @@ class PropertyValueResolverHelper
     {
         return $collectionValue instanceof RA &&
             true !== $collectionValue->hasKey(FilteringHelper::IDENTIFIER_FIELD_NAME);
+    }
+
+    /**
+     * @param mixed $value
+     * @param string $type
+     * @return bool
+     */
+    public function isUpdatableEntity($value, string $type): bool
+    {
+        return $this->request->attributes->get(self::ROUTE_KEY) === self::UPDATE_ROUTE_NAME &&
+            DoctrineCrudApiMappingTypeInterface::METADATA_TYPE_ENTITY === $type &&
+            $value instanceof RA &&
+            true === $value->hasKey(FilteringHelper::IDENTIFIER_FIELD_NAME);
+    }
+
+    /**
+     * @param $collectionValue
+     * @return bool
+     */
+    public function isUpdatableCollectionItem($collectionValue): bool
+    {
+        return $this->request->attributes->get(self::ROUTE_KEY) === self::UPDATE_ROUTE_NAME &&
+            $collectionValue instanceof RA &&
+            true === $collectionValue->hasKey(FilteringHelper::IDENTIFIER_FIELD_NAME);
     }
 
     /**
@@ -79,8 +122,18 @@ class PropertyValueResolverHelper
     public function setResolvedValue(string $field, $resolvedValue, ApiEntityInterface $item): ApiEntityInterface
     {
         if ($resolvedValue instanceof ArrayCollection) {
+            $singularPropertyName = ucfirst(Inflector::singularize($field));
+            /** @var Collection $currentValue */
+            $currentValue = $item->{\Safe\sprintf('get%s', ucfirst($field))}();
+            foreach ($currentValue as $collectionValue) {
+                if (true !== $resolvedValue->contains($collectionValue)) {
+                    $item->{\Safe\sprintf('remove%s', $singularPropertyName)}();
+                }
+            }
             foreach ($resolvedValue as $collectionValue) {
-                $item->{\Safe\sprintf('add%s', ucfirst(Inflector::singularize($field)))}($collectionValue);
+                if (true !== $currentValue->contains($collectionValue)) {
+                    $item->{\Safe\sprintf('add%s', $singularPropertyName)}($collectionValue);
+                }
             }
             return $item;
         }
@@ -116,5 +169,22 @@ class PropertyValueResolverHelper
             );
         }
         return $fieldMetadata->getString(DoctrineCrudApiMappingTypeInterface::METADATA_CLASS);
+    }
+
+    /**
+     * @param DoctrineCrudApiMetadata $metadata
+     * @param string $field
+     * @return array
+     * @throws \WernerDweight\RA\Exception\RAException
+     */
+    public function getFieldTypeAndMetadata(DoctrineCrudApiMetadata $metadata, string $field): array
+    {
+        $type = $metadata->getFieldType($field);
+        $fieldMetadata = $metadata->getFieldMetadata($field);
+        if (null === $type) {
+            $type = $metadata->getInternalFieldType($field);
+            $fieldMetadata = (new RA())->set(DoctrineCrudApiMappingTypeInterface::METADATA_TYPE, $type);
+        }
+        return [$type, $fieldMetadata];
     }
 }

@@ -5,15 +5,16 @@ namespace WernerDweight\DoctrineCrudApiBundle\Service\ActionProcessor;
 
 use Doctrine\ORM\EntityManagerInterface;
 use WernerDweight\DoctrineCrudApiBundle\Entity\ApiEntityInterface;
-use WernerDweight\DoctrineCrudApiBundle\Service\Data\ModifyHelper;
+use WernerDweight\DoctrineCrudApiBundle\Service\Data\DataManager;
 use WernerDweight\DoctrineCrudApiBundle\Service\Data\ItemValidator;
+use WernerDweight\DoctrineCrudApiBundle\Service\Data\ModifyHelper;
 use WernerDweight\DoctrineCrudApiBundle\Service\Event\DoctrineCrudApiEventDispatcher;
 use WernerDweight\DoctrineCrudApiBundle\Service\Request\ParameterEnum;
 use WernerDweight\DoctrineCrudApiBundle\Service\Request\ParameterResolver;
 use WernerDweight\DoctrineCrudApiBundle\Service\Response\Formatter;
 use WernerDweight\RA\RA;
 
-class Creator
+class Updater
 {
     /** @var ParameterResolver */
     private $parameterResolver;
@@ -33,15 +34,18 @@ class Creator
     /** @var ModifyHelper */
     private $modifyHelper;
 
+    /** @var DataManager */
+    private $dataManager;
+
     /**
-     * Creator constructor.
-     *
-     * @param ParameterResolver              $parameterResolver
-     * @param Formatter                      $formatter
+     * Updater constructor.
+     * @param ParameterResolver $parameterResolver
+     * @param Formatter $formatter
      * @param DoctrineCrudApiEventDispatcher $eventDispatcher
-     * @param EntityManagerInterface         $entityManager
-     * @param ItemValidator                  $itemValidator
-     * @param ModifyHelper                   $modifyHelper
+     * @param EntityManagerInterface $entityManager
+     * @param ItemValidator $itemValidator
+     * @param ModifyHelper $modifyHelper
+     * @param DataManager $dataManager
      */
     public function __construct(
         ParameterResolver $parameterResolver,
@@ -49,7 +53,8 @@ class Creator
         DoctrineCrudApiEventDispatcher $eventDispatcher,
         EntityManagerInterface $entityManager,
         ItemValidator $itemValidator,
-        ModifyHelper $modifyHelper
+        ModifyHelper $modifyHelper,
+        DataManager $dataManager
     ) {
         $this->parameterResolver = $parameterResolver;
         $this->formatter = $formatter;
@@ -57,6 +62,19 @@ class Creator
         $this->entityManager = $entityManager;
         $this->itemValidator = $itemValidator;
         $this->modifyHelper = $modifyHelper;
+        $this->dataManager = $dataManager;
+    }
+
+    /**
+     * @return ApiEntityInterface
+     *
+     * @throws \WernerDweight\RA\Exception\RAException
+     */
+    private function fetch(): ApiEntityInterface
+    {
+        return $this->dataManager->getItem(
+            $this->parameterResolver->getString(ParameterEnum::PRIMARY_KEY)
+        );
     }
 
     /**
@@ -65,23 +83,22 @@ class Creator
      * @throws \Safe\Exceptions\StringsException
      * @throws \WernerDweight\RA\Exception\RAException
      */
-    public function createItem(): RA
+    public function updateItem(): RA
     {
-        $this->parameterResolver->resolveCreate();
+        $this->parameterResolver->resolveUpdate();
         $fieldValues = $this->parameterResolver->getRA(ParameterEnum::FIELDS);
-        $item = $this->modifyHelper->create($fieldValues);
+        $item = $this->modifyHelper->update($this->fetch(), $fieldValues);
 
         $this->eventDispatcher->dispatchPreValidate($item);
         $this->itemValidator->validate($item);
 
-        $this->eventDispatcher->dispatchPrePersist($item);
-        $this->entityManager->persist($item);
+        $this->eventDispatcher->dispatchPreUpdate($item);
         $this->modifyHelper->getNestedItems()->walk(function (ApiEntityInterface $nestedItem): void {
             $this->entityManager->persist($nestedItem);
         });
         $this->entityManager->flush();
 
-        $this->eventDispatcher->dispatchPostCreate($item);
+        $this->eventDispatcher->dispatchPostUpdate($item);
         return $this->formatter->format(
             $item,
             $this->parameterResolver->getRAOrNull(ParameterEnum::RESPONSE_STRUCTURE),

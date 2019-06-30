@@ -6,8 +6,10 @@ namespace WernerDweight\DoctrineCrudApiBundle\Service\Event;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use WernerDweight\DoctrineCrudApiBundle\Entity\ApiEntityInterface;
 use WernerDweight\DoctrineCrudApiBundle\Event\PostCreateEvent;
+use WernerDweight\DoctrineCrudApiBundle\Event\PostUpdateEvent;
 use WernerDweight\DoctrineCrudApiBundle\Event\PrePersistEvent;
 use WernerDweight\DoctrineCrudApiBundle\Event\PreSetPropertyEvent;
+use WernerDweight\DoctrineCrudApiBundle\Event\PreUpdateEvent;
 use WernerDweight\DoctrineCrudApiBundle\Event\PreValidateEvent;
 
 class DoctrineCrudApiEventDispatcher
@@ -72,6 +74,28 @@ class DoctrineCrudApiEventDispatcher
     {
         /** @var PreSetPropertyEvent $event */
         $event = $this->eventDispatcher->dispatch(new PreSetPropertyEvent($item, $field, $value));
+        return $event;
+    }
+
+    /**
+     * @param ApiEntityInterface $item
+     * @return PreUpdateEvent
+     */
+    public function dispatchPreUpdate(ApiEntityInterface $item): PreUpdateEvent
+    {
+        /** @var PreUpdateEvent $event */
+        $event = $this->eventDispatcher->dispatch(new PreUpdateEvent($item));
+        return $event;
+    }
+
+    /**
+     * @param ApiEntityInterface $item
+     * @return PostUpdateEvent
+     */
+    public function dispatchPostUpdate(ApiEntityInterface $item): PostUpdateEvent
+    {
+        /** @var PostUpdateEvent $event */
+        $event = $this->eventDispatcher->dispatch(new PostUpdateEvent($item));
         return $event;
     }
 }
