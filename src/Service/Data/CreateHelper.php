@@ -6,7 +6,6 @@ namespace WernerDweight\DoctrineCrudApiBundle\Service\Data;
 use Doctrine\Common\Collections\ArrayCollection;
 use WernerDweight\DoctrineCrudApiBundle\DTO\DoctrineCrudApiMetadata;
 use WernerDweight\DoctrineCrudApiBundle\Entity\ApiEntityInterface;
-use WernerDweight\DoctrineCrudApiBundle\Exception\CreatorReturnableException;
 use WernerDweight\DoctrineCrudApiBundle\Mapping\Type\DoctrineCrudApiMappingTypeInterface;
 use WernerDweight\DoctrineCrudApiBundle\Service\Request\CurrentEntityResolver;
 use WernerDweight\RA\RA;
@@ -67,17 +66,8 @@ class CreateHelper
         DoctrineCrudApiMetadata $metadata,
         RA $fieldMetadata
     ): ApiEntityInterface {
-        if (true !== $metadata->getCreatableNested()->contains($field)) {
-            throw new CreatorReturnableException(
-                CreatorReturnableException::INVALID_NESTING,
-                [
-                    'root' => $metadata->getShortName(),
-                    'nested' => $field,
-                    'value' => $value instanceof RA ? $value->toArray(RA::RECURSIVE) : $value,
-                ]
-            );
-        }
-        $nestedClassName = $fieldMetadata->getString(DoctrineCrudApiMappingTypeInterface::METADATA_CLASS);
+        $nestedClassName = $this->propertyValueResolverHelper
+            ->getNestedClassName($field, $value, $metadata, $fieldMetadata);
         $nestedItem = $this->create($value, $nestedClassName);
         $this->nestedItems->push($nestedItem);
         return $nestedItem;

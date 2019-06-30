@@ -5,8 +5,10 @@ namespace WernerDweight\DoctrineCrudApiBundle\Service\Data;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Inflector\Inflector;
+use WernerDweight\DoctrineCrudApiBundle\DTO\DoctrineCrudApiMetadata;
 use WernerDweight\DoctrineCrudApiBundle\Entity\ApiEntityInterface;
 use WernerDweight\DoctrineCrudApiBundle\Event\PreSetPropertyEvent;
+use WernerDweight\DoctrineCrudApiBundle\Exception\CreatorReturnableException;
 use WernerDweight\DoctrineCrudApiBundle\Mapping\Type\DoctrineCrudApiMappingTypeInterface;
 use WernerDweight\DoctrineCrudApiBundle\Service\Event\DoctrineCrudApiEventDispatcher;
 use WernerDweight\RA\RA;
@@ -85,5 +87,34 @@ class PropertyValueResolverHelper
 
         $item->{\Safe\sprintf('set%s', ucfirst($field))}($resolvedValue);
         return $item;
+    }
+
+    /**
+     * @param string                  $field
+     * @param mixed                   $value
+     * @param DoctrineCrudApiMetadata $metadata
+     * @param RA                      $fieldMetadata
+     *
+     * @return string
+     *
+     * @throws \WernerDweight\RA\Exception\RAException
+     */
+    public function getNestedClassName(
+        string $field,
+        $value,
+        DoctrineCrudApiMetadata $metadata,
+        RA $fieldMetadata
+    ): string {
+        if (true !== $metadata->getCreatableNested()->contains($field)) {
+            throw new CreatorReturnableException(
+                CreatorReturnableException::INVALID_NESTING,
+                [
+                    'root' => $metadata->getShortName(),
+                    'nested' => $field,
+                    'value' => $value instanceof RA ? $value->toArray(RA::RECURSIVE) : $value,
+                ]
+            );
+        }
+        return $fieldMetadata->getString(DoctrineCrudApiMappingTypeInterface::METADATA_CLASS);
     }
 }
