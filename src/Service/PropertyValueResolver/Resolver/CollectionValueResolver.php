@@ -51,7 +51,7 @@ final class CollectionValueResolver implements PropertyValueResolverInterface
     }
 
     /**
-     * @return int[]
+     * @return (int|string)[]
      */
     public function getPropertyTypes(): array
     {

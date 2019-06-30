@@ -25,7 +25,7 @@ class PreSetPropertyEvent extends Event
      *
      * @param ApiEntityInterface $item
      * @param string             $propertyName
-     * @param $value
+     * @param mixed              $value
      */
     public function __construct(ApiEntityInterface $item, string $propertyName, $value)
     {

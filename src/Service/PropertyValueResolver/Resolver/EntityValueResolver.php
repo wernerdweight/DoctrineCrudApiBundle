@@ -69,7 +69,7 @@ final class EntityValueResolver implements PropertyValueResolverInterface
     }
 
     /**
-     * @return int[]
+     * @return (int|string)[]
      */
     public function getPropertyTypes(): array
     {

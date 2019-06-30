@@ -116,7 +116,7 @@ final class Xml extends AbstractDriver implements DoctrineCrudApiDriverInterface
     {
         return array_key_exists(
             DoctrineCrudApiMappingTypeInterface::ACCESSIBLE,
-            $mapping->children(self::WDS_NAMESPACE_URI)
+            (array)($mapping->children(self::WDS_NAMESPACE_URI))
         );
     }
 

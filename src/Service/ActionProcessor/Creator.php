@@ -91,7 +91,7 @@ class Creator
     /**
      * @param ApiEntityInterface $item
      * @param string             $field
-     * @param $value
+     * @param mixed              $value
      *
      * @return mixed
      */
@@ -103,7 +103,7 @@ class Creator
     }
 
     /**
-     * @param $value
+     * @param mixed       $value
      * @param string|null $type
      *
      * @return bool
@@ -116,10 +116,10 @@ class Creator
     }
 
     /**
-     * @param string $field
-     * @param $value
+     * @param string                  $field
+     * @param mixed                   $value
      * @param DoctrineCrudApiMetadata $metadata
-     * @param RA|null                 $fieldMetadata
+     * @param RA                      $fieldMetadata
      *
      * @return ApiEntityInterface
      *
@@ -130,7 +130,7 @@ class Creator
         string $field,
         $value,
         DoctrineCrudApiMetadata $metadata,
-        ?RA $fieldMetadata
+        RA $fieldMetadata
     ): ApiEntityInterface {
         if (true !== $metadata->getCreatableNested()->contains($field)) {
             throw new CreatorReturnableException(
@@ -167,6 +167,9 @@ class Creator
             if (null === $type) {
                 return $value;
             }
+        }
+        if (null === $fieldMetadata) {
+            return $value;
         }
         if (true === $this->isNewEntity($value, $type)) {
             return $this->createNewEntity($field, $value, $metadata, $fieldMetadata);
