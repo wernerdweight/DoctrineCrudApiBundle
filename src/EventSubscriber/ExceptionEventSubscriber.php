@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace WernerDweight\DoctrineCrudApiBundle\EventSubscriber;
 
+use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -13,6 +14,24 @@ use WernerDweight\RA\RA;
 
 final class ExceptionEventSubscriber implements EventSubscriberInterface
 {
+    /** @var string */
+    private const ERROR_KEY = 'error';
+    /** @var string */
+    private const GENERIC_ERROR_MESSAGE =
+        'Request is not supported! Configuration is not allowing this kind of request, or it is not correct.';
+
+    /** @var LoggerInterface */
+    private $logger;
+
+    /**
+     * ExceptionEventSubscriber constructor.
+     * @param LoggerInterface $logger
+     */
+    public function __construct(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
+
     /**
      * @return array
      */
@@ -33,12 +52,14 @@ final class ExceptionEventSubscriber implements EventSubscriberInterface
     {
         $exception = $event->getException();
         if ($exception instanceof ReturnableExceptionInterface) {
+            $responseData = $exception->getResponseData()->toArray(RA::RECURSIVE);
             $event->setResponse(
                 new JsonResponse(
-                    $exception->getResponseData()->toArray(RA::RECURSIVE),
+                    [self::ERROR_KEY => $responseData],
                     $exception->getStatusCode()
                 )
             );
+            $this->logger->debug($exception->getMessage(), $responseData);
         }
     }
 
@@ -50,9 +71,10 @@ final class ExceptionEventSubscriber implements EventSubscriberInterface
         $exception = $event->getException();
         $event->setResponse(
             new JsonResponse(
-                ['reason' => $exception->getMessage()],
+                [self::ERROR_KEY => self::GENERIC_ERROR_MESSAGE],
                 Response::HTTP_BAD_REQUEST
             )
         );
+        $this->logger->error($exception->getMessage(), $exception->getTrace());
     }
 }

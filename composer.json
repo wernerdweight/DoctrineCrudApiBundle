@@ -24,7 +24,8 @@
         "thecodingmachine/safe": "^0.1.13",
         "wernerdweight/enhanced-exception": "^1.0",
         "wernerdweight/stringy": "^0.1",
-        "symfony/validator": "^4.3"
+        "symfony/validator": "^4.3",
+        "symfony/monolog-bundle": "^3.4"
     },
     "require-dev": {
         "wernerdweight/cs": "^1.2.1",
