@@ -172,6 +172,10 @@ class Creator
         $this->entityManager->flush();
 
         $this->eventDispatcher->dispatch(new PostCreateEvent($item));
-        return $item;
+        return $this->formatter->format(
+            $item,
+            $this->parameterResolver->getRAOrNull(ParameterEnum::RESPONSE_STRUCTURE),
+            $this->parameterResolver->getEntityPrefix()
+        );
     }
 }

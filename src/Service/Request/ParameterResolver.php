@@ -294,6 +294,19 @@ class ParameterResolver
     }
 
     /**
+     * @return string
+     * @throws \Safe\Exceptions\StringsException
+     */
+    public function getEntityPrefix(): string
+    {
+        return \Safe\sprintf(
+            '%s%s',
+            (clone $this->getStringy(ParameterEnum::ENTITY_NAME))->lowercaseFirst(),
+            ParameterEnum::FIELD_SEPARATOR
+        );
+    }
+
+    /**
      * @return ParameterResolver
      */
     private function resolveCommon(): self

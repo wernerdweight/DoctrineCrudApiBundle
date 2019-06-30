@@ -132,9 +132,7 @@ class ListingFormatter
         if ($level > 0 && null !== $groupBy) {
             return $this->formatGrouppedListing($items, $level, $groupBy);
         }
-        $prefix = (clone $this->parameterResolver->getStringy(ParameterEnum::ENTITY_NAME))->lowercaseFirst();
         $responseStructure = $this->parameterResolver->getRAOrNull(ParameterEnum::RESPONSE_STRUCTURE);
-        return $this->formatter
-            ->format($items, $responseStructure, \Safe\sprintf('%s%s', $prefix, ParameterEnum::FIELD_SEPARATOR));
+        return $this->formatter->format($items, $responseStructure, $this->parameterResolver->getEntityPrefix());
     }
 }
