@@ -43,7 +43,7 @@ final class ExceptionEventSubscriber implements EventSubscriberInterface
         return [
             KernelEvents::EXCEPTION => [
                 ['catchReturnableException', 10],
-                ['catchAnyException', 0],
+                //['catchAnyException', 0],
             ],
         ];
     }

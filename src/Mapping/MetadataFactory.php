@@ -77,7 +77,7 @@ class MetadataFactory
             $cacheKey = \Safe\sprintf('%s\\$%s', $metadata->name, self::CACHE_NAMESPACE);
             $cacheDriver->save($cacheKey, $config->toArray());
         }
-
+        
         if (true === $config->getBool(DoctrineCrudApiMappingTypeInterface::ACCESSIBLE)) {
             $this->configurationManager->setConfiguration(
                 $metadata->name,

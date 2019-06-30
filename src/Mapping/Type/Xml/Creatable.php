@@ -8,6 +8,11 @@ use WernerDweight\RA\RA;
 
 final class Creatable extends AbstractType implements DoctrineCrudApiMappingTypeInterface
 {
+    /** @var string */
+    private const ATTRIBUTE_NESTED = 'nested';
+    /** @var stirng[] */
+    private const NESTED_TRUE_VALUES = ['true', '1'];
+
     /**
      * @param \SimpleXMLElement $propertyMapping
      * @param \SimpleXMLElement $filteredMapping

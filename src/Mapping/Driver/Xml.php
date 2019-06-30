@@ -114,7 +114,10 @@ final class Xml extends AbstractDriver implements DoctrineCrudApiDriverInterface
      */
     private function isAccessible(object $mapping): bool
     {
-        return isset($mapping->children(self::WDS_NAMESPACE_URI)[DoctrineCrudApiMappingTypeInterface::ACCESSIBLE]);
+        return array_key_exists(
+            DoctrineCrudApiMappingTypeInterface::ACCESSIBLE,
+            $mapping->children(self::WDS_NAMESPACE_URI)
+        );
     }
 
     /**
