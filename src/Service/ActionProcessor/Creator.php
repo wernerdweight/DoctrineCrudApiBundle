@@ -16,7 +16,6 @@ use WernerDweight\DoctrineCrudApiBundle\Event\PreValidateEvent;
 use WernerDweight\DoctrineCrudApiBundle\Exception\CreatorReturnableException;
 use WernerDweight\DoctrineCrudApiBundle\Mapping\Type\DoctrineCrudApiMappingTypeInterface;
 use WernerDweight\DoctrineCrudApiBundle\Service\Data\ConfigurationManager;
-use WernerDweight\DoctrineCrudApiBundle\Service\Data\DataManager;
 use WernerDweight\DoctrineCrudApiBundle\Service\Data\FilteringHelper;
 use WernerDweight\DoctrineCrudApiBundle\Service\Data\ItemValidator;
 use WernerDweight\DoctrineCrudApiBundle\Service\Data\MappingResolver;
@@ -30,9 +29,6 @@ class Creator
 {
     /** @var ParameterResolver */
     private $parameterResolver;
-
-    /** @var DataManager */
-    private $dataManager;
 
     /** @var Formatter */
     private $formatter;
@@ -62,7 +58,6 @@ class Creator
      * Creator constructor.
      *
      * @param ParameterResolver        $parameterResolver
-     * @param DataManager              $dataManager
      * @param Formatter                $formatter
      * @param EventDispatcherInterface $eventDispatcher
      * @param EntityManagerInterface   $entityManager
@@ -73,7 +68,6 @@ class Creator
      */
     public function __construct(
         ParameterResolver $parameterResolver,
-        DataManager $dataManager,
         Formatter $formatter,
         EventDispatcherInterface $eventDispatcher,
         EntityManagerInterface $entityManager,
@@ -83,7 +77,6 @@ class Creator
         MappingResolver $mappingResolver
     ) {
         $this->parameterResolver = $parameterResolver;
-        $this->dataManager = $dataManager;
         $this->formatter = $formatter;
         $this->eventDispatcher = $eventDispatcher;
         $this->entityManager = $entityManager;

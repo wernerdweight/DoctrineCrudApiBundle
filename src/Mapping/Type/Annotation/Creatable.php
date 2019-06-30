@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace WernerDweight\DoctrineCrudApiBundle\Mapping\Type\Annotation;
 
 use Doctrine\Common\Annotations\Annotation;
+use WernerDweight\DoctrineCrudApiBundle\Mapping\Annotation\Creatable as CreatableAnnotation;
 use WernerDweight\DoctrineCrudApiBundle\Mapping\Type\DoctrineCrudApiMappingTypeInterface;
 use WernerDweight\RA\RA;
 use WernerDweight\Stringy\Stringy;
@@ -12,7 +13,7 @@ final class Creatable extends AbstractType implements DoctrineCrudApiMappingType
 {
     /**
      * @param Stringy             $propertyName
-     * @param UpdatableAnnotation $annotation
+     * @param CreatableAnnotation $annotation
      * @param RA                  $config
      *
      * @return RA
