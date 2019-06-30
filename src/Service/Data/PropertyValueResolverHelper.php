@@ -34,7 +34,7 @@ class PropertyValueResolverHelper
      * PropertyValueResolverHelper constructor.
      *
      * @param DoctrineCrudApiEventDispatcher $eventDispatcher
-     * @param RequestStack $requestStack
+     * @param RequestStack                   $requestStack
      */
     public function __construct(DoctrineCrudApiEventDispatcher $eventDispatcher, RequestStack $requestStack)
     {
@@ -72,25 +72,27 @@ class PropertyValueResolverHelper
     }
 
     /**
-     * @param mixed $value
+     * @param mixed  $value
      * @param string $type
+     *
      * @return bool
      */
     public function isUpdatableEntity($value, string $type): bool
     {
-        return $this->request->attributes->get(self::ROUTE_KEY) === self::UPDATE_ROUTE_NAME &&
+        return self::UPDATE_ROUTE_NAME === $this->request->attributes->get(self::ROUTE_KEY) &&
             DoctrineCrudApiMappingTypeInterface::METADATA_TYPE_ENTITY === $type &&
             $value instanceof RA &&
             true === $value->hasKey(FilteringHelper::IDENTIFIER_FIELD_NAME);
     }
 
     /**
-     * @param $collectionValue
+     * @param mixed $collectionValue
+     *
      * @return bool
      */
     public function isUpdatableCollectionItem($collectionValue): bool
     {
-        return $this->request->attributes->get(self::ROUTE_KEY) === self::UPDATE_ROUTE_NAME &&
+        return self::UPDATE_ROUTE_NAME === $this->request->attributes->get(self::ROUTE_KEY) &&
             $collectionValue instanceof RA &&
             true === $collectionValue->hasKey(FilteringHelper::IDENTIFIER_FIELD_NAME);
     }
@@ -173,8 +175,10 @@ class PropertyValueResolverHelper
 
     /**
      * @param DoctrineCrudApiMetadata $metadata
-     * @param string $field
+     * @param string                  $field
+     *
      * @return array
+     *
      * @throws \WernerDweight\RA\Exception\RAException
      */
     public function getFieldTypeAndMetadata(DoctrineCrudApiMetadata $metadata, string $field): array

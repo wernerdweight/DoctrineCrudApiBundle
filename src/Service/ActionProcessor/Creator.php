@@ -5,8 +5,8 @@ namespace WernerDweight\DoctrineCrudApiBundle\Service\ActionProcessor;
 
 use Doctrine\ORM\EntityManagerInterface;
 use WernerDweight\DoctrineCrudApiBundle\Entity\ApiEntityInterface;
-use WernerDweight\DoctrineCrudApiBundle\Service\Data\ModifyHelper;
 use WernerDweight\DoctrineCrudApiBundle\Service\Data\ItemValidator;
+use WernerDweight\DoctrineCrudApiBundle\Service\Data\ModifyHelper;
 use WernerDweight\DoctrineCrudApiBundle\Service\Event\DoctrineCrudApiEventDispatcher;
 use WernerDweight\DoctrineCrudApiBundle\Service\Request\ParameterEnum;
 use WernerDweight\DoctrineCrudApiBundle\Service\Request\ParameterResolver;

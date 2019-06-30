@@ -117,11 +117,13 @@ class ModifyHelper
     }
 
     /**
-     * @param ApiEntityInterface $item
-     * @param string $field
-     * @param RA $fieldValues
+     * @param ApiEntityInterface      $item
+     * @param string                  $field
+     * @param RA                      $fieldValues
      * @param DoctrineCrudApiMetadata $configuration
+     *
      * @return ApiEntityInterface
+     *
      * @throws \Safe\Exceptions\StringsException
      * @throws \WernerDweight\RA\Exception\RAException
      */
@@ -164,8 +166,10 @@ class ModifyHelper
 
     /**
      * @param ApiEntityInterface $item
-     * @param RA $values
+     * @param RA                 $values
+     *
      * @return ApiEntityInterface
+     *
      * @throws \WernerDweight\RA\Exception\RAException
      */
     public function update(ApiEntityInterface $item, RA $values): ApiEntityInterface

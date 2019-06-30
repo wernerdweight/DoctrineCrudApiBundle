@@ -395,4 +395,33 @@ class ParameterResolver
         ;
         return $this;
     }
+
+    /**
+     * @return ParameterResolver
+     */
+    public function resolveUpdate(): self
+    {
+        $this->resolveCommon();
+
+        $query = $this->request->query;
+        $request = $this->request->request;
+        $attributes = $this->request->attributes;
+        $this->parameters
+            ->set(ParameterEnum::PRIMARY_KEY, $attributes->get(ParameterEnum::PRIMARY_KEY))
+            ->set(
+                ParameterEnum::FIELDS,
+                $this->parameterValidator->validateFields(
+                    $request->get(ParameterEnum::FIELDS)
+                )
+            )
+            ->set(
+                ParameterEnum::RESPONSE_STRUCTURE,
+                $this->parameterValidator->validateResponseStructure(
+                    $query->get(ParameterEnum::RESPONSE_STRUCTURE),
+                    (clone $this->getStringy(ParameterEnum::ENTITY_NAME))->lowercaseFirst()
+                )
+            )
+        ;
+        return $this;
+    }
 }

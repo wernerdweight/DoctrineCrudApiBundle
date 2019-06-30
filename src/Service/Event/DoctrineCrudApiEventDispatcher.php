@@ -79,6 +79,7 @@ class DoctrineCrudApiEventDispatcher
 
     /**
      * @param ApiEntityInterface $item
+     *
      * @return PreUpdateEvent
      */
     public function dispatchPreUpdate(ApiEntityInterface $item): PreUpdateEvent
@@ -90,6 +91,7 @@ class DoctrineCrudApiEventDispatcher
 
     /**
      * @param ApiEntityInterface $item
+     *
      * @return PostUpdateEvent
      */
     public function dispatchPostUpdate(ApiEntityInterface $item): PostUpdateEvent
