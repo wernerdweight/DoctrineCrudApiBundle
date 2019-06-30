@@ -15,7 +15,9 @@ use WernerDweight\RA\RA;
 final class ExceptionEventSubscriber implements EventSubscriberInterface
 {
     /** @var string */
-    private const ERROR_KEY = 'error';
+    private const MESSAGE_KEY = 'message';
+    /** @var string */
+    private const ERROR_KEY = 'errors';
     /** @var string */
     private const GENERIC_ERROR_MESSAGE =
         'Request is not supported! Configuration is not allowing this kind of request, or it is not correct.';
@@ -55,7 +57,7 @@ final class ExceptionEventSubscriber implements EventSubscriberInterface
             $responseData = $exception->getResponseData()->toArray(RA::RECURSIVE);
             $event->setResponse(
                 new JsonResponse(
-                    [self::ERROR_KEY => $responseData],
+                    [self::MESSAGE_KEY => $exception->getMessage(), self::ERROR_KEY => $responseData],
                     $exception->getStatusCode()
                 )
             );
@@ -71,7 +73,7 @@ final class ExceptionEventSubscriber implements EventSubscriberInterface
         $exception = $event->getException();
         $event->setResponse(
             new JsonResponse(
-                [self::ERROR_KEY => self::GENERIC_ERROR_MESSAGE],
+                [self::MESSAGE_KEY => self::GENERIC_ERROR_MESSAGE],
                 Response::HTTP_BAD_REQUEST
             )
         );

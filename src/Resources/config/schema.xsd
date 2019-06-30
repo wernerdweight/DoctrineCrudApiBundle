@@ -21,7 +21,9 @@
         <xs:attribute name="default" type="xs:boolean" use="optional" default="false"/>
     </xs:complexType>
 
-    <xs:complexType name="creatable"/>
+    <xs:complexType name="creatable">
+        <xs:attribute name="nested" type="xs:boolean" use="optional" default="false"/>
+    </xs:complexType>
 
     <xs:complexType name="updatable">
         <xs:attribute name="nested" type="xs:boolean" use="optional" default="false"/>

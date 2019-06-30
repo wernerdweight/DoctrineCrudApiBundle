@@ -9,6 +9,7 @@ use WernerDweight\DoctrineCrudApiBundle\Mapping\Type\DoctrineCrudApiMappingTypeI
 use WernerDweight\DoctrineCrudApiBundle\Service\Data\FilteringHelper;
 use WernerDweight\DoctrineCrudApiBundle\Service\Data\QueryBuilderDecorator;
 use WernerDweight\RA\RA;
+use WernerDweight\Stringy\Stringy;
 
 class DoctrineCrudApiMetadata
 {
@@ -41,6 +42,15 @@ class DoctrineCrudApiMetadata
     public function getName(): string
     {
         return $this->name;
+    }
+
+    /**
+     * @return string
+     */
+    public function getShortName(): string
+    {
+        $name = new Stringy($this->getName());
+        return (string)($name->substring($name->getPositionOfLastSubstring('\\') + 1));
     }
 
     /**
@@ -79,6 +89,16 @@ class DoctrineCrudApiMetadata
     public function getCreatableFields(): RA
     {
         return $this->apiMetadata->getRA(DoctrineCrudApiMappingTypeInterface::CREATABLE);
+    }
+
+    /**
+     * @return RA
+     *
+     * @throws \WernerDweight\RA\Exception\RAException
+     */
+    public function getCreatableNested(): RA
+    {
+        return $this->apiMetadata->getRA(DoctrineCrudApiMappingTypeInterface::CREATABLE_NESTED);
     }
 
     /**

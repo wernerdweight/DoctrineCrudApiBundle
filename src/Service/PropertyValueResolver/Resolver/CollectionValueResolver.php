@@ -34,13 +34,13 @@ final class CollectionValueResolver implements PropertyValueResolverInterface
      */
     public function getPropertyValue($value, RA $configuration): ?ArrayCollection
     {
-        if (true !== $configuration->hasKey(QueryBuilderDecorator::DOCTRINE_TARGET_ENTITY)) {
+        if (true !== $configuration->hasKey(DoctrineCrudApiMappingTypeInterface::METADATA_CLASS)) {
             throw new MappingResolverException(
                 MappingResolverException::EXCEPTION_MISSING_TARGET_ENTITY,
                 [implode(', ', $this->getPropertyTypes())]
             );
         }
-        $className = $configuration->getString(QueryBuilderDecorator::DOCTRINE_TARGET_ENTITY);
+        $className = $configuration->getString(DoctrineCrudApiMappingTypeInterface::METADATA_CLASS);
 
         return new ArrayCollection(
             $value

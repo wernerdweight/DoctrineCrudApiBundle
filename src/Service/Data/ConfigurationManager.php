@@ -88,6 +88,7 @@ class ConfigurationManager
             ->set(DoctrineCrudApiMappingTypeInterface::LISTABLE, new RA())
             ->set(DoctrineCrudApiMappingTypeInterface::DEFAULT_LISTABLE, new RA())
             ->set(DoctrineCrudApiMappingTypeInterface::CREATABLE, new RA())
+            ->set(DoctrineCrudApiMappingTypeInterface::CREATABLE_NESTED, new RA())
             ->set(DoctrineCrudApiMappingTypeInterface::UPDATABLE, new RA())
             ->set(DoctrineCrudApiMappingTypeInterface::UPDATABLE_NESTED, new RA())
             ->set(DoctrineCrudApiMappingTypeInterface::METADATA, new RA())

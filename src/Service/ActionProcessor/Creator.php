@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace WernerDweight\DoctrineCrudApiBundle\Service\ActionProcessor;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Inflector\Inflector;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use WernerDweight\DoctrineCrudApiBundle\DTO\DoctrineCrudApiMetadata;
@@ -11,9 +13,11 @@ use WernerDweight\DoctrineCrudApiBundle\Event\PostCreateEvent;
 use WernerDweight\DoctrineCrudApiBundle\Event\PrePersistEvent;
 use WernerDweight\DoctrineCrudApiBundle\Event\PreSetPropertyEvent;
 use WernerDweight\DoctrineCrudApiBundle\Event\PreValidateEvent;
+use WernerDweight\DoctrineCrudApiBundle\Exception\CreatorReturnableException;
 use WernerDweight\DoctrineCrudApiBundle\Mapping\Type\DoctrineCrudApiMappingTypeInterface;
 use WernerDweight\DoctrineCrudApiBundle\Service\Data\ConfigurationManager;
 use WernerDweight\DoctrineCrudApiBundle\Service\Data\DataManager;
+use WernerDweight\DoctrineCrudApiBundle\Service\Data\FilteringHelper;
 use WernerDweight\DoctrineCrudApiBundle\Service\Data\ItemValidator;
 use WernerDweight\DoctrineCrudApiBundle\Service\Data\MappingResolver;
 use WernerDweight\DoctrineCrudApiBundle\Service\Request\CurrentEntityResolver;
@@ -51,6 +55,9 @@ class Creator
     /** @var MappingResolver */
     private $mappingResolver;
 
+    /** @var RA */
+    private $nestedItems;
+
     /**
      * Creator constructor.
      *
@@ -84,6 +91,8 @@ class Creator
         $this->currentEntityResolver = $currentEntityResolver;
         $this->configurationManager = $configurationManager;
         $this->mappingResolver = $mappingResolver;
+
+        $this->nestedItems = new RA();
     }
 
     /**
@@ -98,6 +107,45 @@ class Creator
         /** @var PreSetPropertyEvent $event */
         $event = $this->eventDispatcher->dispatch(new PreSetPropertyEvent($item, $field, $value));
         return $event->getValue();
+    }
+
+    /**
+     * @param $value
+     * @param string|null $type
+     * @return bool
+     */
+    private function isNewEntity($value, ?string $type): bool
+    {
+        return $type === DoctrineCrudApiMappingTypeInterface::METADATA_TYPE_ENTITY &&
+            $value instanceof RA &&
+            true !== $value->hasKey(FilteringHelper::IDENTIFIER_FIELD_NAME);
+    }
+
+    /**
+     * @param string $field
+     * @param $value
+     * @param DoctrineCrudApiMetadata $metadata
+     * @param RA|null $fieldMetadata
+     * @return ApiEntityInterface
+     * @throws \Safe\Exceptions\StringsException
+     * @throws \WernerDweight\RA\Exception\RAException
+     */
+    private function createNewEntity(string $field, $value, DoctrineCrudApiMetadata $metadata, ?RA $fieldMetadata): ApiEntityInterface
+    {
+        if (true !== $metadata->getCreatableNested()->contains($field)) {
+            throw new CreatorReturnableException(
+                CreatorReturnableException::INVALID_NESTING,
+                [
+                    'root' => $metadata->getShortName(),
+                    'nested' => $field,
+                    'value' => $value instanceof RA ? $value->toArray(RA::RECURSIVE) : $value,
+                ]
+            );
+        }
+        $nestedClassName = $fieldMetadata->getString(DoctrineCrudApiMappingTypeInterface::METADATA_CLASS);
+        $nestedItem = $this->create($nestedClassName, $value);
+        $this->nestedItems->push($nestedItem);
+        return $nestedItem;
     }
 
     /**
@@ -120,21 +168,32 @@ class Creator
                 return $value;
             }
         }
+        if (true === $this->isNewEntity($value, $type)) {
+            return $this->createNewEntity($field, $value, $metadata, $fieldMetadata);
+        }
+        if ($type === DoctrineCrudApiMappingTypeInterface::METADATA_TYPE_COLLECTION && $value instanceof RA) {
+            return new ArrayCollection($value->map(function ($collectionValue) use ($field, $metadata, $fieldMetadata): ApiEntityInterface {
+                if ($collectionValue instanceof RA && true !== $collectionValue->hasKey(FilteringHelper::IDENTIFIER_FIELD_NAME)) {
+                    return $this->createNewEntity($field, $collectionValue, $metadata, $fieldMetadata);
+                }
+                return $this->mappingResolver->resolveValue($fieldMetadata, $collectionValue);
+            })->toArray());
+        }
         return $this->mappingResolver->resolveValue($fieldMetadata, $value);
     }
 
     /**
+     * @param string $itemClassName
+     * @param RA     $fieldValues
+     *
      * @return ApiEntityInterface
      *
      * @throws \Safe\Exceptions\StringsException
      * @throws \WernerDweight\RA\Exception\RAException
      */
-    private function create(): ApiEntityInterface
+    private function create(string $itemClassName, RA $fieldValues): ApiEntityInterface
     {
-        $itemClassName = (string)$this->currentEntityResolver->getCurrentEntityFQCN();
         $item = new $itemClassName();
-
-        $fieldValues = $this->parameterResolver->getRA(ParameterEnum::FIELDS);
         $configuration = $this->configurationManager->getConfigurationForEntityClass($itemClassName);
         $configuration->getCreatableFields()->walk(function (string $field) use (
             $item,
@@ -145,9 +204,14 @@ class Creator
                 return;
             }
             $value = $this->getPreSetValue($item, $field, $fieldValues->get($field));
-            $item->{\Safe\sprintf('set%s', ucfirst($field))}(
-                $this->resolveValue($field, $value, $configuration)
-            );
+            $resolvedValue = $this->resolveValue($field, $value, $configuration);
+            if ($resolvedValue instanceof ArrayCollection) {
+                foreach ($resolvedValue as $collectionValue) {
+                    $item->{\Safe\sprintf('add%s', ucfirst(Inflector::singularize($field)))}($collectionValue);
+                }
+                return;
+            }
+            $item->{\Safe\sprintf('set%s', ucfirst($field))}($resolvedValue);
         });
 
         return $item;
@@ -162,13 +226,18 @@ class Creator
     public function createItem(): RA
     {
         $this->parameterResolver->resolveCreate();
-        $item = $this->create();
+        $itemClassName = (string)$this->currentEntityResolver->getCurrentEntityFQCN();
+        $fieldValues = $this->parameterResolver->getRA(ParameterEnum::FIELDS);
+        $item = $this->create($itemClassName, $fieldValues);
 
         $this->eventDispatcher->dispatch(new PreValidateEvent($item));
         $this->itemValidator->validate($item);
 
         $this->eventDispatcher->dispatch(new PrePersistEvent($item));
         $this->entityManager->persist($item);
+        $this->nestedItems->walk(function (ApiEntityInterface $nestedItem): void {
+            $this->entityManager->persist($nestedItem);
+        });
         $this->entityManager->flush();
 
         $this->eventDispatcher->dispatch(new PostCreateEvent($item));

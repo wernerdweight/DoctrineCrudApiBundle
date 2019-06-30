@@ -19,6 +19,8 @@ interface DoctrineCrudApiMappingTypeInterface
     /** @var string */
     public const CREATABLE = 'creatable';
     /** @var string */
+    public const CREATABLE_NESTED = 'creatable-nested';
+    /** @var string */
     public const UPDATABLE = 'updatable';
     /** @var string */
     public const UPDATABLE_NESTED = 'updatable-nested';
