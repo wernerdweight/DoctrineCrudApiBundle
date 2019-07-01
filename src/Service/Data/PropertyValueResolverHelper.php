@@ -84,7 +84,7 @@ class PropertyValueResolverHelper
             DoctrineCrudApiMappingTypeInterface::METADATA_TYPE_ENTITY === $type &&
             $value instanceof RA &&
             true === $value->hasKey(FilteringHelper::IDENTIFIER_FIELD_NAME) &&
-            $value->length() !== 1;     // more data than ID present
+            1 !== $value->length();     // more data than ID present
     }
 
     /**
@@ -97,7 +97,18 @@ class PropertyValueResolverHelper
         return self::UPDATE_ROUTE_NAME === $this->request->attributes->get(self::ROUTE_KEY) &&
             $collectionValue instanceof RA &&
             true === $collectionValue->hasKey(FilteringHelper::IDENTIFIER_FIELD_NAME) &&
-            $collectionValue->length() !== 1;     // more data than ID present
+            1 !== $collectionValue->length();     // more data than ID present
+    }
+
+    /**
+     * @param mixed  $value
+     * @param string $type
+     *
+     * @return bool
+     */
+    public function isCollection($value, string $type): bool
+    {
+        return DoctrineCrudApiMappingTypeInterface::METADATA_TYPE_COLLECTION === $type && $value instanceof RA;
     }
 
     /**
@@ -203,6 +214,19 @@ class PropertyValueResolverHelper
             );
         }
         return $fieldMetadata->getString(DoctrineCrudApiMappingTypeInterface::METADATA_CLASS);
+    }
+
+    /**
+     * @param RA $fieldMetadata
+     *
+     * @return RA
+     */
+    public function getNestedCollectionItemMetadata(RA $fieldMetadata): RA
+    {
+        return (clone $fieldMetadata)->set(
+            DoctrineCrudApiMappingTypeInterface::METADATA_TYPE,
+            DoctrineCrudApiMappingTypeInterface::METADATA_TYPE_ENTITY
+        );
     }
 
     /**

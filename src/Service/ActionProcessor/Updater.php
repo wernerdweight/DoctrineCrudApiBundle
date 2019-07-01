@@ -5,7 +5,6 @@ namespace WernerDweight\DoctrineCrudApiBundle\Service\ActionProcessor;
 
 use Doctrine\ORM\EntityManagerInterface;
 use WernerDweight\DoctrineCrudApiBundle\Entity\ApiEntityInterface;
-use WernerDweight\DoctrineCrudApiBundle\Service\Data\DataManager;
 use WernerDweight\DoctrineCrudApiBundle\Service\Data\ItemValidator;
 use WernerDweight\DoctrineCrudApiBundle\Service\Data\ModifyHelper;
 use WernerDweight\DoctrineCrudApiBundle\Service\Event\DoctrineCrudApiEventDispatcher;
@@ -34,9 +33,6 @@ class Updater
     /** @var ModifyHelper */
     private $modifyHelper;
 
-    /** @var DataManager */
-    private $dataManager;
-
     /**
      * Updater constructor.
      *
@@ -46,7 +42,6 @@ class Updater
      * @param EntityManagerInterface         $entityManager
      * @param ItemValidator                  $itemValidator
      * @param ModifyHelper                   $modifyHelper
-     * @param DataManager                    $dataManager
      */
     public function __construct(
         ParameterResolver $parameterResolver,
@@ -54,8 +49,7 @@ class Updater
         DoctrineCrudApiEventDispatcher $eventDispatcher,
         EntityManagerInterface $entityManager,
         ItemValidator $itemValidator,
-        ModifyHelper $modifyHelper,
-        DataManager $dataManager
+        ModifyHelper $modifyHelper
     ) {
         $this->parameterResolver = $parameterResolver;
         $this->formatter = $formatter;
@@ -63,19 +57,6 @@ class Updater
         $this->entityManager = $entityManager;
         $this->itemValidator = $itemValidator;
         $this->modifyHelper = $modifyHelper;
-        $this->dataManager = $dataManager;
-    }
-
-    /**
-     * @return ApiEntityInterface
-     *
-     * @throws \WernerDweight\RA\Exception\RAException
-     */
-    private function fetch(): ApiEntityInterface
-    {
-        return $this->dataManager->getItem(
-            $this->parameterResolver->getString(ParameterEnum::PRIMARY_KEY)
-        );
     }
 
     /**
@@ -88,7 +69,12 @@ class Updater
     {
         $this->parameterResolver->resolveUpdate();
         $fieldValues = $this->parameterResolver->getRA(ParameterEnum::FIELDS);
-        $item = $this->modifyHelper->update($this->fetch(), $fieldValues);
+        $item = $this->modifyHelper->update(
+            $this->modifyHelper->fetch(
+                $this->parameterResolver->getString(ParameterEnum::PRIMARY_KEY)
+            ),
+            $fieldValues
+        );
 
         $this->eventDispatcher->dispatchPreValidate($item);
         $this->itemValidator->validate($item);

@@ -6,7 +6,6 @@ namespace WernerDweight\DoctrineCrudApiBundle\Service\Data;
 use Doctrine\Common\Collections\ArrayCollection;
 use WernerDweight\DoctrineCrudApiBundle\DTO\DoctrineCrudApiMetadata;
 use WernerDweight\DoctrineCrudApiBundle\Entity\ApiEntityInterface;
-use WernerDweight\DoctrineCrudApiBundle\Mapping\Type\DoctrineCrudApiMappingTypeInterface;
 use WernerDweight\DoctrineCrudApiBundle\Service\Request\CurrentEntityResolver;
 use WernerDweight\RA\RA;
 
@@ -24,6 +23,9 @@ class ModifyHelper
     /** @var MappingResolver */
     private $mappingResolver;
 
+    /** @var DataManager */
+    private $dataManager;
+
     /** @var RA */
     private $nestedItems;
 
@@ -34,17 +36,20 @@ class ModifyHelper
      * @param ConfigurationManager        $configurationManager
      * @param PropertyValueResolverHelper $propertyValueResolverHelper
      * @param MappingResolver             $mappingResolver
+     * @param DataManager                 $dataManager
      */
     public function __construct(
         CurrentEntityResolver $currentEntityResolver,
         ConfigurationManager $configurationManager,
         PropertyValueResolverHelper $propertyValueResolverHelper,
-        MappingResolver $mappingResolver
+        MappingResolver $mappingResolver,
+        DataManager $dataManager
     ) {
         $this->currentEntityResolver = $currentEntityResolver;
         $this->configurationManager = $configurationManager;
         $this->propertyValueResolverHelper = $propertyValueResolverHelper;
         $this->mappingResolver = $mappingResolver;
+        $this->dataManager = $dataManager;
 
         $this->nestedItems = new RA();
     }
@@ -104,9 +109,9 @@ class ModifyHelper
      */
     public function resolveValue(string $field, $value, DoctrineCrudApiMetadata $metadata)
     {
-        /**
-         * @var RA|null $fieldMetadata
-         * @var string $field
+        /*
+         * @var RA|null
+         * @var string  $field
          */
         [$type, $fieldMetadata] = $this->propertyValueResolverHelper->getFieldTypeAndMetadata($metadata, $field);
         if (null === $type || null === $fieldMetadata) {
@@ -120,7 +125,7 @@ class ModifyHelper
             $nestedEntity = $this->mappingResolver->resolveValue($fieldMetadata, $value);
             return $this->updateExistingEntity($nestedEntity, $value, $metadata, $field);
         }
-        if (DoctrineCrudApiMappingTypeInterface::METADATA_TYPE_COLLECTION === $type && $value instanceof RA) {
+        if (true === $this->propertyValueResolverHelper->isCollection($value, $type)) {
             return new ArrayCollection($value->map(function ($collectionValue) use (
                 $field,
                 $metadata,
@@ -130,10 +135,8 @@ class ModifyHelper
                     return $this->createNewEntity($field, $collectionValue, $metadata, $fieldMetadata);
                 }
                 if ($this->propertyValueResolverHelper->isUpdatableCollectionItem($collectionValue)) {
-                    $nestedMetadata = (clone $fieldMetadata)->set(
-                        DoctrineCrudApiMappingTypeInterface::METADATA_TYPE,
-                        DoctrineCrudApiMappingTypeInterface::METADATA_TYPE_ENTITY
-                    );
+                    $nestedMetadata = $this->propertyValueResolverHelper
+                        ->getNestedCollectionItemMetadata($fieldMetadata);
                     /** @var ApiEntityInterface $nestedEntity */
                     $nestedEntity = $this->mappingResolver->resolveValue($nestedMetadata, $collectionValue);
                     return $this->updateExistingEntity($nestedEntity, $collectionValue, $metadata, $field);
@@ -208,6 +211,16 @@ class ModifyHelper
         });
 
         return $item;
+    }
+
+    /**
+     * @param string $primaryKey
+     *
+     * @return ApiEntityInterface
+     */
+    public function fetch(string $primaryKey): ApiEntityInterface
+    {
+        return $this->dataManager->getItem($primaryKey);
     }
 
     /**
