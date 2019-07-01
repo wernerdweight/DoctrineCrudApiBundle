@@ -153,12 +153,12 @@ Usage
 
 ### Endpoints
 
-* **`/{entity-name}/list/`** - lists entities of type *EntityName* (see below for filtering, ordering etc.);
-* **`/{entity-name}/length/`** - returns the count of entities of type *EntityName* that would be listed for given criteria;
-* **`/{entity-name}/detail/{id}/`** - returns entity of type *EntityName* with primary key *id*
-* **`/{entity-name}/create/`** - creates entity of type *EntityName*
-* **`/{entity-name}/update/{id}/`** - updates entity of type *EntityName* with primary key *id*
-* **`/{entity-name}/delete/{id}/`** - deletes entity of type *EntityName* with primary key *id*
+* **[GET] `/{entity-name}/list/`** - lists entities of type *EntityName* (see below for filtering, ordering etc.);
+* **[GET] `/{entity-name}/length/`** - returns the count of entities of type *EntityName* that would be listed for given criteria;
+* **[GET] `/{entity-name}/detail/{id}/`** - returns entity of type *EntityName* with primary key *id*
+* **[POST] `/{entity-name}/create/`** - creates entity of type *EntityName*
+* **[POST] `/{entity-name}/update/{id}/`** - updates entity of type *EntityName* with primary key *id*
+* **[DELETE] `/{entity-name}/delete/{id}/`** - deletes entity of type *EntityName* with primary key *id*
 
 ### Specifying response structure
 
@@ -200,7 +200,13 @@ TODO:
 
 TODO:
 
-### Request examples
+Request examples
+------------
+
+TODO:
+
+What you have to take care of yourself
+------------
 
 TODO:
 
