@@ -71,8 +71,8 @@ class ModifyHelper
         DoctrineCrudApiMetadata $metadata,
         RA $fieldMetadata
     ): ApiEntityInterface {
-        $nestedClassName = $this->propertyValueResolverHelper
-            ->getNestedClassName($field, $value, $metadata, $fieldMetadata);
+        $nestedClassName = $this->mappingResolver
+            ->getNestedCreatableClassName($field, $value, $metadata, $fieldMetadata);
         $nestedItem = $this->create($value, $nestedClassName);
         $this->nestedItems->push($nestedItem);
         return $nestedItem;
@@ -94,7 +94,7 @@ class ModifyHelper
         DoctrineCrudApiMetadata $metadata,
         string $field
     ): ApiEntityInterface {
-        $nestedEntity = $this->propertyValueResolverHelper->getNestedUpdatable($item, $metadata, $field, $value);
+        $nestedEntity = $this->mappingResolver->getNestedUpdatable($item, $metadata, $field, $value);
         return $this->update($nestedEntity, $value);
     }
 
@@ -109,11 +109,9 @@ class ModifyHelper
      */
     public function resolveValue(string $field, $value, DoctrineCrudApiMetadata $metadata)
     {
-        /*
-         * @var RA|null
-         * @var string  $field
-         */
-        [$type, $fieldMetadata] = $this->propertyValueResolverHelper->getFieldTypeAndMetadata($metadata, $field);
+        /** @var RA|null $fieldMetadata */
+        /** @var string $type */
+        [$type, $fieldMetadata] = $this->mappingResolver->getFieldTypeAndMetadata($metadata, $field);
         if (null === $type || null === $fieldMetadata) {
             return $value;
         }
@@ -135,8 +133,7 @@ class ModifyHelper
                     return $this->createNewEntity($field, $collectionValue, $metadata, $fieldMetadata);
                 }
                 if ($this->propertyValueResolverHelper->isUpdatableCollectionItem($collectionValue)) {
-                    $nestedMetadata = $this->propertyValueResolverHelper
-                        ->getNestedCollectionItemMetadata($fieldMetadata);
+                    $nestedMetadata = $this->mappingResolver->getNestedCollectionItemMetadata($fieldMetadata);
                     /** @var ApiEntityInterface $nestedEntity */
                     $nestedEntity = $this->mappingResolver->resolveValue($nestedMetadata, $collectionValue);
                     return $this->updateExistingEntity($nestedEntity, $collectionValue, $metadata, $field);
