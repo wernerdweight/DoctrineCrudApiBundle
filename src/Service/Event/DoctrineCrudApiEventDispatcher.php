@@ -6,7 +6,9 @@ namespace WernerDweight\DoctrineCrudApiBundle\Service\Event;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use WernerDweight\DoctrineCrudApiBundle\Entity\ApiEntityInterface;
 use WernerDweight\DoctrineCrudApiBundle\Event\PostCreateEvent;
+use WernerDweight\DoctrineCrudApiBundle\Event\PostDeleteEvent;
 use WernerDweight\DoctrineCrudApiBundle\Event\PostUpdateEvent;
+use WernerDweight\DoctrineCrudApiBundle\Event\PreDeleteEvent;
 use WernerDweight\DoctrineCrudApiBundle\Event\PrePersistEvent;
 use WernerDweight\DoctrineCrudApiBundle\Event\PreSetPropertyEvent;
 use WernerDweight\DoctrineCrudApiBundle\Event\PreUpdateEvent;
@@ -98,6 +100,30 @@ class DoctrineCrudApiEventDispatcher
     {
         /** @var PostUpdateEvent $event */
         $event = $this->eventDispatcher->dispatch(new PostUpdateEvent($item));
+        return $event;
+    }
+
+    /**
+     * @param ApiEntityInterface $item
+     *
+     * @return PreDeleteEvent
+     */
+    public function dispatchPreDelete(ApiEntityInterface $item): PreDeleteEvent
+    {
+        /** @var PreDeleteEvent $event */
+        $event = $this->eventDispatcher->dispatch(new PreDeleteEvent($item));
+        return $event;
+    }
+
+    /**
+     * @param ApiEntityInterface $item
+     *
+     * @return PostDeleteEvent
+     */
+    public function dispatchPostDelete(ApiEntityInterface $item): PostDeleteEvent
+    {
+        /** @var PostDeleteEvent $event */
+        $event = $this->eventDispatcher->dispatch(new PostDeleteEvent($item));
         return $event;
     }
 }

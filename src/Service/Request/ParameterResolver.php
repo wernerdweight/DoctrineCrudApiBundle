@@ -424,4 +424,18 @@ class ParameterResolver
         ;
         return $this;
     }
+
+    /**
+     * @return ParameterResolver
+     */
+    public function resolveDelete(): self
+    {
+        $this->resolveCommon();
+
+        $attributes = $this->request->attributes;
+        $this->parameters
+            ->set(ParameterEnum::PRIMARY_KEY, $attributes->get(ParameterEnum::PRIMARY_KEY))
+        ;
+        return $this;
+    }
 }

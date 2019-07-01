@@ -6,16 +6,16 @@ namespace WernerDweight\DoctrineCrudApiBundle\Event;
 use Symfony\Contracts\EventDispatcher\Event;
 use WernerDweight\DoctrineCrudApiBundle\Entity\ApiEntityInterface;
 
-class PreRemoveEvent extends Event
+class PreDeleteEvent extends Event
 {
     /** @var string */
-    public const NAME = 'wds.doctrine_crud_api_bundle.item.pre_remove';
+    public const NAME = 'wds.doctrine_crud_api_bundle.item.pre_delete';
 
     /** @var ApiEntityInterface */
     private $item;
 
     /**
-     * PreRemoveEvent constructor.
+     * PreDeleteEvent constructor.
      *
      * @param ApiEntityInterface $item
      */
