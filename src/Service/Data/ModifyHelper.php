@@ -104,6 +104,10 @@ class ModifyHelper
      */
     public function resolveValue(string $field, $value, DoctrineCrudApiMetadata $metadata)
     {
+        /**
+         * @var RA|null $fieldMetadata
+         * @var string $field
+         */
         [$type, $fieldMetadata] = $this->propertyValueResolverHelper->getFieldTypeAndMetadata($metadata, $field);
         if (null === $type || null === $fieldMetadata) {
             return $value;
@@ -116,7 +120,6 @@ class ModifyHelper
             $nestedEntity = $this->mappingResolver->resolveValue($fieldMetadata, $value);
             return $this->updateExistingEntity($nestedEntity, $value, $metadata, $field);
         }
-        // TODO: existing items in collections are not fetched correctly (id instead of entity)
         if (DoctrineCrudApiMappingTypeInterface::METADATA_TYPE_COLLECTION === $type && $value instanceof RA) {
             return new ArrayCollection($value->map(function ($collectionValue) use (
                 $field,
@@ -127,8 +130,12 @@ class ModifyHelper
                     return $this->createNewEntity($field, $collectionValue, $metadata, $fieldMetadata);
                 }
                 if ($this->propertyValueResolverHelper->isUpdatableCollectionItem($collectionValue)) {
+                    $nestedMetadata = (clone $fieldMetadata)->set(
+                        DoctrineCrudApiMappingTypeInterface::METADATA_TYPE,
+                        DoctrineCrudApiMappingTypeInterface::METADATA_TYPE_ENTITY
+                    );
                     /** @var ApiEntityInterface $nestedEntity */
-                    $nestedEntity = $this->mappingResolver->resolveValue($fieldMetadata, $collectionValue);
+                    $nestedEntity = $this->mappingResolver->resolveValue($nestedMetadata, $collectionValue);
                     return $this->updateExistingEntity($nestedEntity, $collectionValue, $metadata, $field);
                 }
                 return $this->mappingResolver->resolveValue($fieldMetadata, $collectionValue);
