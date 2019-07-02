@@ -178,13 +178,13 @@ Host: your-api-host.com
 For clarity, the structure parameter is as follows:
 ```json
 {
-  responseStructure: {
-    name: true,
-    tracks: {
-      title: true,
-      difficulty: true,
-      genre: {
-        title: true
+  "responseStructure": {
+    "name": true,
+    "tracks": {
+      "title": true,
+      "difficulty": true,
+      "genre": {
+        "title": true
       }
     }
   }
@@ -220,19 +220,19 @@ Following operators are supported:
 Generally, the filter structure is as follows:
 ```json
 {
-  filter: {
-    logic: "and|or",
-    conditions: [
+  "filter": {
+    "logic": "and|or",
+    "conditions": [
       {
         // regular filter
-        field: "path.to.field",
-        operator: "eq|neq|...",
-        value: "filtering value"
+        "field": "path.to.field",
+        "operator": "eq|neq|...",
+        "value": "filtering value"
       },
       {
         // nested filter
-        logic: "and|or",
-        conditions: [ /*...*/ ]
+        "logic": "and|or",
+        "conditions": [ /*...*/ ]
       },
       ...
     ]
@@ -250,36 +250,36 @@ Host: your-api-host.com
 For clarity, the filter parameter is as follows:
 ```json
 {
-  filter: {
-    logic: "or",
-    conditions: [
+  "filter": {
+    "logic": "or",
+    "conditions": [
       {
-        logic: "and",
-        conditions: [
+        "logic": "and",
+        "conditions": [
           {
-            field: "this.name",
-            operator: "contains",
-            value: "radio"
+            "field": "this.name",
+            "operator": "contains",
+            "value": "radio"
           },
           {
-            field: "this.tracks.title",
-            operator: "contains",
-            value: "creep"
+            "field": "this.tracks.title",
+            "operator": "contains",
+            "value": "creep"
           },
         ]
       },
       {
-        logic: "and",
-        conditions: [
+        "logic": "and",
+        "conditions": [
           {
-            field: "this.name",
-            operator: "contains",
-            value: "pink"
+            "field": "this.name",
+            "operator": "contains",
+            "value": "pink"
           },
           {
-            field: "this.tracks.title",
-            operator: "contains",
-            value: "wish"
+            "field": "this.tracks.title",
+            "operator": "contains",
+            "value": "wish"
           },
         ],
       }
@@ -310,9 +310,9 @@ The API lets you sort listed data using query parameter `orderBy`.
 Generally, the orderBy structure is as follows (conditions will be applied in specified order):
 ```json
 {
-  orderBy: [
+  "orderBy": [
     {
-      field: "path.to.field",
+      "field": "path.to.field",
       "direction": "asc|desc"
     },
     ...
@@ -330,9 +330,9 @@ Host: your-api-host.com
 For clarity, the orderBy parameter is as follows:
 ```json
 {
-  orderBy: [
+  "orderBy": [
     {
-      field: "name",
+      "field": "name",
       "direction": "desc"
     }
   ]
@@ -348,14 +348,14 @@ The API lets you list groupped data using query parameter `groupBy` with optiona
 Generally, the groupBy structure is as follows (groupping will be applied in specified order; aggregates are optional):
 ```json
 {
-  groupBy: [
+  "groupBy": [
     {
-      field: "path.to.field",
+      "field": "path.to.field",
       "direction": "asc|desc",
       "aggregates": [
         {
-          function: "avg|count|min|max|sum",
-          field: "path.to.field",
+          "function": "avg|count|min|max|sum",
+          "field": "path.to.field",
         },
         ...
       ]
@@ -375,18 +375,18 @@ Host: your-api-host.com
 For clarity, the groupBy parameter is as follows:
 ```json
 {
-  groupBy: [
+  "groupBy": [
     {
-      field: "this.difficulty",
+      "field": "this.difficulty",
       "direction": "desc",
       "aggregates": [
         {
-          function: "count",
-          field: "id"
+          "function": "count",
+          "field": "id"
         },
         {
-          function: "sum",
-          field: "difficulty"
+          "function": "sum",
+          "field": "difficulty"
         }
       ]
     }
@@ -429,7 +429,7 @@ Am      Em\nSome Lyrics\n
 For clarity, the fields parameter is as follows:
 ```json
 {
-  fields: [
+  "fields": [
     {
       "title": "New Track",
       "difficulty": 3,
