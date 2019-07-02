@@ -128,6 +128,25 @@ class ParameterEnum
     public const GROUP_BY_HAS_GROUPS = 'hasGroups';
 
     /** @var string */
+    public const GROUP_BY_AGGREGATE_FUNCTION_AVG = 'avg';
+    /** @var string */
+    public const GROUP_BY_AGGREGATE_FUNCTION_COUNT = 'count';
+    /** @var string */
+    public const GROUP_BY_AGGREGATE_FUNCTION_MIN = 'min';
+    /** @var string */
+    public const GROUP_BY_AGGREGATE_FUNCTION_MAX = 'max';
+    /** @var string */
+    public const GROUP_BY_AGGREGATE_FUNCTION_SUM = 'sum';
+    /** @var string[] */
+    public const AVAILABLE_AGGREGATE_FUNCTIONS = [
+        self::GROUP_BY_AGGREGATE_FUNCTION_AVG,
+        self::GROUP_BY_AGGREGATE_FUNCTION_COUNT,
+        self::GROUP_BY_AGGREGATE_FUNCTION_MIN,
+        self::GROUP_BY_AGGREGATE_FUNCTION_MAX,
+        self::GROUP_BY_AGGREGATE_FUNCTION_SUM,
+    ];
+
+    /** @var string */
     public const RESPONSE_STRUCTURE = 'responseStructure';
 
     /** @var string */

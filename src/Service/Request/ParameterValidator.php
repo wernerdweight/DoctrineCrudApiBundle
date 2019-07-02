@@ -239,6 +239,30 @@ class ParameterValidator
     }
 
     /**
+     * @param RA|null $aggregates
+     *
+     * @return RA|null
+     */
+    private function validateAggregates(?RA $aggregates): ?RA
+    {
+        if (null === $aggregates) {
+            return null;
+        }
+
+        $aggregates->walk(function (RA $aggregate): void {
+            $function = mb_strtolower($aggregate->getString(ParameterEnum::GROUP_BY_AGGREGATE_FUNCTION));
+            if (true !== in_array($function, ParameterEnum::AVAILABLE_AGGREGATE_FUNCTIONS, true)) {
+                throw new FilteringException(
+                    FilteringException::EXCEPTION_INVALID_AGGREGATE_FUNCTION,
+                    [$function, implode(', ', ParameterEnum::AVAILABLE_AGGREGATE_FUNCTIONS)]
+                );
+            }
+        });
+
+        return $aggregates;
+    }
+
+    /**
      * @param array|null $groupBy
      *
      * @return RA|null
@@ -262,7 +286,7 @@ class ParameterValidator
             }
             $aggregates = (
                 $entry->hasKey(ParameterEnum::GROUP_BY_AGGREGATES)
-                    ? $entry->getRAOrNull(ParameterEnum::GROUP_BY_AGGREGATES)
+                    ? $this->validateAggregates($entry->getRAOrNull(ParameterEnum::GROUP_BY_AGGREGATES))
                     : null
                 ) ?? new RA();
             return new RA(compact('field', 'direction', 'aggregates'));

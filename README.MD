@@ -164,31 +164,225 @@ Usage
 
 *Available for `list`, `detail`, `create`, `update`.*
 
-TODO:
+The API lets you decide the structure of the response. You should set some default structure using `Listable(default=true)` (see above) - properties marked as default will automatically be returned if no response structure is specified in the request. Furthermore, if you decide to specify response structure with nesting (you require a property that is a related entity or collection of entities - e.g. `artist.tracks`) but will not specify response structure for the nested entity, the defaults for will be used to outpu the nested entity.
+
+**WARNING: If you specify response structure, default properties on the specified level will be ignored! You have to specify all required fields in the request!**
+
+Pass response structure with your request as query parameter like this:
+
+```http request
+GET /artist/list/?responseStructure%5Bname%5D=true&responseStructure%5Btracks%5D%5Btitle%5D=true&responseStructure%5Btracks%5D%5Bdifficulty%5D=true&responseStructure%5Btracks%5D%5Bgenre%5D%5Btitle%5D=true HTTP/1.1
+Host: your-api-host.com
+```
+
+For clarity, the structure parameter is as follows:
+```json
+{
+  responseStructure: {
+    name: true,
+    tracks: {
+      title: true,
+      difficulty: true,
+      genre: {
+        title: true
+      }
+    }
+  }
+}
+```
 
 ### Filtering
 
 *Available for `list`, `length`.*
 
-TODO:
+The API lets you filter listed data using query parameter `filter`. The filter must respect entity relations (so if you want to filter by name of the artist (root entity in this example - root entity is always referenced as `this`), the key for the filter will be `this.name`, but if you want to filter by title of related tracks (a 1:N relation), the filter key will be `this.tracks.title`).
+
+Filters can be nested and support `AND` and `OR` logic.
+
+Following operators are supported:
+* **eq** - is equal to (equivalent of `=` in SQL),
+* **neq** - is not equal to (equivalent of `!=` in SQL),
+* **gt** - is greater than (equivalent of `>` in SQL),
+* **gte** - is greater than or equal (equivalent of `>=` in SQL),
+* **gten** - is greater than or equal or NULL (equivalent of `>= OR IS NULL` in SQL),
+* **lt** - is lower than (equivalent of `<` in SQL),
+* **lte** - is lower than or equal (equivalent of `<=` in SQL),
+* **begins** - begins with (equivalent of `LIKE '...%'` in SQL; textual properties only, case-insensitive),
+* **contains** - contains (equivalent of `LIKE '%...%'` in SQL; textual properties only, case-insensitive),
+* **not-contains** - does not contain (equivalent of `NOT LIKE '%...%'` in SQL; textual properties only, case-insensitive),
+* **ends** - ends with (equivalent of `LIKE '%...'` in SQL; textual properties only, case-insensitive),
+* **null** - is null (equivalent of `IS NULL` in SQL),
+* **not-null** - is not null (equivalent of `IS NOT NULL` in SQL),
+* **empty** - is empty (equivalent of `IS NULL OR = ''` in SQL; textual properties only),
+* **not-empty** - is not empty (equivalent of `IS NOT NULL AND != ''` in SQL; textual properties only),
+* **in** - is contained in (equivalent of `IN` in SQL).
+
+Generally, the filter structure is as follows:
+```json
+{
+  filter: {
+    logic: "and|or",
+    conditions: [
+      {
+        // regular filter
+        field: "path.to.field",
+        operator: "eq|neq|...",
+        value: "filtering value"
+      },
+      {
+        // nested filter
+        logic: "and|or",
+        conditions: [ /*...*/ ]
+      },
+      ...
+    ]
+  }
+}
+```
+
+Pass filter settings with your request as query parameter like this:
+
+```http request
+GET /artist/list/?filter%5Blogic%5D=or&filter%5Bconditions%5D%5B0%5D%5Blogic%5D=and&filter%5Bconditions%5D%5B0%5D%5Bconditions%5D%5B0%5D%5Bfield%5D=this.name&filter%5Bconditions%5D%5B0%5D%5Bconditions%5D%5B0%5D%5Boperator%5D=contains&filter%5Bconditions%5D%5B0%5D%5Bconditions%5D%5B0%5D%5Bvalue%5D=radio&filter%5Bconditions%5D%5B0%5D%5Bconditions%5D%5B1%5D%5Bfield%5D=this.tracks.title&filter%5Bconditions%5D%5B0%5D%5Bconditions%5D%5B1%5D%5Boperator%5D=contains&filter%5Bconditions%5D%5B0%5D%5Bconditions%5D%5B1%5D%5Bvalue%5D=creep&filter%5Bconditions%5D%5B1%5D%5Blogic%5D=and&filter%5Bconditions%5D%5B1%5D%5Bconditions%5D%5B0%5D%5Bfield%5D=this.name&filter%5Bconditions%5D%5B1%5D%5Bconditions%5D%5B0%5D%5Boperator%5D=contains&filter%5Bconditions%5D%5B1%5D%5Bconditions%5D%5B0%5D%5Bvalue%5D=pink&filter%5Bconditions%5D%5B1%5D%5Bconditions%5D%5B1%5D%5Bfield%5D=this.tracks.title&filter%5Bconditions%5D%5B1%5D%5Bconditions%5D%5B1%5D%5Boperator%5D=contains&filter%5Bconditions%5D%5B1%5D%5Bconditions%5D%5B1%5D%5Bvalue%5D=wish HTTP/1.1
+Host: your-api-host.com
+```
+
+For clarity, the filter parameter is as follows:
+```json
+{
+  filter: {
+    logic: "or",
+    conditions: [
+      {
+        logic: "and",
+        conditions: [
+          {
+            field: "this.name",
+            operator: "contains",
+            value: "radio"
+          },
+          {
+            field: "this.tracks.title",
+            operator: "contains",
+            value: "creep"
+          },
+        ]
+      },
+      {
+        logic: "and",
+        conditions: [
+          {
+            field: "this.name",
+            operator: "contains",
+            value: "pink"
+          },
+          {
+            field: "this.tracks.title",
+            operator: "contains",
+            value: "wish"
+          },
+        ],
+      }
+    ]
+  }
+}
+```
 
 ### Pagination
 
 *Available for `list`, `length`.*
 
-TODO:
+The API lets you paginate the listed data using a zero-indexed `offset` and `limit` parameters.
+
+Pass pagination settings with your request as query parameters like this:
+
+```http request
+GET /artist/list/?offset=100&limit=20 HTTP/1.1
+Host: your-api-host.com
+```
 
 ### Ordering
 
 *Available for `list`.*
 
-TODO:
+The API lets you sort listed data using query parameter `orderBy`.
 
-### Groupping
+Generally, the orderBy structure is as follows (conditions will be applied in specified order):
+```json
+{
+  orderBy: [
+    {
+      field: "path.to.field",
+      "direction": "asc|desc"
+    },
+    ...
+  ]
+}
+```
+
+Pass ordering settings with your request as query parameter like this:
+
+```http request
+GET /artist/list/?orderBy%5B0%5D%5Bfield%5D=name&orderBy%5B0%5D%5Bdirection%5D=desc HTTP/1.1
+Host: your-api-host.com
+```
+
+For clarity, the orderBy parameter is as follows:
+```json
+{
+  orderBy: [
+    {
+      field: "name",
+      "direction": "desc"
+    }
+  ]
+}
+```
+
+### Groupping and aggregations
 
 *Available for `list`, `length`.*
 
-TODO:
+The API lets you list groupped data using query parameter `groupBy` with optional aggregates. Supported aggregate functions are `avg`, `count`, `min`, `max`, and `sum`. 
+
+Generally, the groupBy structure is as follows (groupping will be applied in specified order; aggregates are optional):
+```json
+{
+  groupBy: [
+    {
+      field: "path.to.field",
+      "direction": "asc|desc",
+      "aggregates": [
+        {
+          function: "avg|count|min|max|sum",
+          field: "path.to.field",
+        },
+        ...
+      ]
+    },
+    ...
+  ]
+}
+```
+
+Pass groupping settings with your request as query parameter like this:
+
+```http request
+GET /artist/list/?orderBy%5B0%5D%5Bfield%5D=name&orderBy%5B0%5D%5Bdirection%5D=desc HTTP/1.1
+Host: your-api-host.com
+```
+
+For clarity, the orderBy parameter is as follows:
+```json
+{
+  orderBy: [
+    {
+      field: "name",
+      "direction": "desc"
+    }
+  ]
+}
+```
 
 ### Specifying fields to modify
 
