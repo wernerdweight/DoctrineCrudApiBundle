@@ -178,13 +178,13 @@ Host: your-api-host.com
 For clarity, the structure parameter is as follows:
 ```javascript
 {
-  "responseStructure": {
-    "name": true,
-    "tracks": {
-      "title": true,
-      "difficulty": true,
-      "genre": {
-        "title": true
+  responseStructure: {
+    name: true,
+    tracks: {
+      title: true,
+      difficulty: true,
+      genre: {
+        title: true
       }
     }
   }
