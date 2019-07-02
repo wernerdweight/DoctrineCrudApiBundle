@@ -400,11 +400,94 @@ For clarity, the groupBy parameter is as follows:
 
 When creating/updating an entity, the API needs to know, which properties to change. You must specify this using the `fields` request parameter.
 
-TODO: 
+Pass fields with your request as form data like this:
+
+```http request
+POST /track/create/?= HTTP/1.1
+Content-Type: multipart/form-data; boundary=---011000010111000001101001
+Host: your-api-host.com
+Content-Length: 576
+
+-----011000010111000001101001
+Content-Disposition: form-data; name="fields[title]"
+New Track
+-----011000010111000001101001
+Content-Disposition: form-data; name="fields[difficulty]"
+3
+-----011000010111000001101001
+Content-Disposition: form-data; name="fields[artist][id]"
+e00ea3a8-bb91-4639-880c-10ce67a92987
+-----011000010111000001101001
+Content-Disposition: form-data; name="fields[genre][title]"
+New Genre
+-----011000010111000001101001
+Content-Disposition: form-data; name="fields[chords]"
+Am      Em\nSome Lyrics\n
+-----011000010111000001101001--
+```
+
+For clarity, the fields parameter is as follows:
+```json
+{
+  fields: [
+    {
+      "title": "New Track",
+      "difficulty": 3,
+      "artist":{
+        "id": "e00ea3a8-bb91-4639-880c-10ce67a92987"
+      },
+      "genre": {
+        "title": "New Genre"
+      },
+      "chords": "Am      Em\nSome Lyrics\n"
+    }
+  ]
+}
+```
+
+**Please note** the difference between how `artist` and `genre` are specified. An ID is specified for artist - API will thus look for an existing artist with this ID (and will fail if it doesn't exist). The genre, on the other hand, doesn't have an ID specified, but (imagine) it is set as `Creatable(nested=true)`, co it can be created together with the track (the same applies to `Updatable(nested=true)`). The resulting track will therefore be assigned an existing artist and a newly created genre.
+
+**NOTE:** If you specify the ID of the related entity, specifing any other fields for the related entity is a no-op.**
+
+**NOTE:** Specifying the ID value right as a value for the related entity key is equivalent to specifying the ID value as a key under the related entity:
+
+```json
+{
+  // these are equivalent
+  "artist": "e00ea3a8-bb91-4639-880c-10ce67a92987",
+  "artist": {
+    "id": "e00ea3a8-bb91-4639-880c-10ce67a92987"
+  }
+}
+```
 
 ### Events
 
-TODO:
+The API dispatches events during certain operations, so you can hook in the process. For general info on how to use events, please consult the [official Symfony documentation](https://symfony.com/doc/current/event_dispatcher.html).
+
+**PrePersistEvent (`wds.doctrine_crud_api_bundle.item.pre_persist`)** \
+Issued during `create` endpoint call, right before the newly created entity is persisted. Contains the item being created.
+
+**PostCreateEvent (`wds.doctrine_crud_api_bundle.item.post_create`)** \
+Issued during `create` endpoint call, right after the newly created entity is flushed to the database. Contains the item being created.
+
+**PreUpdateEvent (`wds.doctrine_crud_api_bundle.item.pre_update`)** \
+Issued during `update` endpoint call, right before the updated entity is applied the data from request. Contains the item being updated.
+
+**PostUpdateEvent (`wds.doctrine_crud_api_bundle.item.post_update`)** \
+Issued during `update` endpoint call, right after the updated entity is flushed to the database. Contains the item being updated.
+
+**PreDeleteEvent (`wds.doctrine_crud_api_bundle.item.pre_delete`)** \
+Issued during `delete` endpoint call, right before the entity is deleted. Contains the item being deleted.
+
+**PostDeleteEvent (`wds.doctrine_crud_api_bundle.item.post_delete`)** \
+Issued during `delete` endpoint call, right after the entity is deleted. Contains the item being deleted.
+
+**PreValidateEvent (`wds.doctrine_crud_api_bundle.item.pre_validate`)** \
+Issued during `create` and `update` endpoint call, right before the validation is executed on the entity. Contains the item being created/updated.
+
+**PreSetPropertyEvent (`wds.doctrine_crud_api_bundle.item.pre_set_property`)** \
+Issued during `create` and `update` endpoint call, right before a value is applied to particular property of the item being created/updated. Contains the item being created/updated, the field being updated, and the value being applied.
 
 Request examples
 ------------
