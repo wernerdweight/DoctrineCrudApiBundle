@@ -489,15 +489,532 @@ Issued during `create` and `update` endpoint call, right before the validation i
 **PreSetPropertyEvent (`wds.doctrine_crud_api_bundle.item.pre_set_property`)** \
 Issued during `create` and `update` endpoint call, right before a value is applied to particular property of the item being created/updated. Contains the item being created/updated, the field being updated, and the value being applied.
 
-Request examples
-------------
-
-TODO:
-
 What you have to take care of yourself
 ------------
 
 TODO:
+
+Request examples
+------------
+
+*FYI: The data shown are taken from various chord libraries.*
+
+**Basic listing:**
+```bash
+curl --request GET \
+  --url http://your-api-host.com/artist/list/
+```
+```json
+[
+  {
+    "name": "Radiohead",
+    "tracks": [
+      {
+        "title": "Karma Police"
+      },
+      {
+        "title": "Polyethylene"
+      },
+      {
+        "title": "Creep"
+      },
+      {
+        "title": "You and Whose Army"
+      },
+      {
+        "title": "Lucky"
+      }
+    ]
+  },
+  {
+    "name": "Pink Floyd",
+    "tracks": [
+      {
+        "title": "Wish You Were Here"
+      },
+      {
+        "title": "Time"
+      },
+      {
+        "title": "Money"
+      }
+    ]
+  }
+]
+```
+
+**Partial response structure:**
+```bash
+curl --request GET \
+  --url 'http://your-api-host.com/artist/list/?responseStructure%5Bname%5D=true&responseStructure%5Btracks%5D%5Btitle%5D=true&responseStructure%5Btracks%5D%5Bdifficulty%5D=true&responseStructure%5Btracks%5D%5Bgenre%5D=true'
+```
+```json
+[
+  {
+    "name": "Radiohead",
+    "tracks": [
+      {
+        "title": "Karma Police",
+        "difficulty": 3,
+        "genre": {
+          "title": "Psychedelic Rock"
+        }
+      },
+      {
+        "title": "Polyethylene",
+        "difficulty": 4,
+        "genre": {
+          "title": "Psychedelic Rock"
+        }
+      },
+      {
+        "title": "Creep",
+        "difficulty": 1,
+        "genre": {
+          "title": "Psychedelic Rock"
+        }
+      },
+      {
+        "title": "You and Whose Army",
+        "difficulty": 5,
+        "genre": {
+          "title": "Psychedelic Rock"
+        }
+      },
+      {
+        "title": "Lucky",
+        "difficulty": 2,
+        "genre": {
+          "title": "Psychedelic Rock"
+        }
+      }
+    ]
+  },
+  {
+    "name": "Pink Floyd",
+    "tracks": [
+      {
+        "title": "Wish You Were Here",
+        "difficulty": 2,
+        "genre": {
+          "title": "Psychedelic Rock"
+        }
+      },
+      {
+        "title": "Time",
+        "difficulty": 3,
+        "genre": {
+          "title": "Psychedelic Rock"
+        }
+      },
+      {
+        "title": "Money",
+        "difficulty": 3,
+        "genre": {
+          "title": "Psychedelic Rock"
+        }
+      }
+    ]
+  }
+]
+```
+
+**Full response structure specified:**
+```bash
+curl --request GET \
+  --url 'http://your-api-host.com/artist/list/?responseStructure%5Bname%5D=true&responseStructure%5Btracks%5D%5Btitle%5D=true&responseStructure%5Btracks%5D%5Bdifficulty%5D=true&responseStructure%5Btracks%5D%5Bgenre%5D%5Btitle%5D=true'
+```
+```json
+[
+  {
+    "name": "Radiohead",
+    "tracks": [
+      {
+        "title": "Karma Police",
+        "difficulty": 3,
+        "genre": {
+          "title": "Psychedelic Rock"
+        }
+      },
+      {
+        "title": "Polyethylene",
+        "difficulty": 4,
+        "genre": {
+          "title": "Psychedelic Rock"
+        }
+      },
+      {
+        "title": "Creep",
+        "difficulty": 1,
+        "genre": {
+          "title": "Psychedelic Rock"
+        }
+      },
+      {
+        "title": "You and Whose Army",
+        "difficulty": 5,
+        "genre": {
+          "title": "Psychedelic Rock"
+        }
+      },
+      {
+        "title": "Lucky",
+        "difficulty": 2,
+        "genre": {
+          "title": "Psychedelic Rock"
+        }
+      }
+    ]
+  },
+  {
+    "name": "Pink Floyd",
+    "tracks": [
+      {
+        "title": "Wish You Were Here",
+        "difficulty": 2,
+        "genre": {
+          "title": "Psychedelic Rock"
+        }
+      },
+      {
+        "title": "Time",
+        "difficulty": 3,
+        "genre": {
+          "title": "Psychedelic Rock"
+        }
+      },
+      {
+        "title": "Money",
+        "difficulty": 3,
+        "genre": {
+          "title": "Psychedelic Rock"
+        }
+      }
+    ]
+  }
+]
+```
+
+**Artists like "radio" having track like "Creep" or artists like "pink" having track like "Wish":**
+```bash
+curl --request GET \
+  --url 'http://your-api-host.com/artist/list/?filter%5Blogic%5D=or&filter%5Bconditions%5D%5B0%5D%5Blogic%5D=and&filter%5Bconditions%5D%5B0%5D%5Bconditions%5D%5B0%5D%5Bfield%5D=this.name&filter%5Bconditions%5D%5B0%5D%5Bconditions%5D%5B0%5D%5Boperator%5D=contains&filter%5Bconditions%5D%5B0%5D%5Bconditions%5D%5B0%5D%5Bvalue%5D=radio&filter%5Bconditions%5D%5B0%5D%5Bconditions%5D%5B1%5D%5Bfield%5D=this.tracks.title&filter%5Bconditions%5D%5B0%5D%5Bconditions%5D%5B1%5D%5Boperator%5D=contains&filter%5Bconditions%5D%5B0%5D%5Bconditions%5D%5B1%5D%5Bvalue%5D=creep&filter%5Bconditions%5D%5B1%5D%5Blogic%5D=and&filter%5Bconditions%5D%5B1%5D%5Bconditions%5D%5B0%5D%5Bfield%5D=this.name&filter%5Bconditions%5D%5B1%5D%5Bconditions%5D%5B0%5D%5Boperator%5D=contains&filter%5Bconditions%5D%5B1%5D%5Bconditions%5D%5B0%5D%5Bvalue%5D=pink&filter%5Bconditions%5D%5B1%5D%5Bconditions%5D%5B1%5D%5Bfield%5D=this.tracks.title&filter%5Bconditions%5D%5B1%5D%5Bconditions%5D%5B1%5D%5Boperator%5D=contains&filter%5Bconditions%5D%5B1%5D%5Bconditions%5D%5B1%5D%5Bvalue%5D=wish'
+```
+```json
+[
+  {
+    "name": "Pink Floyd",
+    "tracks": [
+      {
+        "title": "Wish You Were Here"
+      },
+      {
+        "title": "Time"
+      },
+      {
+        "title": "Money"
+      }
+    ]
+  },
+  {
+    "name": "Radiohead",
+    "tracks": [
+      {
+        "title": "Karma Police"
+      },
+      {
+        "title": "Polyethylene"
+      },
+      {
+        "title": "Creep"
+      },
+      {
+        "title": "You and Whose Army"
+      },
+      {
+        "title": "Lucky"
+      }
+    ]
+  }
+]
+```
+
+**Tracks by title descending:**
+```bash
+curl --request GET \
+  --url 'http://your-api-host.com/track/list/?orderBy%5B0%5D%5Bfield%5D=title&orderBy%5B0%5D%5Bdirection%5D=desc'
+```
+```json
+[
+  {
+    "title": "You and Whose Army"
+  },
+  {
+    "title": "Wish You Were Here"
+  },
+  {
+    "title": "Time"
+  },
+  {
+    "title": "Polyethylene"
+  },
+  {
+    "title": "Money"
+  },
+  {
+    "title": "Lucky"
+  },
+  {
+    "title": "Karma Police"
+  },
+  {
+    "title": "Creep"
+  }
+]
+```
+
+**Groupping with aggregates, filtering, and response structure:**
+```bash
+curl --request GET \
+  --url 'http://your-api-host.com/track/list/?groupBy%5B0%5D%5Bfield%5D=this.difficulty&groupBy%5B0%5D%5Bdirection%5D=desc&groupBy%5B0%5D%5Baggregates%5D%5B0%5D%5Bfunction%5D=count&groupBy%5B0%5D%5Baggregates%5D%5B0%5D%5Bfield%5D=id&groupBy%5B0%5D%5Baggregates%5D%5B1%5D%5Bfunction%5D=sum&groupBy%5B0%5D%5Baggregates%5D%5B1%5D%5Bfield%5D=difficulty&filter%5Blogic%5D=and&filter%5Bconditions%5D%5B0%5D%5Bfield%5D=this.artist.name&filter%5Bconditions%5D%5B0%5D%5Boperator%5D=eq&filter%5Bconditions%5D%5B0%5D%5Bvalue%5D=Pink%20Floyd&responseStructure%5Btitle%5D=true&responseStructure%5Bartist%5D%5Bname%5D=true'
+```
+```json
+[
+  {
+    "aggregates": [
+      {
+        "id": {
+          "count": 2
+        }
+      },
+      {
+        "difficulty": {
+          "sum": 6
+        }
+      }
+    ],
+    "field": "difficulty",
+    "value": "3",
+    "hasGroups": false,
+    "items": [
+      {
+        "title": "Time",
+        "artist": {
+          "name": "Pink Floyd"
+        }
+      },
+      {
+        "title": "Money",
+        "artist": {
+          "name": "Pink Floyd"
+        }
+      }
+    ]
+  },
+  {
+    "aggregates": [
+      {
+        "id": {
+          "count": 1
+        }
+      },
+      {
+        "difficulty": {
+          "sum": 2
+        }
+      }
+    ],
+    "field": "difficulty",
+    "value": "2",
+    "hasGroups": false,
+    "items": [
+      {
+        "title": "Wish You Were Here",
+        "artist": {
+          "name": "Pink Floyd"
+        }
+      }
+    ]
+  }
+]
+```
+
+**Pagination:**
+```bash
+curl --request GET \
+  --url 'http://your-api-host.com/track/list/?orderBy%5B0%5D%5Bfield%5D=title&orderBy%5B0%5D%5Bdirection%5D=desc&offset=3&limit=2'
+```
+```json
+[
+  {
+    "title": "Polyethylene"
+  },
+  {
+    "title": "Money"
+  }
+]
+```
+
+**Length with groupping:**
+```bash
+curl --request GET \
+  --url 'http://your-api-host.com/track/length/?groupBy%5B0%5D%5Bfield%5D=this.difficulty&groupBy%5B0%5D%5Bdirection%5D=desc&groupBy%5B0%5D%5Baggregates%5D%5B0%5D%5Bfunction%5D=count&groupBy%5B0%5D%5Baggregates%5D%5B0%5D%5Bfield%5D=id&groupBy%5B0%5D%5Baggregates%5D%5B1%5D%5Bfunction%5D=sum&groupBy%5B0%5D%5Baggregates%5D%5B1%5D%5Bfield%5D=difficulty&filter%5Blogic%5D=and&filter%5Bconditions%5D%5B0%5D%5Bfield%5D=this.artist.name&filter%5Bconditions%5D%5B0%5D%5Boperator%5D=eq&filter%5Bconditions%5D%5B0%5D%5Bvalue%5D=Pink%20Floyd&responseStructure%5Btitle%5D=true&responseStructure%5Bartist%5D%5Bname%5D=true'
+```
+```json
+{
+  "length": 2
+}
+```
+
+**Detail with response structure:**
+```bash
+curl --request GET \
+  --url 'http://your-api-host.com/artist/detail/e00ea3a8-bb91-4639-880c-10ce67a92987?responseStructure%5Bname%5D=true&responseStructure%5Btracks%5D%5Btitle%5D=true&responseStructure%5Btracks%5D%5Bdifficulty%5D=true&responseStructure%5Btracks%5D%5Bgenre%5D=true'
+```
+```json
+{
+  "name": "Radiohead",
+  "tracks": [
+    {
+      "title": "Karma Police",
+      "difficulty": 3,
+      "genre": {
+        "title": "Psychedelic Rock"
+      }
+    },
+    {
+      "title": "Polyethylene",
+      "difficulty": 4,
+      "genre": {
+        "title": "Psychedelic Rock"
+      }
+    },
+    {
+      "title": "Creep",
+      "difficulty": 1,
+      "genre": {
+        "title": "Psychedelic Rock"
+      }
+    },
+    {
+      "title": "You and Whose Army",
+      "difficulty": 5,
+      "genre": {
+        "title": "Psychedelic Rock"
+      }
+    },
+    {
+      "title": "Lucky",
+      "difficulty": 2,
+      "genre": {
+        "title": "Psychedelic Rock"
+      }
+    }
+  ]
+}
+```
+
+**Delete track:**
+```bash
+curl --request DELETE \
+  --url http://your-api-host.com/track/delete/3cf54bb9-9e98-46fe-834c-298c4cb3763c
+```
+```json
+{
+  "title": "New Track"
+}
+```
+
+**Update track:**
+```bash
+curl --request POST \
+  --url 'http://your-api-host.com/track/update/c9e5c46d-94eb-4cbc-a778-992d115271d3?=' \
+  --header 'content-type: multipart/form-data; boundary=---011000010111000001101001' \
+  --form 'fields[title]=New Track (modified)' \
+  --form 'fields[difficulty]=1' \
+  --form 'fields[artist][id]=10401146-c83b-48dc-91f0-64abe93e84f4' \
+  --form 'fields[genre][id]=fc3e17e3-96f2-4947-9567-ca053a557acd' \
+  --form 'fields[chords]=C     Dm\nCompletely Different'
+```
+```json
+{
+  "title": "New Track (modified)"
+}
+```
+
+**Update artist with existing nested tracks with existing nested genre:**
+```bash
+curl --request POST \
+  --url 'http://your-api-host.com/artist/update/10401146-c83b-48dc-91f0-64abe93e84f4?=' \
+  --header 'content-type: multipart/form-data; boundary=---011000010111000001101001' \
+  --form 'fields[tracks][0][id]=9df932d7-b832-48ba-9884-a0cdecc017e9' \
+  --form 'fields[tracks][0][title]=New Track 75' \
+  --form 'fields[tracks][0][difficulty]=1' \
+  --form 'fields[tracks][0][genre][title]=New Genre 81' \
+  --form 'fields[tracks][1][title]=New Track 20' \
+  --form 'fields[tracks][1][difficulty]=1' \
+  --form 'fields[tracks][1][chords]=Em      Am\nSome other lyrics\n' \
+  --form 'fields[tracks][1][genre][id]=8247ac0f-17bb-46b5-8f5e-b52fb77792b5'
+```
+```json
+{
+  "name": "New Artist (modified)",
+  "tracks": [
+    {
+      "title": "New Track 75"
+    },
+    {
+      "title": "New Track 20"
+    }
+  ]
+}
+```
+
+**Create track:**
+```bash
+curl --request POST \
+  --url 'http://your-api-host.com/track/create/?=' \
+  --header 'content-type: multipart/form-data; boundary=---011000010111000001101001' \
+  --form 'fields[title]=New Track' \
+  --form 'fields[difficulty]=3' \
+  --form 'fields[artist][id]=e00ea3a8-bb91-4639-880c-10ce67a92987' \
+  --form 'fields[genre][id]=8247ac0f-17bb-46b5-8f5e-b52fb77792b5' \
+  --form 'fields[chords]=Am      Em\nSome Lyrics\n'
+```
+```json
+{
+  "title": "New Track"
+}
+```
+
+**Create artist with nested tracks with nested genre:**
+```bash
+curl --request POST \
+  --url 'http://your-api-host.com/artist/create/?=' \
+  --header 'content-type: multipart/form-data; boundary=---011000010111000001101001' \
+  --form 'fields[name]=New Artist' \
+  --form 'fields[tracks][0][title]=New Track 2' \
+  --form 'fields[tracks][0][difficulty]=5' \
+  --form 'fields[tracks][0][genre][title]=New Genre 2' \
+  --form 'fields[tracks][0][chords]=Am      Em\nSome Lyrics\n' \
+  --form 'fields[tracks][1][title]=New Track 3' \
+  --form 'fields[tracks][1][difficulty]=1' \
+  --form 'fields[tracks][1][chords]=Em      Am\nSome other lyrics\n' \
+  --form 'fields[tracks][1][genre][id]=8247ac0f-17bb-46b5-8f5e-b52fb77792b5'
+```
+```json
+{
+  "name": "New Artist",
+  "tracks": [
+    {
+      "title": "New Track 2"
+    },
+    {
+      "title": "New Track 3"
+    }
+  ]
+}
+```
 
 License
 -------
