@@ -493,10 +493,11 @@ What you have to take care of yourself
 ------------
 
 **Correct configuration of validation constraints:** \
-TODO:
+Entity data is validated during create and update calls. API uses validator from symfony, so if you need your data to be validated, follow the [official symfony documentation](https://symfony.com/doc/current/validation.html#constraint-configuration). \
+**WARNING: All validation constraints that should be used by the API must be assigned the "api" validation group!** (see [validation groups documentation](https://symfony.com/doc/current/validation/groups.html))
 
 **Correct configuration of cascading:** \
-TODO:
+The API will persist all newly created entities (including the nested ones), but it will not check for possible orphaned relations when deleting an item. You should correctly set cascading for any entity, that should be available for delete operation (see [doctrine documentation](https://www.doctrine-project.org/projects/doctrine-orm/en/2.6/reference/working-with-objects.html#removing-entities) for cascading configuration).
 
 **CORS:** \
 TODO:
