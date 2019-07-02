@@ -220,19 +220,19 @@ Following operators are supported:
 Generally, the filter structure is as follows:
 ```javascript
 {
-  "filter": {
-    "logic": "and|or",
-    "conditions": [
+  filter: {
+    logic: "and|or",
+    conditions: [
       {
         // regular filter
-        "field": "path.to.field",
-        "operator": "eq|neq|...",
-        "value": "filtering value"
+        field: "path.to.field",
+        operator: "eq|neq|...",
+        value: "filtering value"
       },
       {
         // nested filter
-        "logic": "and|or",
-        "conditions": [ /*...*/ ]
+        logic: "and|or",
+        conditions: [ /*...*/ ]
       },
       ...
     ]
