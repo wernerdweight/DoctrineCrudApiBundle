@@ -368,17 +368,27 @@ Generally, the groupBy structure is as follows (groupping will be applied in spe
 Pass groupping settings with your request as query parameter like this:
 
 ```http request
-GET /artist/list/?orderBy%5B0%5D%5Bfield%5D=name&orderBy%5B0%5D%5Bdirection%5D=desc HTTP/1.1
+GET /track/list/?groupBy%5B0%5D%5Bfield%5D=this.difficulty&groupBy%5B0%5D%5Bdirection%5D=desc&groupBy%5B0%5D%5Baggregates%5D%5B0%5D%5Bfunction%5D=count&groupBy%5B0%5D%5Baggregates%5D%5B0%5D%5Bfield%5D=id&groupBy%5B0%5D%5Baggregates%5D%5B1%5D%5Bfunction%5D=sum&groupBy%5B0%5D%5Baggregates%5D%5B1%5D%5Bfield%5D=difficulty HTTP/1.1
 Host: your-api-host.com
 ```
 
-For clarity, the orderBy parameter is as follows:
+For clarity, the groupBy parameter is as follows:
 ```json
 {
-  orderBy: [
+  groupBy: [
     {
-      field: "name",
-      "direction": "desc"
+      field: "this.difficulty",
+      "direction": "desc",
+      "aggregates": [
+        {
+          function: "count",
+          field: "id"
+        },
+        {
+          function: "sum",
+          field: "difficulty"
+        }
+      ]
     }
   ]
 }
@@ -388,7 +398,9 @@ For clarity, the orderBy parameter is as follows:
 
 *Available for `create`, `update`.*
 
-TODO:
+When creating/updating an entity, the API needs to know, which properties to change. You must specify this using the `fields` request parameter.
+
+TODO: 
 
 ### Events
 
