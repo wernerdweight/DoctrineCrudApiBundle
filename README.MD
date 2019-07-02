@@ -250,36 +250,36 @@ Host: your-api-host.com
 For clarity, the filter parameter is as follows:
 ```javascript
 {
-  "filter": {
-    "logic": "or",
-    "conditions": [
+  filter: {
+    logic: "or",
+    conditions: [
       {
-        "logic": "and",
-        "conditions": [
+        logic: "and",
+        conditions: [
           {
-            "field": "this.name",
-            "operator": "contains",
-            "value": "radio"
+            field: "this.name",
+            operator: "contains",
+            value: "radio"
           },
           {
-            "field": "this.tracks.title",
-            "operator": "contains",
-            "value": "creep"
+            field: "this.tracks.title",
+            operator: "contains",
+            value: "creep"
           },
         ]
       },
       {
-        "logic": "and",
-        "conditions": [
+        logic: "and",
+        conditions: [
           {
-            "field": "this.name",
-            "operator": "contains",
-            "value": "pink"
+            field: "this.name",
+            operator: "contains",
+            value: "pink"
           },
           {
-            "field": "this.tracks.title",
-            "operator": "contains",
-            "value": "wish"
+            field: "this.tracks.title",
+            operator: "contains",
+            value: "wish"
           },
         ],
       }
@@ -310,10 +310,10 @@ The API lets you sort listed data using query parameter `orderBy`.
 Generally, the orderBy structure is as follows (conditions will be applied in specified order):
 ```javascript
 {
-  "orderBy": [
+  orderBy: [
     {
-      "field": "path.to.field",
-      "direction": "asc|desc"
+      field: "path.to.field",
+      direction: "asc|desc"
     },
     ...
   ]
@@ -330,10 +330,10 @@ Host: your-api-host.com
 For clarity, the orderBy parameter is as follows:
 ```javascript
 {
-  "orderBy": [
+  orderBy: [
     {
-      "field": "name",
-      "direction": "desc"
+      field: "name",
+      direction: "desc"
     }
   ]
 }
@@ -348,14 +348,14 @@ The API lets you list groupped data using query parameter `groupBy` with optiona
 Generally, the groupBy structure is as follows (groupping will be applied in specified order; aggregates are optional):
 ```javascript
 {
-  "groupBy": [
+  groupBy: [
     {
-      "field": "path.to.field",
-      "direction": "asc|desc",
-      "aggregates": [
+      field: "path.to.field",
+      direction: "asc|desc",
+      aggregates: [
         {
-          "function": "avg|count|min|max|sum",
-          "field": "path.to.field",
+          function: "avg|count|min|max|sum",
+          field: "path.to.field",
         },
         ...
       ]
@@ -375,18 +375,18 @@ Host: your-api-host.com
 For clarity, the groupBy parameter is as follows:
 ```javascript
 {
-  "groupBy": [
+  groupBy: [
     {
-      "field": "this.difficulty",
-      "direction": "desc",
-      "aggregates": [
+      field: "this.difficulty",
+      direction: "desc",
+      aggregates: [
         {
-          "function": "count",
-          "field": "id"
+          function: "count",
+          field: "id"
         },
         {
-          "function": "sum",
-          "field": "difficulty"
+          function: "sum",
+          field: "difficulty"
         }
       ]
     }
@@ -429,17 +429,17 @@ Am      Em\nSome Lyrics\n
 For clarity, the fields parameter is as follows:
 ```javascript
 {
-  "fields": [
+  fields: [
     {
-      "title": "New Track",
-      "difficulty": 3,
-      "artist":{
-        "id": "e00ea3a8-bb91-4639-880c-10ce67a92987"
+      title: "New Track",
+      difficulty: 3,
+      artist:{
+        id: "e00ea3a8-bb91-4639-880c-10ce67a92987"
       },
-      "genre": {
-        "title": "New Genre"
+      genre: {
+        title: "New Genre"
       },
-      "chords": "Am      Em\nSome Lyrics\n"
+      chords: "Am      Em\nSome Lyrics\n"
     }
   ]
 }
@@ -454,9 +454,9 @@ For clarity, the fields parameter is as follows:
 ```javascript
 {
   // these are equivalent
-  "artist": "e00ea3a8-bb91-4639-880c-10ce67a92987",
-  "artist": {
-    "id": "e00ea3a8-bb91-4639-880c-10ce67a92987"
+  artist: "e00ea3a8-bb91-4639-880c-10ce67a92987",
+  artist: {
+    id: "e00ea3a8-bb91-4639-880c-10ce67a92987"
   }
 }
 ```
