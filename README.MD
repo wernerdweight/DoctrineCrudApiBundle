@@ -176,7 +176,7 @@ Host: your-api-host.com
 ```
 
 For clarity, the structure parameter is as follows:
-```json
+```jsonc
 {
   "responseStructure": {
     "name": true,
@@ -218,7 +218,7 @@ Following operators are supported:
 * **in** - is contained in (equivalent of `IN` in SQL).
 
 Generally, the filter structure is as follows:
-```json
+```jsonc
 {
   "filter": {
     "logic": "and|or",
@@ -248,7 +248,7 @@ Host: your-api-host.com
 ```
 
 For clarity, the filter parameter is as follows:
-```json
+```jsonc
 {
   "filter": {
     "logic": "or",
@@ -308,7 +308,7 @@ Host: your-api-host.com
 The API lets you sort listed data using query parameter `orderBy`.
 
 Generally, the orderBy structure is as follows (conditions will be applied in specified order):
-```json
+```jsonc
 {
   "orderBy": [
     {
@@ -328,7 +328,7 @@ Host: your-api-host.com
 ```
 
 For clarity, the orderBy parameter is as follows:
-```json
+```jsonc
 {
   "orderBy": [
     {
@@ -346,7 +346,7 @@ For clarity, the orderBy parameter is as follows:
 The API lets you list groupped data using query parameter `groupBy` with optional aggregates. Supported aggregate functions are `avg`, `count`, `min`, `max`, and `sum`. 
 
 Generally, the groupBy structure is as follows (groupping will be applied in specified order; aggregates are optional):
-```json
+```jsonc
 {
   "groupBy": [
     {
@@ -373,7 +373,7 @@ Host: your-api-host.com
 ```
 
 For clarity, the groupBy parameter is as follows:
-```json
+```jsonc
 {
   "groupBy": [
     {
@@ -427,7 +427,7 @@ Am      Em\nSome Lyrics\n
 ```
 
 For clarity, the fields parameter is as follows:
-```json
+```jsonc
 {
   "fields": [
     {
@@ -451,7 +451,7 @@ For clarity, the fields parameter is as follows:
 
 **NOTE:** Specifying the ID value right as a value for the related entity key is equivalent to specifying the ID value as a key under the related entity:
 
-```json
+```jsonc
 {
   // these are equivalent
   "artist": "e00ea3a8-bb91-4639-880c-10ce67a92987",
