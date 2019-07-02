@@ -156,8 +156,8 @@ Usage
 * **[GET] `/{entity-name}/list/`** - lists entities of type *EntityName* (see below for filtering, ordering etc.);
 * **[GET] `/{entity-name}/length/`** - returns the count of entities of type *EntityName* that would be listed for given criteria;
 * **[GET] `/{entity-name}/detail/{id}/`** - returns entity of type *EntityName* with primary key *id*
-* **[POST] `/{entity-name}/create/`** - creates entity of type *EntityName*
-* **[POST] `/{entity-name}/update/{id}/`** - updates entity of type *EntityName* with primary key *id*
+* **[POST] `/{entity-name}/create/`** - creates entity of type *EntityName* (validation is executed on submitted data - **you need to add "api" validation group to your validation constraints**)
+* **[POST] `/{entity-name}/update/{id}/`** - updates entity of type *EntityName* with primary key *id* (validation is executed on submitted data - **you need to add "api" validation group to your validation constraints**)
 * **[DELETE] `/{entity-name}/delete/{id}/`** - deletes entity of type *EntityName* with primary key *id*
 
 ### Specifying response structure
@@ -492,6 +492,16 @@ Issued during `create` and `update` endpoint call, right before a value is appli
 What you have to take care of yourself
 ------------
 
+**Correct configuration of validation constraints:** \
+TODO:
+
+**Correct configuration of cascading:** \
+TODO:
+
+**CORS:** \
+TODO:
+
+**Access control:** \
 TODO:
 
 Request examples
