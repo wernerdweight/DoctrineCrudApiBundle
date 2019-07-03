@@ -29,7 +29,8 @@
     },
     "require-dev": {
         "wernerdweight/cs": "^1.2.1",
-        "thecodingmachine/phpstan-safe-rule": "^0.1.2"
+        "thecodingmachine/phpstan-safe-rule": "^0.1.2",
+        "symfony/phpunit-bridge": "^4.3"
     },
     "suggest": {},
     "autoload": {
