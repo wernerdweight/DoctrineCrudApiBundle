@@ -9,6 +9,9 @@ use PHPUnit\Framework\TestCase;
 use WernerDweight\DoctrineCrudApiBundle\DTO\DoctrineCrudApiMetadata;
 use WernerDweight\DoctrineCrudApiBundle\Entity\ApiEntityInterface;
 use WernerDweight\DoctrineCrudApiBundle\Service\Response\ValueGetter;
+use WernerDweight\DoctrineCrudApiBundle\Tests\Fixtures\ArticleFixtures;
+use WernerDweight\DoctrineCrudApiBundle\Tests\Fixtures\AuthorFixtures;
+use WernerDweight\DoctrineCrudApiBundle\Tests\Fixtures\CategoryFixtures;
 use WernerDweight\DoctrineCrudApiBundle\Tests\Fixtures\DoctrineCrudApiMetadataFixtures;
 use WernerDweight\RA\RA;
 use WernerDweight\Stringy\Stringy;
@@ -161,49 +164,16 @@ class ValueGetterTest extends TestCase
      */
     public function provideRelatedEntities(): array
     {
-        $relatedEntity = new class() implements ApiEntityInterface {
-            public function getId(): int
-            {
-                return 1;
-            }
-        };
         return [
             [
-                $relatedEntity,
-                new class($relatedEntity) implements ApiEntityInterface {
-                    private $relatedEntity;
-
-                    public function __construct(ApiEntityInterface $entity)
-                    {
-                        $this->relatedEntity = $entity;
-                    }
-
-                    public function getId(): int
-                    {
-                        return 1;
-                    }
-
-                    public function getRelatedEntity(): ApiEntityInterface
-                    {
-                        return $this->relatedEntity;
-                    }
-                },
-                new Stringy('relatedEntity'),
+                AuthorFixtures::createAuthor(),
+                ArticleFixtures::createArticle(),
+                new Stringy('author'),
             ],
             [
                 null,
-                new class() implements ApiEntityInterface {
-                    public function getId(): int
-                    {
-                        return 1;
-                    }
-
-                    public function getRelatedEntity(): ?ApiEntityInterface
-                    {
-                        return null;
-                    }
-                },
-                new Stringy('relatedEntity'),
+                ArticleFixtures::createArticleWithoutAuthor(),
+                new Stringy('author'),
             ],
         ];
     }
@@ -213,57 +183,17 @@ class ValueGetterTest extends TestCase
      */
     public function provideRelatedCollections(): array
     {
-        $relatedCollection = new ArrayCollection();
-        $relatedCollection->add(new class() implements ApiEntityInterface {
-            public function getId(): int
-            {
-                return 1;
-            }
-        });
-        $relatedCollection->add(new class() implements ApiEntityInterface {
-            public function getId(): int
-            {
-                return 2;
-            }
-        });
         return [
             [
-                new RA($relatedCollection->toArray()),
-                new class($relatedCollection) implements ApiEntityInterface {
-                    private $relatedCollection;
-
-                    public function __construct(Collection $collection)
-                    {
-                        $this->relatedCollection = $collection;
-                    }
-
-                    public function getId(): int
-                    {
-                        return 1;
-                    }
-
-                    public function getRelatedCollection(): Collection
-                    {
-                        return $this->relatedCollection;
-                    }
-                },
-                new Stringy('relatedCollection'),
+                new RA(ArticleFixtures::createCollectionOfArticles()->toArray()),
+                CategoryFixtures::createCategoryWithArticles(),
+                new Stringy('articles'),
                 DoctrineCrudApiMetadataFixtures::createEmptyMetadata(),
             ],
             [
                 new RA(),
-                new class() implements ApiEntityInterface {
-                    public function getId(): int
-                    {
-                        return 1;
-                    }
-
-                    public function getRelatedCollection(): Collection
-                    {
-                        return new ArrayCollection();
-                    }
-                },
-                new Stringy('relatedCollection'),
+                CategoryFixtures::createEmptyCategory(),
+                new Stringy('articles'),
                 DoctrineCrudApiMetadataFixtures::createEmptyMetadata(),
             ],
         ];
