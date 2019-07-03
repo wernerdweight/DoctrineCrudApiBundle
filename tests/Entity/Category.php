@@ -8,7 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\PersistentCollection;
 use WernerDweight\DoctrineCrudApiBundle\Entity\ApiEntityInterface;
 
-class Category implements ApiEntityInterface
+final class Category implements ApiEntityInterface
 {
     /** @var int */
     private $id;
@@ -21,8 +21,9 @@ class Category implements ApiEntityInterface
 
     /**
      * Category constructor.
-     * @param int $id
-     * @param string $title
+     *
+     * @param int                                  $id
+     * @param string                               $title
      * @param ArrayCollection|PersistentCollection $articles
      */
     public function __construct(int $id, string $title, Collection $articles)

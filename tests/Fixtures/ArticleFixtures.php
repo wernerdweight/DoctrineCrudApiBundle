@@ -4,8 +4,6 @@ declare(strict_types=1);
 namespace WernerDweight\DoctrineCrudApiBundle\Tests\Fixtures;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\Mapping\ClassMetadata;
-use WernerDweight\DoctrineCrudApiBundle\DTO\DoctrineCrudApiMetadata;
 use WernerDweight\DoctrineCrudApiBundle\Tests\Entity\Article;
 
 class ArticleFixtures
@@ -23,13 +21,41 @@ class ArticleFixtures
         );
     }
 
+    /**
+     * @return Article
+     */
     public static function createArticleWithoutAuthor(): Article
     {
-
+        return new Article(
+            2,
+            'Reservoir Dogs - behind the scenes',
+            null,
+            CategoryFixtures::createEmptyCategory()
+        );
     }
 
+    /**
+     * @return Article
+     */
+    public static function createArticleWithoutCategory(): Article
+    {
+        return new Article(
+            2,
+            'Reservoir Dogs - behind the scenes',
+            AuthorFixtures::createAuthor(),
+            null
+        );
+    }
+
+    /**
+     * @return ArrayCollection
+     */
     public static function createCollectionOfArticles(): ArrayCollection
     {
-
+        return new ArrayCollection([
+            self::createArticle(),
+            self::createArticleWithoutAuthor(),
+            self::createArticleWithoutCategory(),
+        ]);
     }
 }

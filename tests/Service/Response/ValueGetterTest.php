@@ -3,8 +3,6 @@ declare(strict_types=1);
 
 namespace WernerDweight\DoctrineCrudApiBundle\Tests\Service\Response;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use PHPUnit\Framework\TestCase;
 use WernerDweight\DoctrineCrudApiBundle\DTO\DoctrineCrudApiMetadata;
 use WernerDweight\DoctrineCrudApiBundle\Entity\ApiEntityInterface;

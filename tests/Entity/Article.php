@@ -5,7 +5,7 @@ namespace WernerDweight\DoctrineCrudApiBundle\Tests\Entity;
 
 use WernerDweight\DoctrineCrudApiBundle\Entity\ApiEntityInterface;
 
-class Article implements ApiEntityInterface
+final class Article implements ApiEntityInterface
 {
     /** @var int */
     private $id;
@@ -13,20 +13,21 @@ class Article implements ApiEntityInterface
     /** @var string */
     private $title;
 
-    /** @var Author */
+    /** @var Author|null */
     private $author;
 
-    /** @var Category */
+    /** @var Category|null */
     private $category;
 
     /**
      * Article constructor.
-     * @param int $id
-     * @param string $title
-     * @param Author $author
-     * @param Category $category
+     *
+     * @param int           $id
+     * @param string        $title
+     * @param Author|null   $author
+     * @param Category|null $category
      */
-    public function __construct(int $id, string $title, Author $author, Category $category)
+    public function __construct(int $id, string $title, ?Author $author, ?Category $category)
     {
         $this->id = $id;
         $this->title = $title;
@@ -51,17 +52,17 @@ class Article implements ApiEntityInterface
     }
 
     /**
-     * @return Author
+     * @return Author|null
      */
-    public function getAuthor(): Author
+    public function getAuthor(): ?Author
     {
         return $this->author;
     }
 
     /**
-     * @return Category
+     * @return Category|null
      */
-    public function getCategory(): Category
+    public function getCategory(): ?Category
     {
         return $this->category;
     }

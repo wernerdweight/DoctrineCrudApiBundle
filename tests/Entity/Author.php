@@ -5,7 +5,7 @@ namespace WernerDweight\DoctrineCrudApiBundle\Tests\Entity;
 
 use WernerDweight\DoctrineCrudApiBundle\Entity\ApiEntityInterface;
 
-class Author implements ApiEntityInterface
+final class Author implements ApiEntityInterface
 {
     /** @var int */
     private $id;
@@ -18,7 +18,8 @@ class Author implements ApiEntityInterface
 
     /**
      * Author constructor.
-     * @param int $id
+     *
+     * @param int    $id
      * @param string $name
      * @param string $email
      */
