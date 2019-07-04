@@ -106,12 +106,9 @@ class ListingFormatter
     private function formatGrouppedListing(RA $items, int $level, RA $groupBy): RA
     {
         $levelConfiguration = $groupBy->getRAOrNull($groupBy->length() - $level) ?? new RA();
-        $levelGroupingField = FilteringHelper::IDENTIFIER_FIELD_NAME;
-        if (true === $levelConfiguration->hasKey(ParameterEnum::GROUP_BY_FIELD)) {
-            /** @var Stringy $field */
-            $field = $levelConfiguration->get(ParameterEnum::GROUP_BY_FIELD);
-            $levelGroupingField = (new RA($field->explode(ParameterEnum::FIELD_SEPARATOR)))->last();
-        }
+        $levelGroupingField = true === $levelConfiguration->hasKey(ParameterEnum::GROUP_BY_FIELD)
+            ? (string)$levelConfiguration->get(ParameterEnum::GROUP_BY_FIELD)
+            : FilteringHelper::IDENTIFIER_FIELD_NAME;
         return $this->formatGroupped($items, $level, $levelGroupingField);
     }
 
