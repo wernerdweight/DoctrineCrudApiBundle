@@ -25,6 +25,7 @@ class ManyFormatterTest extends DoctrineMetadataKernelTestCase
         ?RA $responseStructure,
         string $prefix
     ): void {
+        /** @var ManyFormatter $formatter */
         $formatter = self::$container->get(ManyFormatter::class);
         $value = $formatter->format($items, $responseStructure, $prefix);
         $this->assertEquals($expected, $value);
@@ -37,10 +38,30 @@ class ManyFormatterTest extends DoctrineMetadataKernelTestCase
     {
         return [
             [
-                new RA(),
+                new RA([
+                    [
+                        'id' => 1,
+                        'title' => 'How I Learned to Stop Worrying and Love the Bomb',
+                        'author' => [
+                            'name' => 'Jules Winnfield',
+                        ],
+                    ],
+                    [
+                        'id' => 2,
+                        'title' => 'Reservoir Dogs - behind the scenes',
+                        'author' => null,
+                    ],
+                    [
+                        'id' => 3,
+                        'title' => 'Coherence',
+                        'author' => [
+                            'name' => 'Jules Winnfield',
+                        ],
+                    ],
+                ], RA::RECURSIVE),
                 new RA(ArticleFixtures::createCollectionOfArticles()->toArray(), RA::RECURSIVE),
                 DoctrineCrudApiResponseStructureFixtures::createArticleResponseStructure(),
-                'article',
+                'article.',
             ],
         ];
     }

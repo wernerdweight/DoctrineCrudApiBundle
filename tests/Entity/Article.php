@@ -22,6 +22,7 @@ final class Article implements ApiEntityInterface
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue()
+     * @WDS\Listable(default=true)
      */
     private $id;
 
@@ -40,7 +41,7 @@ final class Article implements ApiEntityInterface
      *
      * @ORM\ManyToOne(targetEntity="Author")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="author_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     *   @ORM\JoinColumn(name="author_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
      * })
      * @WDS\Listable()
      * @WDS\Creatable()
@@ -53,7 +54,7 @@ final class Article implements ApiEntityInterface
      *
      * @ORM\ManyToOne(targetEntity="Category", inversedBy="articles")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="category_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     *   @ORM\JoinColumn(name="category_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
      * })
      * @WDS\Listable()
      * @WDS\Creatable()

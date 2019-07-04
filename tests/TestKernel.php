@@ -3,11 +3,7 @@ declare(strict_types=1);
 
 namespace WernerDweight\DoctrineCrudApiBundle\Tests;
 
-use Doctrine\Bundle\DoctrineBundle\DependencyInjection\Compiler\DbalSchemaFilterPass;
-use Doctrine\Bundle\DoctrineBundle\DependencyInjection\Compiler\EntityListenerPass;
-use Doctrine\Bundle\DoctrineBundle\DependencyInjection\Compiler\ServiceRepositoryCompilerPass;
 use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
-use Symfony\Bridge\Doctrine\DependencyInjection\CompilerPass\DoctrineValidationPass;
 use Symfony\Bridge\Doctrine\DependencyInjection\CompilerPass\RegisterEventListenersAndSubscribersPass;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
@@ -96,15 +92,5 @@ class TestKernel extends Kernel
             ),
             PassConfig::TYPE_BEFORE_OPTIMIZATION
         );
-        $builder->addCompilerPass(new DoctrineValidationPass('orm'));
-        $builder->addCompilerPass(new EntityListenerPass());
-        $builder->addCompilerPass(new ServiceRepositoryCompilerPass());
-        $builder->addCompilerPass(new DbalSchemaFilterPass());
-
-        //$builder->autowire('test.private_services_locator', ServiceLocator::class);
-        //$builder->addCompilerPass(new TestServiceContainerWeakRefPass(), PassConfig::TYPE_BEFORE_REMOVING, -32);
-        //$builder->addCompilerPass(new TestServiceContainerRealRefPass(), PassConfig::TYPE_AFTER_REMOVING);
-        //$builder->autowire('test.service_container', TestContainer::class);
-        //$builder->autowire(EntityManagerInterface::class, EntityManagerInterface::class);
     }
 }
