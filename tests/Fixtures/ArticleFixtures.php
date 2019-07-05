@@ -40,8 +40,8 @@ class ArticleFixtures
     public static function createArticleWithoutCategory(): Article
     {
         return new Article(
-            2,
-            'Reservoir Dogs - behind the scenes',
+            3,
+            'Coherence',
             AuthorFixtures::createAuthor(),
             null
         );

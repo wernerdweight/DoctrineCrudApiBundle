@@ -42,11 +42,11 @@ class OutputVoterTest extends TestCase
         $metadata = DoctrineCrudApiMetadataFixtures::createArticleMetadata();
         $responseStructure = DoctrineCrudApiResponseStructureFixtures::createArticleResponseStructure();
         return [
-            [true, new Stringy('title'), $metadata, $responseStructure],
-            [false, new Stringy('author'), $metadata, $responseStructure],
-            [true, new Stringy('author.name'), $metadata, $responseStructure],
-            [false, new Stringy('author.email'), $metadata, $responseStructure],
-            [false, new Stringy('category'), $metadata, $responseStructure],
+            [true, new Stringy('article.title'), $metadata, $responseStructure],
+            [true, new Stringy('article.author'), $metadata, $responseStructure],
+            [true, new Stringy('article.author.name'), $metadata, $responseStructure],
+            [false, new Stringy('article.author.email'), $metadata, $responseStructure],
+            [false, new Stringy('article.category'), $metadata, $responseStructure],
         ];
     }
 }

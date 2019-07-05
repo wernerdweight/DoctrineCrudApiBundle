@@ -14,10 +14,12 @@ class DoctrineCrudApiResponseStructureFixtures
     public static function createArticleResponseStructure(): RA
     {
         return new RA([
-            'id' => ParameterEnum::TRUE_VALUE,
-            'title' => ParameterEnum::TRUE_VALUE,
-            'author' => [
-                'name' => ParameterEnum::TRUE_VALUE,
+            'article' => [
+                'id' => ParameterEnum::TRUE_VALUE,
+                'title' => ParameterEnum::TRUE_VALUE,
+                'author' => [
+                    'name' => ParameterEnum::TRUE_VALUE,
+                ],
             ],
         ], RA::RECURSIVE);
     }
