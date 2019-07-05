@@ -5,13 +5,9 @@ namespace WernerDweight\DoctrineCrudApiBundle\Tests\Service\Request;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
-use WernerDweight\DoctrineCrudApiBundle\Entity\ApiEntityInterface;
 use WernerDweight\DoctrineCrudApiBundle\Service\Request\ParameterEnum;
-use WernerDweight\DoctrineCrudApiBundle\Service\Request\ParameterResolver;
 use WernerDweight\DoctrineCrudApiBundle\Service\Request\ParameterValidator;
-use WernerDweight\DoctrineCrudApiBundle\Service\Response\Formatter;
 use WernerDweight\DoctrineCrudApiBundle\Tests\DoctrineMetadataKernelTestCase;
-use WernerDweight\DoctrineCrudApiBundle\Tests\Fixtures\ArticleFixtures;
 use WernerDweight\DoctrineCrudApiBundle\Tests\Fixtures\DoctrineCrudApiResponseStructureFixtures;
 use WernerDweight\RA\RA;
 use WernerDweight\Stringy\Stringy;
@@ -37,7 +33,7 @@ class ParameterValidatorTest extends DoctrineMetadataKernelTestCase
     }
 
     /**
-     * @param RA $expected
+     * @param RA         $expected
      * @param array|null $filter
      *
      * @dataProvider provideFilterValues
@@ -52,7 +48,7 @@ class ParameterValidatorTest extends DoctrineMetadataKernelTestCase
     }
 
     /**
-     * @param RA $expected
+     * @param RA         $expected
      * @param array|null $orderBy
      *
      * @dataProvider provideOrderByValues
@@ -67,7 +63,7 @@ class ParameterValidatorTest extends DoctrineMetadataKernelTestCase
     }
 
     /**
-     * @param RA|null $expected
+     * @param RA|null    $expected
      * @param array|null $groupBy
      *
      * @dataProvider provideGroupByValues
@@ -82,9 +78,9 @@ class ParameterValidatorTest extends DoctrineMetadataKernelTestCase
     }
 
     /**
-     * @param RA|null $expected
+     * @param RA|null    $expected
      * @param array|null $responseStructure
-     * @param Stringy $entityName
+     * @param Stringy    $entityName
      *
      * @dataProvider provideResponseStructureValues
      */
@@ -98,7 +94,7 @@ class ParameterValidatorTest extends DoctrineMetadataKernelTestCase
     }
 
     /**
-     * @param RA $expected
+     * @param RA         $expected
      * @param array|null $fields
      *
      * @dataProvider provideFieldsValues
@@ -184,13 +180,13 @@ class ParameterValidatorTest extends DoctrineMetadataKernelTestCase
                     'orderBy' => [
                         'field' => 'this.author.name',
                         'direction' => 'desc',
-                    ]
+                    ],
                 ], RA::RECURSIVE),
                 [
                     ParameterEnum::ORDER_BY => [
                         ParameterEnum::ORDER_BY_FIELD => 'this.author.name',
                         ParameterEnum::ORDER_BY_DIRECTION => ParameterEnum::ORDER_BY_DIRECTION_DESC,
-                    ]
+                    ],
                 ],
             ],
         ];
@@ -213,7 +209,7 @@ class ParameterValidatorTest extends DoctrineMetadataKernelTestCase
                     ],
                 ], RA::RECURSIVE),
                 [
-                    ParameterEnum::GROUP_BY=> [
+                    ParameterEnum::GROUP_BY => [
                         ParameterEnum::GROUP_BY_FIELD => 'this.author.name',
                         ParameterEnum::GROUP_BY_DIRECTION => ParameterEnum::GROUP_BY_DIRECTION_DESC,
                     ],
@@ -233,7 +229,7 @@ class ParameterValidatorTest extends DoctrineMetadataKernelTestCase
                     ],
                 ], RA::RECURSIVE),
                 [
-                    ParameterEnum::GROUP_BY=> [
+                    ParameterEnum::GROUP_BY => [
                         ParameterEnum::GROUP_BY_FIELD => 'this.author.name',
                         ParameterEnum::GROUP_BY_DIRECTION => ParameterEnum::GROUP_BY_DIRECTION_DESC,
                         ParameterEnum::GROUP_BY_AGGREGATES => [
@@ -257,10 +253,10 @@ class ParameterValidatorTest extends DoctrineMetadataKernelTestCase
             [null, null, new Stringy('')],
             [
                 new RA([
-                    'article' => []
+                    'article' => [],
                 ], RA::RECURSIVE),
                 [],
-                new Stringy('article')
+                new Stringy('article'),
             ],
             [
                 DoctrineCrudApiResponseStructureFixtures::createArticleResponseStructure(),
