@@ -272,7 +272,7 @@ class ParameterValidatorTest extends DoctrineMetadataKernelTestCase
                     ],
                 ],
                 new Stringy('article'),
-            ]
+            ],
         ];
     }
 
@@ -282,7 +282,22 @@ class ParameterValidatorTest extends DoctrineMetadataKernelTestCase
     public function provideFieldsValues(): array
     {
         return [
-            [],
+            [new RA(), null],
+            [new RA([]), []],
+            [
+                new RA([
+                    'title' => 'Some Article',
+                    'author' => [
+                        'name' => 'Johannes Brahms',
+                    ],
+                ], RA::RECURSIVE),
+                [
+                    'title' => 'Some Article',
+                    'author' => [
+                        'name' => 'Johannes Brahms',
+                    ],
+                ],
+            ],
         ];
     }
 }
