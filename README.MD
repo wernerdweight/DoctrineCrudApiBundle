@@ -501,7 +501,7 @@ The API will persist all newly created entities (including the nested ones), but
 
 **CORS:** \
 If your FE app (or any other app that communicates with the API) sends [preflight requests](https://developer.mozilla.org/en-US/docs/Glossary/Preflight_request), you have to handle their resolving (an easy option is to listen on `kernel.request` event and filter requests by method (`OPTIONS`) and controller (by implemented interface `DoctrineCrudApiControllerInterface`)). \
-**HEADS UP: There will be an optional bundle to handle this use-case. Stay tuned!**
+**HEADS UP: You can use [CORSBundle](https://github.com/wernerdweight/CORSBundle) to handle this use-case.**
 
 **Access control:** \
 You should protect your API with some credentials (API secret, client id, OAuth. ...). Since the methods are numerous and requirements may vary, the API does not force you to use a specific method. You can use [symfony security options](https://symfony.com/doc/current/security/guard_authentication.html), integrate a 3rd-party bundle, or use your custom solution. \
