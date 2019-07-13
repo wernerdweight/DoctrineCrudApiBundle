@@ -8,6 +8,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
+use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
 use WernerDweight\DoctrineCrudApiBundle\Exception\ReturnableExceptionInterface;
 use WernerDweight\RA\RA;
@@ -66,6 +67,16 @@ final class ExceptionEventSubscriber implements EventSubscriberInterface
                 )
             );
             $this->logger->debug($exception->getMessage(), $responseData);
+        }
+
+        if ($exception instanceof HttpExceptionInterface) {
+            $event->setResponse(
+                new JsonResponse(
+                    [self::MESSAGE_KEY => $exception->getMessage()],
+                    $exception->getStatusCode()
+                )
+            );
+            $this->logger->debug($exception->getMessage(), $exception->getTrace());
         }
     }
 
