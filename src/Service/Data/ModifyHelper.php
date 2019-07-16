@@ -110,7 +110,7 @@ class ModifyHelper
     public function resolveValue(string $field, $value, DoctrineCrudApiMetadata $metadata)
     {
         /** @var RA|null $fieldMetadata */
-        /** @var string $type */
+        /** @var string|null $type */
         [$type, $fieldMetadata] = $this->mappingResolver->getFieldTypeAndMetadata($metadata, $field);
         if (null === $type || null === $fieldMetadata) {
             return $value;
