@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace WernerDweight\DoctrineCrudApiBundle\Service\Data;
 
 use WernerDweight\DoctrineCrudApiBundle\Entity\ApiEntityInterface;
-use WernerDweight\DoctrineCrudApiBundle\Exception\DataManagerException;
+use WernerDweight\DoctrineCrudApiBundle\Exception\DataManagerReturnableException;
 use WernerDweight\DoctrineCrudApiBundle\Service\Request\ParameterEnum;
 use WernerDweight\RA\RA;
 use WernerDweight\Stringy\Stringy;
@@ -164,7 +164,7 @@ class DataManager
         /** @var ApiEntityInterface|null $item */
         $item = $this->repositoryManager->getCurrentRepository()->find($primaryKey);
         if (null === $item) {
-            throw new DataManagerException(DataManagerException::UNKNOWN_ENTITY_REQUESTED);
+            throw new DataManagerReturnableException(DataManagerReturnableException::UNKNOWN_ENTITY_REQUESTED);
         }
         return $item;
     }

@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace WernerDweight\DoctrineCrudApiBundle\Service\PropertyValueResolver\Resolver;
 
+use DateTimeImmutable;
 use Doctrine\DBAL\Types\Type;
 use WernerDweight\DoctrineCrudApiBundle\Service\Request\ParameterEnum;
 use WernerDweight\RA\RA;
@@ -21,7 +22,7 @@ final class DateTimeImmutableValueResolver implements PropertyValueResolverInter
         if (true === empty($value) || ParameterEnum::NULL_VALUE === $value) {
             return null;
         }
-        return new \DateTimeImmutable(
+        return new DateTimeImmutable(
         // remove localized timezone (some browsers use localized names)
             (string)((new Stringy($value))->eregReplace('^([^\(]*)\s(.*$', '\\1'))
         );
