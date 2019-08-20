@@ -46,7 +46,7 @@ class CurrentEntityResolver
     public function getCurrentEntity(): Stringy
     {
         if (null === $this->currentEntity) {
-            $entityName = $this->request->attributes->getAlpha(ParameterEnum::ENTITY_NAME);
+            $entityName = $this->request->attributes->get(ParameterEnum::ENTITY_NAME);
             if (true === empty($entityName)) {
                 throw new InvalidRequestException(InvalidRequestException::EXCEPTION_NO_ENTITY_NAME);
             }
