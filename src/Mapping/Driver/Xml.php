@@ -7,6 +7,7 @@ use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Persistence\Mapping\Driver\FileDriver;
 use Doctrine\Common\Persistence\Mapping\Driver\FileLocator;
 use Doctrine\ORM\Mapping\ClassMetadata;
+use SimpleXMLElement;
 use WernerDweight\DoctrineCrudApiBundle\Exception\XmlDriverException;
 use WernerDweight\DoctrineCrudApiBundle\Mapping\Type\DoctrineCrudApiMappingTypeInterface;
 use WernerDweight\DoctrineCrudApiBundle\Mapping\Type\Factory\XmlMappingTypeFactory;
@@ -89,7 +90,7 @@ final class Xml extends AbstractDriver implements DoctrineCrudApiDriverInterface
     /**
      * @param string $entityName
      *
-     * @return \SimpleXMLElement|ClassMetadata
+     * @return SimpleXMLElement|ClassMetadata
      *
      * @throws \Doctrine\Common\Persistence\Mapping\MappingException
      * @throws \Safe\Exceptions\SimplexmlException
@@ -108,7 +109,7 @@ final class Xml extends AbstractDriver implements DoctrineCrudApiDriverInterface
     }
 
     /**
-     * @param \SimpleXMLElement $mapping
+     * @param SimpleXMLElement $mapping
      *
      * @return bool
      */
@@ -118,6 +119,34 @@ final class Xml extends AbstractDriver implements DoctrineCrudApiDriverInterface
             DoctrineCrudApiMappingTypeInterface::ACCESSIBLE,
             (array)($mapping->children(self::WDS_NAMESPACE_URI))
         );
+    }
+
+    /**
+     * @param RA               $config
+     * @param SimpleXMLElement $mapping
+     *
+     * @return RA
+     *
+     * @throws \WernerDweight\RA\Exception\RAException
+     */
+    private function readAttributeOverrides(RA $config, object $mapping): RA
+    {
+        if (true !== isset($mapping->{DoctrineCrudApiDriverInterface::PROPERTY_ATTRIBUTE_OVERRIDES})) {
+            return $config;
+        }
+
+        $overrides = $mapping
+            ->{DoctrineCrudApiDriverInterface::PROPERTY_ATTRIBUTE_OVERRIDES}
+            ->{DoctrineCrudApiDriverInterface::PROPERTY_ATTRIBUTE_OVERRIDE};
+        foreach ($overrides as $override) {
+            $filteredMapping = $override->field->children(self::WDS_NAMESPACE_URI);
+            foreach (DoctrineCrudApiMappingTypeInterface::MAPPING_TYPES as $mappingType) {
+                $config = $this->mappingTypeFactory->get($mappingType)
+                    ->readConfiguration($override, $filteredMapping, $config);
+            }
+        }
+
+        return $config;
     }
 
     /**
@@ -153,6 +182,9 @@ final class Xml extends AbstractDriver implements DoctrineCrudApiDriverInterface
                 }
             }
         }
+
+        $config = $this->readAttributeOverrides($config, $mapping);
+
         return $config;
     }
 }

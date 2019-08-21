@@ -7,7 +7,7 @@ use Doctrine\DBAL\Types\Type;
 use WernerDweight\DoctrineCrudApiBundle\Service\Request\ParameterEnum;
 use WernerDweight\RA\RA;
 
-final class ArrayValueResolver implements PropertyValueResolverInterface
+final class JsonValueResolver implements PropertyValueResolverInterface
 {
     /**
      * @param mixed $value
@@ -17,7 +17,9 @@ final class ArrayValueResolver implements PropertyValueResolverInterface
      */
     public function getPropertyValue($value, RA $configuration): ?array
     {
-        return (true !== empty($value) && ParameterEnum::NULL_VALUE !== $value) ? (array)$value : null;
+        return (true !== empty($value) && ParameterEnum::NULL_VALUE !== $value)
+            ? (is_array($value) ? $value : \Safe\json_decode($value, true))
+            : null;
     }
 
     /**
@@ -26,9 +28,8 @@ final class ArrayValueResolver implements PropertyValueResolverInterface
     public function getPropertyTypes(): array
     {
         return [
-            Type::TARRAY,
-            Type::SIMPLE_ARRAY,
-            Type::OBJECT,
+            Type::JSON_ARRAY,
+            Type::JSON,
         ];
     }
 }

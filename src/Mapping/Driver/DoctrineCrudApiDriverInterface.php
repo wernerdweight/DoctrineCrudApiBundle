@@ -23,6 +23,10 @@ interface DoctrineCrudApiDriverInterface
     public const PROPERTY_MANY_TO_ONE = 'many-to-one';
     /** @var string */
     public const PROPERTY_MANY_TO_MANY = 'many-to-many';
+    /** @var string */
+    public const PROPERTY_ATTRIBUTE_OVERRIDES = 'attribute-overrides';
+    /** @var string */
+    public const PROPERTY_ATTRIBUTE_OVERRIDE = 'attribute-override';
     /** @var string[] */
     public const INSPECTABLE_PROPERTIES = [
         self::PROPERTY_ID,
