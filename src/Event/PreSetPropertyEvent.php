@@ -57,4 +57,15 @@ class PreSetPropertyEvent extends Event
     {
         return $this->value;
     }
+
+    /**
+     * @param mixed $value
+     *
+     * @return PreSetPropertyEvent
+     */
+    public function setValue($value): self
+    {
+        $this->value = $value;
+        return $this;
+    }
 }
