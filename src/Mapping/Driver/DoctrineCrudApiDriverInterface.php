@@ -27,6 +27,8 @@ interface DoctrineCrudApiDriverInterface
     public const PROPERTY_ATTRIBUTE_OVERRIDES = 'attribute-overrides';
     /** @var string */
     public const PROPERTY_ATTRIBUTE_OVERRIDE = 'attribute-override';
+    /** @var string */
+    public const PROPERTY_UNMAPPED = 'unmapped';
     /** @var string[] */
     public const INSPECTABLE_PROPERTIES = [
         self::PROPERTY_ID,
@@ -35,6 +37,7 @@ interface DoctrineCrudApiDriverInterface
         self::PROPERTY_ONE_TO_MANY,
         self::PROPERTY_MANY_TO_ONE,
         self::PROPERTY_MANY_TO_MANY,
+        self::PROPERTY_UNMAPPED,
     ];
 
     /**

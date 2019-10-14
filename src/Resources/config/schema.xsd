@@ -29,6 +29,10 @@
         <xs:attribute name="nested" type="xs:boolean" use="optional" default="false"/>
     </xs:complexType>
 
+    <xs:complexType name="unmapped">
+        <xs:attribute name="name" type="xs:string" use="required" />
+    </xs:complexType>
+
     <xs:complexType name="metadata">
         <xs:sequence>
             <xs:element name="type" type="wds:metadata-type" minOccurs="0" maxOccurs="1"/>
