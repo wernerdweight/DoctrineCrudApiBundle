@@ -122,21 +122,33 @@ final class Xml extends AbstractDriver implements DoctrineCrudApiDriverInterface
     }
 
     /**
-     * @param RA               $config
      * @param SimpleXMLElement $mapping
+     *
+     * @return array
+     */
+    private function extendXmlMappingWithWdsElements(object $mapping): array
+    {
+        $wdsElements = new RA((array)$mapping->children(self::WDS_NAMESPACE_URI));
+        return array_merge((array)$mapping, $wdsElements->map(function ($element): array {
+            return true !== is_array($element) ? [$element] : $element;
+        })->toArray());
+    }
+
+    /**
+     * @param RA    $config
+     * @param array $mapping
      *
      * @return RA
      *
      * @throws \WernerDweight\RA\Exception\RAException
      */
-    private function readAttributeOverrides(RA $config, object $mapping): RA
+    private function readAttributeOverrides(RA $config, array $mapping): RA
     {
-        if (true !== isset($mapping->{DoctrineCrudApiDriverInterface::PROPERTY_ATTRIBUTE_OVERRIDES})) {
+        if (true !== isset($mapping[DoctrineCrudApiDriverInterface::PROPERTY_ATTRIBUTE_OVERRIDES])) {
             return $config;
         }
 
-        $overrides = $mapping
-            ->{DoctrineCrudApiDriverInterface::PROPERTY_ATTRIBUTE_OVERRIDES}
+        $overrides = $mapping[DoctrineCrudApiDriverInterface::PROPERTY_ATTRIBUTE_OVERRIDES]
             ->{DoctrineCrudApiDriverInterface::PROPERTY_ATTRIBUTE_OVERRIDE};
         foreach ($overrides as $override) {
             $filteredMapping = $override->field->children(self::WDS_NAMESPACE_URI);
@@ -170,10 +182,12 @@ final class Xml extends AbstractDriver implements DoctrineCrudApiDriverInterface
 
         $config->set(DoctrineCrudApiMappingTypeInterface::ACCESSIBLE, true);
 
+        $mapping = $this->extendXmlMappingWithWdsElements($mapping);
+
         foreach (DoctrineCrudApiDriverInterface::INSPECTABLE_PROPERTIES as $property) {
-            if (true === isset($mapping->$property)) {
+            if (true === isset($mapping[$property])) {
                 /** @var \SimpleXMLElement $propertyMapping */
-                foreach ($mapping->$property as $propertyMapping) {
+                foreach ($mapping[$property] as $propertyMapping) {
                     $filteredMapping = $propertyMapping->children(self::WDS_NAMESPACE_URI);
                     foreach (DoctrineCrudApiMappingTypeInterface::MAPPING_TYPES as $mappingType) {
                         $config = $this->mappingTypeFactory->get($mappingType)
