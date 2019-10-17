@@ -186,8 +186,9 @@ final class Xml extends AbstractDriver implements DoctrineCrudApiDriverInterface
 
         foreach (DoctrineCrudApiDriverInterface::INSPECTABLE_PROPERTIES as $property) {
             if (true === isset($mapping[$property])) {
+                $mappingProperties = is_array($mapping[$property]) ? $mapping[$property] : [$mapping[$property]];
                 /** @var \SimpleXMLElement $propertyMapping */
-                foreach ($mapping[$property] as $propertyMapping) {
+                foreach ($mappingProperties as $propertyMapping) {
                     $filteredMapping = $propertyMapping->children(self::WDS_NAMESPACE_URI);
                     foreach (DoctrineCrudApiMappingTypeInterface::MAPPING_TYPES as $mappingType) {
                         $config = $this->mappingTypeFactory->get($mappingType)
