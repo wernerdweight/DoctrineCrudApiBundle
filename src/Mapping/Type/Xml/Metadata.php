@@ -37,10 +37,12 @@ final class Metadata extends AbstractType implements DoctrineCrudApiMappingTypeI
                     )
                     ->set(
                         DoctrineCrudApiMappingTypeInterface::METADATA_PAYLOAD,
-                        (array)($children
-                            ->{DoctrineCrudApiMappingTypeInterface::METADATA_PAYLOAD}
-                            ->{DoctrineCrudApiMappingTypeInterface::METADATA_PAYLOAD_ARGUMENT}
-                        ) ?: []
+                        new RA(
+                            (array)($children
+                                ->{DoctrineCrudApiMappingTypeInterface::METADATA_PAYLOAD}
+                                ->{DoctrineCrudApiMappingTypeInterface::METADATA_PAYLOAD_ARGUMENT}
+                            ) ?: []
+                        )
                     )
             );
         }
