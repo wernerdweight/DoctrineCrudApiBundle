@@ -6,7 +6,7 @@ namespace WernerDweight\DoctrineCrudApiBundle\Entity;
 interface ApiEntityInterface
 {
     /**
-     * @return string|int
+     * @return string|int|object
      */
     public function getId();
 }
