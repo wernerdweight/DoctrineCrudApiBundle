@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace WernerDweight\DoctrineCrudApiBundle\Mapping\Type\Factory;
 
+use Iterator;
 use Symfony\Component\DependencyInjection\Argument\RewindableGenerator;
 use WernerDweight\DoctrineCrudApiBundle\Exception\MappingTypeFactoryException;
 use WernerDweight\DoctrineCrudApiBundle\Mapping\Type\DoctrineCrudApiMappingTypeInterface;
@@ -21,6 +22,7 @@ abstract class AbstractMappingTypeFactory
     public function __construct(RewindableGenerator $types)
     {
         $this->types = new RA();
+        /** @var Iterator $iterator */
         $iterator = $types->getIterator();
         while ($iterator->valid()) {
             $type = $iterator->current();

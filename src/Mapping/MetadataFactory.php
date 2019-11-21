@@ -14,7 +14,7 @@ use WernerDweight\RA\RA;
 class MetadataFactory
 {
     /** @var string */
-    private const CACHE_NAMESPACE = 'DOCTRINE_CRUD_API_CLASSMETADATA';
+    public const CACHE_NAMESPACE = 'DOCTRINE_CRUD_API_CLASSMETADATA';
 
     /** @var EntityManagerInterface */
     private $entityManager;
@@ -72,17 +72,17 @@ class MetadataFactory
             $config = $this->driverFactory->getDriver()->readMetadata($metadata, $config);
         }
 
+        $isAccessible = $config->getBool(DoctrineCrudApiMappingTypeInterface::ACCESSIBLE);
+        $configuration = new DoctrineCrudApiMetadata($metadata->name, $metadata, $config);
+
         $cacheDriver = $metadataFactory->getCacheDriver();
         if (null !== $cacheDriver) {
             $cacheKey = \Safe\sprintf('%s\\$%s', $metadata->name, self::CACHE_NAMESPACE);
-            $cacheDriver->save($cacheKey, $config->toArray());
+            $cacheDriver->save($cacheKey, true === $isAccessible ? $configuration : null);
         }
 
-        if (true === $config->getBool(DoctrineCrudApiMappingTypeInterface::ACCESSIBLE)) {
-            $this->configurationManager->setConfiguration(
-                $metadata->name,
-                new DoctrineCrudApiMetadata($metadata->name, $metadata, $config)
-            );
+        if (true === $isAccessible) {
+            $this->configurationManager->setConfiguration($metadata->name, $configuration);
         }
         return $this;
     }

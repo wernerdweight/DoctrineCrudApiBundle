@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace WernerDweight\DoctrineCrudApiBundle\Mapping;
 
+use Iterator;
 use Symfony\Component\DependencyInjection\Argument\RewindableGenerator;
 use WernerDweight\DoctrineCrudApiBundle\Exception\DriverFactoryException;
 use WernerDweight\DoctrineCrudApiBundle\Mapping\Driver\DoctrineCrudApiDriverInterface;
@@ -22,6 +23,7 @@ class DriverFactory
     public function __construct(RewindableGenerator $drivers)
     {
         $this->drivers = new RA();
+        /** @var Iterator $iterator */
         $iterator = $drivers->getIterator();
         while ($iterator->valid()) {
             $driver = $iterator->current();
