@@ -3711,16 +3711,16 @@
         },
         {
             "name": "wernerdweight/enhanced-exception",
-            "version": "1.0.0",
+            "version": "1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/wernerdweight/EnhancedException.git",
-                "reference": "775aae8a223f221ceaf7e69e1f7925c41a280ddb"
+                "reference": "b9f454e20eceed5f63c52477ca3c5278d6cd2f21"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wernerdweight/EnhancedException/zipball/775aae8a223f221ceaf7e69e1f7925c41a280ddb",
-                "reference": "775aae8a223f221ceaf7e69e1f7925c41a280ddb",
+                "url": "https://api.github.com/repos/wernerdweight/EnhancedException/zipball/b9f454e20eceed5f63c52477ca3c5278d6cd2f21",
+                "reference": "b9f454e20eceed5f63c52477ca3c5278d6cd2f21",
                 "shasum": ""
             },
             "require": {
@@ -3754,21 +3754,21 @@
                 "exception",
                 "generic"
             ],
-            "time": "2019-06-01T10:27:50+00:00"
+            "time": "2019-12-08T20:40:52+00:00"
         },
         {
             "name": "wernerdweight/ra",
-            "version": "1.0.2",
+            "version": "1.1.0",
             "target-dir": "WernerDweight/RA",
             "source": {
                 "type": "git",
                 "url": "https://github.com/wernerdweight/RA.git",
-                "reference": "0040dedb4a0feab9d96639ffe20cb1f7691aa7bd"
+                "reference": "432024d7ea6e11027d4b0e441547fa8664ea3732"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wernerdweight/RA/zipball/0040dedb4a0feab9d96639ffe20cb1f7691aa7bd",
-                "reference": "0040dedb4a0feab9d96639ffe20cb1f7691aa7bd",
+                "url": "https://api.github.com/repos/wernerdweight/RA/zipball/432024d7ea6e11027d4b0e441547fa8664ea3732",
+                "reference": "432024d7ea6e11027d4b0e441547fa8664ea3732",
                 "shasum": ""
             },
             "require": {
@@ -3802,7 +3802,7 @@
                 "iterable",
                 "object"
             ],
-            "time": "2019-07-19T16:13:30+00:00"
+            "time": "2019-12-08T20:49:34+00:00"
         },
         {
             "name": "wernerdweight/stringy",
