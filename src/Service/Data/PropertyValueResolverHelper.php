@@ -136,7 +136,7 @@ class PropertyValueResolverHelper
     {
         if ($resolvedValue instanceof ArrayCollection) {
             $singularPropertyName = ucfirst(Inflector::singularize($field));
-            /** @var Collection $currentValue */
+            /** @var Collection<int, ApiEntityInterface> $currentValue */
             $currentValue = $item->{\Safe\sprintf('get%s', ucfirst($field))}();
             foreach ($currentValue as $collectionValue) {
                 if (true !== $resolvedValue->contains($collectionValue)) {

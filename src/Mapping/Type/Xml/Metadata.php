@@ -22,6 +22,7 @@ final class Metadata extends AbstractType implements DoctrineCrudApiMappingTypeI
     {
         $mappingType = $this->getType();
         if (true === isset($filteredMapping->$mappingType)) {
+            /** @var \SimpleXMLElement $attributes */
             $attributes = $propertyMapping->attributes();
             $children = $filteredMapping->$mappingType->children(Xml::WDS_NAMESPACE_URI);
             $config->getRA($mappingType)->set(

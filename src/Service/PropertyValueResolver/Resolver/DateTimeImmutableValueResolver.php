@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace WernerDweight\DoctrineCrudApiBundle\Service\PropertyValueResolver\Resolver;
 
-use DateTimeImmutable;
 use Doctrine\DBAL\Types\Type;
+use Safe\DateTimeImmutable;
 use WernerDweight\DoctrineCrudApiBundle\Service\Request\ParameterEnum;
 use WernerDweight\RA\RA;
 use WernerDweight\Stringy\Stringy;
@@ -15,7 +15,7 @@ final class DateTimeImmutableValueResolver implements PropertyValueResolverInter
      * @param mixed $value
      * @param RA    $configuration
      *
-     * @return \DateTimeImmutable|null
+     * @return DateTimeImmutable|null
      */
     public function getPropertyValue($value, RA $configuration): ?\DateTimeImmutable
     {

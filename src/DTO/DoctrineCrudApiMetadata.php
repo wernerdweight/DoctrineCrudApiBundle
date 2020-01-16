@@ -125,11 +125,11 @@ class DoctrineCrudApiMetadata
      * @param string  $field
      * @param RA|null $metadata
      *
-     * @return RA|null
+     * @return RA
      *
      * @throws \WernerDweight\RA\Exception\RAException
      */
-    private function patchMissingFieldMetadata(string $field, ?RA $metadata)
+    private function patchMissingFieldMetadata(string $field, ?RA $metadata): RA
     {
         $extendedFieldMetadata = $metadata ?? new RA();
         $doctrineMetadata = $this->doctrineMetadata->associationMappings[$field];

@@ -29,7 +29,7 @@ final class CollectionValueResolver implements PropertyValueResolverInterface
      * @param RA $value
      * @param RA $configuration
      *
-     * @return ArrayCollection|null
+     * @return ArrayCollection<mixed, mixed>|null
      */
     public function getPropertyValue($value, RA $configuration): ?ArrayCollection
     {

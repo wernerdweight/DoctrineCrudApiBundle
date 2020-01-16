@@ -182,7 +182,7 @@ class ParameterValidator
     }
 
     /**
-     * @param array|null $filter
+     * @param mixed[]|null $filter
      *
      * @return RA
      */
@@ -209,7 +209,7 @@ class ParameterValidator
     }
 
     /**
-     * @param array|null $orderBy
+     * @param string[]|null $orderBy
      *
      * @return RA
      */
@@ -263,7 +263,7 @@ class ParameterValidator
     }
 
     /**
-     * @param array|null $groupBy
+     * @param string[]|null $groupBy
      *
      * @return RA|null
      */
@@ -294,8 +294,8 @@ class ParameterValidator
     }
 
     /**
-     * @param array|null $responseStructure
-     * @param Stringy    $entityName
+     * @param mixed[]|null $responseStructure
+     * @param Stringy      $entityName
      *
      * @return RA|null
      */
@@ -308,7 +308,7 @@ class ParameterValidator
     }
 
     /**
-     * @param array|null $fields
+     * @param string[]|null $fields
      *
      * @return RA
      */

@@ -18,12 +18,12 @@ class ServiceEntityRepositoryFactory
     /**
      * ApiFactory constructor.
      *
-     * @param RewindableGenerator $repositories
+     * @param RewindableGenerator<ServiceEntityRepository> $repositories
      */
     public function __construct(RewindableGenerator $repositories)
     {
         $this->repositories = new RA();
-        /** @var \Generator $iterator */
+        /** @var \Generator<ServiceEntityRepository> $iterator */
         $iterator = $repositories->getIterator();
         while ($iterator->valid()) {
             /** @var ServiceEntityRepository $repository */

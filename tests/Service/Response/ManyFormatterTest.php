@@ -32,7 +32,7 @@ class ManyFormatterTest extends DoctrineMetadataKernelTestCase
     }
 
     /**
-     * @return array
+     * @return mixed[]
      */
     public function provideValues(): array
     {

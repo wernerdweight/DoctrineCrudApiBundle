@@ -16,15 +16,15 @@ class PropertyValueResolverFactory
     /**
      * PropertySetterFactory constructor.
      *
-     * @param RewindableGenerator $propertyValueResolvers
+     * @param RewindableGenerator<PropertyValueResolverInterface> $propertyValueResolvers
      */
     public function __construct(RewindableGenerator $propertyValueResolvers)
     {
         $this->propertyValueResolvers = new RA();
-        /** @var \Generator $iterator */
+        /** @var \Generator<PropertyValueResolverInterface> $iterator */
         $iterator = $propertyValueResolvers->getIterator();
         while ($iterator->valid()) {
-            /** @var PropertyValueResolverInterface\ $propertyValueResolver */
+            /** @var PropertyValueResolverInterface $propertyValueResolver */
             $propertyValueResolver = $iterator->current();
             foreach ($propertyValueResolver->getPropertyTypes() as $type) {
                 $this->propertyValueResolvers->set($type, $propertyValueResolver);

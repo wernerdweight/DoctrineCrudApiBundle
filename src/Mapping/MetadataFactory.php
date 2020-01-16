@@ -51,6 +51,7 @@ class MetadataFactory
      * @throws \Doctrine\ORM\ORMException
      * @throws \Safe\Exceptions\StringsException
      * @throws \WernerDweight\RA\Exception\RAException
+     * @throws \Safe\Exceptions\SplException
      */
     public function extendClassMetadata(ClassMetadata $metadata): self
     {
@@ -60,7 +61,7 @@ class MetadataFactory
 
         $config = $this->configurationManager->createConfigurationObject();
         if (null !== $reflectionClass) {
-            $config = (new RA(class_parents($metadata->name)))
+            $config = (new RA(\Safe\class_parents($metadata->name)))
                 ->reverse()
                 ->reduce(function (RA $carry, string $className) use ($metadataFactory): RA {
                     if (true === $metadataFactory->hasMetadataFor($className)) {

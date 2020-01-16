@@ -35,7 +35,7 @@ class OutputVoterTest extends TestCase
     }
 
     /**
-     * @return array
+     * @return mixed[]
      */
     public function provideValues(): array
     {

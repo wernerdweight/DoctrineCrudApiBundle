@@ -57,10 +57,7 @@ final class Chain extends AbstractDriver implements DoctrineCrudApiDriverInterfa
      */
     public function readMetadata(ClassMetadata $metadata, RA $config): RA
     {
-        /**
-         * @var string
-         * @var DoctrineCrudApiDriverInterface $driver
-         */
+        /** @var DoctrineCrudApiDriverInterface $driver */
         foreach ($this->drivers as $namespace => $driver) {
             if (0 === (new Stringy($metadata->name))->getPositionOfSubstring($namespace)) {
                 return $driver->readMetadata($metadata, $config);

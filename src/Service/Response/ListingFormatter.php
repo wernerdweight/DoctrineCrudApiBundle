@@ -47,7 +47,7 @@ class ListingFormatter
     private function formatGroupAggregates(RA $aggregateFields): RA
     {
         return $aggregateFields
-            ->map(function ($value, string $field): ?RA {
+            ->map(function ($value, string $field): RA {
                 $field = (new Stringy($field))
                     ->substring((new Stringy(QueryBuilderDecorator::AGGREGATE_PREFIX))->length() + 1);
                 $lastUnderscorePosition = $field

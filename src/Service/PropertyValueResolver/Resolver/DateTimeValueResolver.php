@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace WernerDweight\DoctrineCrudApiBundle\Service\PropertyValueResolver\Resolver;
 
-use DateTime;
 use Doctrine\DBAL\Types\Type;
+use Safe\DateTime;
 use WernerDweight\DoctrineCrudApiBundle\Service\Request\ParameterEnum;
 use WernerDweight\RA\RA;
 use WernerDweight\Stringy\Stringy;
@@ -15,7 +15,9 @@ final class DateTimeValueResolver implements PropertyValueResolverInterface
      * @param mixed $value
      * @param RA    $configuration
      *
-     * @return \DateTime|null
+     * @return DateTime|null
+     *
+     * @throws \Exception
      */
     public function getPropertyValue($value, RA $configuration): ?\DateTime
     {

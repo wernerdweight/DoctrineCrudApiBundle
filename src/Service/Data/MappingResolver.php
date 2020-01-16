@@ -117,7 +117,7 @@ class MappingResolver
      * @param DoctrineCrudApiMetadata $metadata
      * @param string                  $field
      *
-     * @return array
+     * @return mixed[]
      *
      * @throws \WernerDweight\RA\Exception\RAException
      */

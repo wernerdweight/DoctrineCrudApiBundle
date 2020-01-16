@@ -1,3 +1,2 @@
-parameters:
-    includes:
-        - vendor/thecodingmachine/phpstan-safe-rule/phpstan-safe-rule.neon
+includes:
+    - vendor/thecodingmachine/phpstan-safe-rule/phpstan-safe-rule.neon

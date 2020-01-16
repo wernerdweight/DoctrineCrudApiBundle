@@ -40,7 +40,7 @@ class RelationJoiner
                 $currentPrefix = $currentPrefix->substring(0, $firstSeparatorPosition);
             }
 
-            if (DataManager::ROOT_ALIAS !== $currentPrefix) {
+            if (DataManager::ROOT_ALIAS !== (string)$currentPrefix) {
                 $previousPrefix = new Stringy(DataManager::ROOT_ALIAS);
                 $currentField = (clone $field)->substring($currentPrefix->length() + 1);
                 while (true !== $currentPrefix->sameAs($previousPrefix)) {

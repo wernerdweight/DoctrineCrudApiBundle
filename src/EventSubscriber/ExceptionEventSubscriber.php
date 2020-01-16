@@ -37,7 +37,7 @@ final class ExceptionEventSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * @return array
+     * @return mixed[]
      */
     public static function getSubscribedEvents(): array
     {

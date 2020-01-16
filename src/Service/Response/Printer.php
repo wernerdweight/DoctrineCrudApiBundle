@@ -54,6 +54,8 @@ class Printer
         if (true === is_object($value)) {
             return $this->printObject($value);
         }
+        /** @var string|mixed $value */
+        $value = $value;
         if (true === is_string($value)) {
             return $value;
         }

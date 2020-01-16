@@ -31,6 +31,7 @@ final class Listable extends AbstractType implements DoctrineCrudApiMappingTypeI
         if (true === isset($filteredAttributes[self::ATTRIBUTE_DEFAULT]) &&
             true === in_array((string)$filteredAttributes[self::ATTRIBUTE_DEFAULT], self::DEFAULT_TRUE_VALUES, true)
         ) {
+            /** @var \SimpleXMLElement $attributes */
             $attributes = $propertyMapping->attributes();
             $config
                 ->getRA(DoctrineCrudApiMappingTypeInterface::DEFAULT_LISTABLE)

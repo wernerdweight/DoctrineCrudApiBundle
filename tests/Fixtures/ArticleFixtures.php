@@ -48,7 +48,7 @@ class ArticleFixtures
     }
 
     /**
-     * @return ArrayCollection
+     * @return ArrayCollection<int, Article>
      */
     public static function createCollectionOfArticles(): ArrayCollection
     {

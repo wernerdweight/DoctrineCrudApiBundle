@@ -60,7 +60,7 @@ final class Xml extends AbstractDriver implements DoctrineCrudApiDriverInterface
     /**
      * @param string $fileName
      *
-     * @return array
+     * @return mixed[]
      *
      * @throws \Safe\Exceptions\SimplexmlException
      */
@@ -124,7 +124,7 @@ final class Xml extends AbstractDriver implements DoctrineCrudApiDriverInterface
     /**
      * @param SimpleXMLElement $mapping
      *
-     * @return array
+     * @return mixed[]
      */
     private function extendXmlMappingWithWdsElements(object $mapping): array
     {
@@ -135,8 +135,8 @@ final class Xml extends AbstractDriver implements DoctrineCrudApiDriverInterface
     }
 
     /**
-     * @param RA    $config
-     * @param array $mapping
+     * @param RA      $config
+     * @param mixed[] $mapping
      *
      * @return RA
      *

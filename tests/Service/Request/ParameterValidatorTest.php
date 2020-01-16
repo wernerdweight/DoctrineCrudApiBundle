@@ -33,8 +33,8 @@ class ParameterValidatorTest extends DoctrineMetadataKernelTestCase
     }
 
     /**
-     * @param RA         $expected
-     * @param array|null $filter
+     * @param RA           $expected
+     * @param mixed[]|null $filter
      *
      * @dataProvider provideFilterValues
      */
@@ -48,8 +48,8 @@ class ParameterValidatorTest extends DoctrineMetadataKernelTestCase
     }
 
     /**
-     * @param RA         $expected
-     * @param array|null $orderBy
+     * @param RA            $expected
+     * @param string[]|null $orderBy
      *
      * @dataProvider provideOrderByValues
      */
@@ -63,8 +63,8 @@ class ParameterValidatorTest extends DoctrineMetadataKernelTestCase
     }
 
     /**
-     * @param RA|null    $expected
-     * @param array|null $groupBy
+     * @param RA|null       $expected
+     * @param string[]|null $groupBy
      *
      * @dataProvider provideGroupByValues
      */
@@ -78,9 +78,9 @@ class ParameterValidatorTest extends DoctrineMetadataKernelTestCase
     }
 
     /**
-     * @param RA|null    $expected
-     * @param array|null $responseStructure
-     * @param Stringy    $entityName
+     * @param RA|null      $expected
+     * @param mixed[]|null $responseStructure
+     * @param Stringy      $entityName
      *
      * @dataProvider provideResponseStructureValues
      */
@@ -94,8 +94,8 @@ class ParameterValidatorTest extends DoctrineMetadataKernelTestCase
     }
 
     /**
-     * @param RA         $expected
-     * @param array|null $fields
+     * @param RA            $expected
+     * @param string[]|null $fields
      *
      * @dataProvider provideFieldsValues
      */
@@ -109,7 +109,7 @@ class ParameterValidatorTest extends DoctrineMetadataKernelTestCase
     }
 
     /**
-     * @return array
+     * @return mixed[]
      */
     public function provideFilterValues(): array
     {
@@ -168,7 +168,7 @@ class ParameterValidatorTest extends DoctrineMetadataKernelTestCase
     }
 
     /**
-     * @return array
+     * @return mixed[]
      */
     public function provideOrderByValues(): array
     {
@@ -193,7 +193,7 @@ class ParameterValidatorTest extends DoctrineMetadataKernelTestCase
     }
 
     /**
-     * @return array
+     * @return mixed[]
      */
     public function provideGroupByValues(): array
     {
@@ -245,7 +245,7 @@ class ParameterValidatorTest extends DoctrineMetadataKernelTestCase
     }
 
     /**
-     * @return array
+     * @return mixed[]
      */
     public function provideResponseStructureValues(): array
     {
@@ -273,7 +273,7 @@ class ParameterValidatorTest extends DoctrineMetadataKernelTestCase
     }
 
     /**
-     * @return array
+     * @return mixed[]
      */
     public function provideFieldsValues(): array
     {

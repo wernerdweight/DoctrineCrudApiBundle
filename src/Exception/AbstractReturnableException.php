@@ -16,7 +16,7 @@ abstract class AbstractReturnableException extends AbstractEnhancedException imp
      * ItemValidatorReturnableException constructor.
      *
      * @param int             $code
-     * @param array           $payload
+     * @param mixed[]         $payload
      * @param \Throwable|null $previous
      */
     public function __construct(int $code, array $payload = [], ?\Throwable $previous = null)

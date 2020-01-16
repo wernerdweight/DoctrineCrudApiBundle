@@ -16,7 +16,7 @@ class ValueGetter
     /**
      * @param ApiEntityInterface $item
      * @param Stringy            $field
-     * @param array              $args
+     * @param mixed[]            $args
      *
      * @return mixed
      */
@@ -73,7 +73,7 @@ class ValueGetter
         $payload = $fieldMetadata && $fieldMetadata->hasKey(DoctrineCrudApiMappingTypeInterface::METADATA_PAYLOAD)
             ? $fieldMetadata->getRA(DoctrineCrudApiMappingTypeInterface::METADATA_PAYLOAD)->toArray()
             : [];
-        /** @var Collection $fieldValue */
+        /** @var Collection<int, ApiEntityInterface> $fieldValue */
         $fieldValue = $this->getEntityPropertyValue($item, $field, $payload);
         return new RA($fieldValue->getValues());
     }

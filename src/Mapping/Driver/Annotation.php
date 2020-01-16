@@ -6,6 +6,7 @@ namespace WernerDweight\DoctrineCrudApiBundle\Mapping\Driver;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Persistence\Mapping\Driver\FileLocator;
 use Doctrine\ORM\Mapping\ClassMetadata;
+use WernerDweight\DoctrineCrudApiBundle\Entity\ApiEntityInterface;
 use WernerDweight\DoctrineCrudApiBundle\Exception\AnnotationDriverException;
 use WernerDweight\DoctrineCrudApiBundle\Mapping\Type\DoctrineCrudApiMappingTypeInterface;
 use WernerDweight\DoctrineCrudApiBundle\Mapping\Type\Factory\AnnotationMappingTypeFactory;
@@ -52,7 +53,7 @@ final class Annotation extends AbstractDriver implements DoctrineCrudApiDriverIn
     }
 
     /**
-     * @param \ReflectionClass $reflectedEntity
+     * @param \ReflectionClass<ApiEntityInterface> $reflectedEntity
      *
      * @return bool
      *

@@ -31,6 +31,7 @@ final class Creatable extends AbstractType implements DoctrineCrudApiMappingType
         if (true === isset($filteredAttributes[self::ATTRIBUTE_NESTED]) &&
             true === in_array((string)$filteredAttributes[self::ATTRIBUTE_NESTED], self::NESTED_TRUE_VALUES, true)
         ) {
+            /** @var \SimpleXMLElement $attributes */
             $attributes = $propertyMapping->attributes();
             $config
                 ->getRA(DoctrineCrudApiMappingTypeInterface::CREATABLE_NESTED)

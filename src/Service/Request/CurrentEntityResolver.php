@@ -59,6 +59,7 @@ class CurrentEntityResolver
      * @return Stringy
      *
      * @throws \Safe\Exceptions\StringsException
+     * @throws \Safe\Exceptions\SplException
      */
     public function getCurrentEntityFQCN(): Stringy
     {
@@ -67,7 +68,7 @@ class CurrentEntityResolver
             $registeredNamespaces = $this->entityManager->getConfiguration()->getEntityNamespaces();
             foreach ($registeredNamespaces as $namespace) {
                 $fqcn = \Safe\sprintf('%s\\%s', $namespace, $entityName);
-                if (class_exists($fqcn) && in_array(ApiEntityInterface::class, class_implements($fqcn), true)) {
+                if (class_exists($fqcn) && in_array(ApiEntityInterface::class, \Safe\class_implements($fqcn), true)) {
                     $this->currentEntityFQCN = new Stringy($fqcn);
                     return $this->currentEntityFQCN;
                 }

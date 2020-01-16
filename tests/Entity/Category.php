@@ -40,7 +40,7 @@ final class Category implements ApiEntityInterface
     private $title;
 
     /**
-     * @var ArrayCollection|PersistentCollection
+     * @var ArrayCollection<int, Article>|PersistentCollection<int, Article>
      *
      * @ORM\OneToMany(targetEntity="Article", mappedBy="category")
      * @WDS\Listable()
@@ -52,9 +52,9 @@ final class Category implements ApiEntityInterface
     /**
      * Category constructor.
      *
-     * @param int                                  $id
-     * @param string                               $title
-     * @param ArrayCollection|PersistentCollection $articles
+     * @param int                                                              $id
+     * @param string                                                           $title
+     * @param ArrayCollection<int, Article>|PersistentCollection<int, Article> $articles
      */
     public function __construct(int $id, string $title, Collection $articles)
     {
@@ -80,7 +80,7 @@ final class Category implements ApiEntityInterface
     }
 
     /**
-     * @return ArrayCollection|PersistentCollection
+     * @return ArrayCollection<int, Article>|PersistentCollection<int, Article>
      */
     public function getArticles(): Collection
     {

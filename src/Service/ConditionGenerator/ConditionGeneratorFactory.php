@@ -17,12 +17,12 @@ class ConditionGeneratorFactory
     /**
      * ConditionGeneratorFactory constructor.
      *
-     * @param RewindableGenerator $conditionGenerators
+     * @param RewindableGenerator<ConditionGeneratorInterface> $conditionGenerators
      */
     public function __construct(RewindableGenerator $conditionGenerators)
     {
         $this->conditionGenerators = new RA();
-        /** @var \Generator $iterator */
+        /** @var \Generator<ConditionGeneratorInterface> $iterator */
         $iterator = $conditionGenerators->getIterator();
         while ($iterator->valid()) {
             /** @var ConditionGeneratorInterface $conditionGenerator */

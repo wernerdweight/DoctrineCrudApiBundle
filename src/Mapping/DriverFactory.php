@@ -18,12 +18,14 @@ class DriverFactory
     /**
      * DriverFactory constructor.
      *
-     * @param RewindableGenerator $drivers
+     * @param RewindableGenerator<DoctrineCrudApiDriverInterface> $drivers
+     *
+     * @throws \Safe\Exceptions\MbstringException
      */
     public function __construct(RewindableGenerator $drivers)
     {
         $this->drivers = new RA();
-        /** @var Iterator $iterator */
+        /** @var Iterator<DoctrineCrudApiDriverInterface> $iterator */
         $iterator = $drivers->getIterator();
         while ($iterator->valid()) {
             $driver = $iterator->current();

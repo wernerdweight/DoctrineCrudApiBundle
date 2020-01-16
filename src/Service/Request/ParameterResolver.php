@@ -168,7 +168,7 @@ class ParameterResolver
     /**
      * @param string $key
      *
-     * @return array
+     * @return mixed[]
      *
      * @throws \WernerDweight\RA\Exception\RAException
      */
@@ -180,7 +180,7 @@ class ParameterResolver
     /**
      * @param string $key
      *
-     * @return array|null
+     * @return mixed[]|null
      *
      * @throws \WernerDweight\RA\Exception\RAException
      */
@@ -264,7 +264,7 @@ class ParameterResolver
     /**
      * @param string $key
      *
-     * @return iterable
+     * @return iterable<mixed, mixed>
      *
      * @throws \WernerDweight\RA\Exception\RAException
      */
@@ -276,7 +276,7 @@ class ParameterResolver
     /**
      * @param string $key
      *
-     * @return iterable|null
+     * @return iterable<mixed, mixed>|null
      *
      * @throws \WernerDweight\RA\Exception\RAException
      */

@@ -13,7 +13,7 @@ final class ArrayValueResolver implements PropertyValueResolverInterface
      * @param mixed $value
      * @param RA    $configuration
      *
-     * @return array|null
+     * @return mixed[]|null
      */
     public function getPropertyValue($value, RA $configuration): ?array
     {

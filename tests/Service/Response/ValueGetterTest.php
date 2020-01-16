@@ -20,7 +20,7 @@ class ValueGetterTest extends TestCase
      * @param mixed              $expected
      * @param ApiEntityInterface $entity
      * @param Stringy            $field
-     * @param array              $args
+     * @param mixed[]            $args
      *
      * @dataProvider provideEntities
      */
@@ -76,7 +76,7 @@ class ValueGetterTest extends TestCase
     }
 
     /**
-     * @return array
+     * @return mixed[]
      */
     public function provideEntities(): array
     {
@@ -145,6 +145,7 @@ class ValueGetterTest extends TestCase
             [
                 'kitten',
                 new class() implements ApiEntityInterface {
+                    /** @var string string */
                     public $kitten = 'kitten';
 
                     public function getId(): int
@@ -158,7 +159,7 @@ class ValueGetterTest extends TestCase
     }
 
     /**
-     * @return array
+     * @return mixed[]
      */
     public function provideRelatedEntities(): array
     {
@@ -177,7 +178,7 @@ class ValueGetterTest extends TestCase
     }
 
     /**
-     * @return array
+     * @return mixed[]
      */
     public function provideRelatedCollections(): array
     {

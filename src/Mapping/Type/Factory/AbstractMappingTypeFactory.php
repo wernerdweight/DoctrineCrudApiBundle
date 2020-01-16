@@ -17,12 +17,12 @@ abstract class AbstractMappingTypeFactory
     /**
      * XmlFactory constructor.
      *
-     * @param RewindableGenerator $types
+     * @param RewindableGenerator<DoctrineCrudApiMappingTypeInterface> $types
      */
     public function __construct(RewindableGenerator $types)
     {
         $this->types = new RA();
-        /** @var Iterator $iterator */
+        /** @var Iterator<int, DoctrineCrudApiMappingTypeInterface> $iterator */
         $iterator = $types->getIterator();
         while ($iterator->valid()) {
             $type = $iterator->current();

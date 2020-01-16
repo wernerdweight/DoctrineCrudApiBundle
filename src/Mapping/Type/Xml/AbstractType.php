@@ -38,6 +38,7 @@ abstract class AbstractType implements DoctrineCrudApiMappingTypeInterface
     {
         $mappingType = $this->getType();
         if (true === isset($filteredMapping->$mappingType)) {
+            /** @var \SimpleXMLElement $attributes */
             $attributes = $propertyMapping->attributes();
             $config->getRA($mappingType)->push((string)($attributes['name'] ?: $attributes['field']));
             $config = $this->readExtraConfiguration($propertyMapping, $filteredMapping->$mappingType, $config);
