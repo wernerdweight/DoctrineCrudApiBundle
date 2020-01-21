@@ -403,7 +403,6 @@ class ParameterResolver
     {
         $this->resolveCommon();
 
-        $query = $this->request->query;
         $request = $this->request->request;
         $attributes = $this->request->attributes;
         $this->parameters
@@ -417,7 +416,7 @@ class ParameterResolver
             ->set(
                 ParameterEnum::RESPONSE_STRUCTURE,
                 $this->parameterValidator->validateResponseStructure(
-                    $query->get(ParameterEnum::RESPONSE_STRUCTURE),
+                    $this->request->get(ParameterEnum::RESPONSE_STRUCTURE),
                     (clone $this->getStringy(ParameterEnum::ENTITY_NAME))->lowercaseFirst()
                 )
             )
