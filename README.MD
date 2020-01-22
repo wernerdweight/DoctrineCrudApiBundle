@@ -164,7 +164,7 @@ Usage
 
 *Available for `list`, `detail`, `create`, `update`.*
 
-The API lets you decide the structure of the response. You should set some default structure using `Listable(default=true)` (see above) - properties marked as default will automatically be returned if no response structure is specified in the request. Furthermore, if you decide to specify response structure with nesting (you require a property that is a related entity or collection of entities - e.g. `artist.tracks`) but will not specify response structure for the nested entity, the defaults for will be used to outpu the nested entity.
+The API lets you decide the structure of the response. You should set some default structure using `Listable(default=true)` (see above) - properties marked as default will automatically be returned if no response structure is specified in the request. Furthermore, if you decide to specify response structure with nesting (you require a property that is a related entity or collection of entities - e.g. `artist.tracks`) but will not specify response structure for the nested entity, the defaults will be used to output the nested entity.
 
 **WARNING: If you specify response structure, default properties on the specified level will be ignored! You have to specify all required fields in the request!**
 
@@ -185,6 +185,37 @@ For clarity, the structure parameter is as follows:
       difficulty: true,
       genre: {
         title: true
+      }
+    }
+  }
+}
+```
+
+You may reference part of the response structure to allow hierarchical output (e.g. tree structure) as follows:
+```javascript
+{
+  responseStructure: {
+    name: true,
+    nodes: {
+      name: true,
+      depth: true,
+      nodes: 'nodes'  // this line references its parent (nodes)
+    }
+  }
+}
+```
+```javascript
+{
+  responseStructure: {
+    company: {
+      name: true,
+      employees: {
+        name: true,
+        address: true,
+        previousCompany: {
+          dateLeft: true,
+          ceo: 'company.employees'  // this line references the employees structure
+        }
       }
     }
   }
