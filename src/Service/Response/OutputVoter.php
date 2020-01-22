@@ -16,6 +16,34 @@ class OutputVoter
     public const NOT_ALLOWED = false;
 
     /**
+     * @param string|RA $value
+     *
+     * @return bool
+     */
+    private function isRegularValue($value): bool
+    {
+        return true === is_string($value) &&
+            ParameterEnum::FALSE_VALUE !== $value &&
+            ParameterEnum::TRUE_VALUE !== $value;
+    }
+
+    /**
+     * @param Stringy $field
+     * @param mixed   $value
+     *
+     * @return bool
+     *
+     * @throws \Safe\Exceptions\PcreException
+     * @throws \Safe\Exceptions\StringsException
+     */
+    private function isValueAllowed(Stringy $field, $value): bool
+    {
+        return ParameterEnum::TRUE_VALUE === $value || $value instanceof RA || (
+                true === is_string($value) && $field->pregMatch(\Safe\sprintf('/\b%s\b/i', $value))
+            );
+    }
+
+    /**
      * @param RA      $responseStructure
      * @param Stringy $path
      *
@@ -24,16 +52,27 @@ class OutputVoter
     private function traverseResponseStructure(RA $responseStructure, Stringy $path): ?RA
     {
         $segments = new RA($path->explode(ParameterEnum::FIELD_SEPARATOR));
-        $reducedResponseStructure = $segments->reduce(function (RA $carry, string $segment): RA {
-            if (true !== $carry->hasKey($segment)) {
+        $reducedResponseStructure = $segments->reduce(
+            function (RA $carry, string $segment) use ($path, $responseStructure): RA {
+                if (true !== $carry->hasKey($segment)) {
+                    return new RA();
+                }
+                $value = $carry->get($segment);
+                if ($value instanceof RA) {
+                    return $value;
+                }
+                if (true === $this->isRegularValue($value)) {
+                    $value = new Stringy($value);
+                    $firstDotPosition = $path->getPositionOfSubstring(ParameterEnum::FIELD_SEPARATOR);
+                    if (null !== $firstDotPosition) {
+                        $value = (clone $path)->substring(0, $firstDotPosition)->concat(\Safe\sprintf('.%s', $value));
+                    }
+                    return $this->traverseResponseStructure($responseStructure, $value) ?? new RA();
+                }
                 return new RA();
-            }
-            $value = $carry->get($segment);
-            if ($value instanceof RA) {
-                return $value;
-            }
-            return new RA();
-        }, $responseStructure);
+            },
+            $responseStructure
+        );
         if (0 === $reducedResponseStructure->length()) {
             return null;
         }
@@ -47,6 +86,9 @@ class OutputVoter
      *
      * @return bool
      *
+     * @throws \Safe\Exceptions\MbstringException
+     * @throws \Safe\Exceptions\PcreException
+     * @throws \Safe\Exceptions\StringsException
      * @throws \WernerDweight\RA\Exception\RAException
      */
     public function vote(
@@ -71,7 +113,7 @@ class OutputVoter
 
         if (true === $responseStructure->hasKey((string)$key)) {
             $value = $responseStructure->get((string)$key);
-            return ParameterEnum::TRUE_VALUE === $value || $value instanceof RA;
+            return $this->isValueAllowed($field, $value);
         }
         return self::NOT_ALLOWED;
     }
