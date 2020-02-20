@@ -14,6 +14,8 @@ class DataManager
     /** @var string */
     private const NULL_GROUP = 'N/A';
     /** @var string */
+    private const DQL_JOIN = 'join';
+    /** @var string */
     public const ROOT_ALIAS = 'this';
 
     /** @var RepositoryManager */
@@ -54,9 +56,12 @@ class DataManager
             ->applyOrdering($queryBuilder, $orderBy)
             ->applyPagination($queryBuilder, $offset, $limit);
 
+        /** @var array[] $joins */
+        $joins = $queryBuilder->getDQLPart(self::DQL_JOIN);
+        $noDistinct = empty($joins);
         return new RA(
             $queryBuilder
-                ->select(\Safe\sprintf('DISTINCT %s', self::ROOT_ALIAS))
+                ->select($noDistinct ? self::ROOT_ALIAS : \Safe\sprintf('DISTINCT %s', self::ROOT_ALIAS))
                 ->getQuery()
                 ->getResult(),
             RA::RECURSIVE
