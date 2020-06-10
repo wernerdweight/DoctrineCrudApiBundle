@@ -155,7 +155,7 @@ class FilteringHelper
      */
     public function getFilteringPathForField(Stringy $field): Stringy
     {
-        $field = $field->pregReplace('/^.*\.([A-Za-z0-9]+\.[A-Za-z0-9]+)$/', '$1');
+        $field = (clone $field)->pregReplace('/^.*\.([A-Za-z0-9]+\.[A-Za-z0-9]+)$/', '$1');
         if (true === $this->isManyToManyField($field)) {
             $field = $field
                 ->replace(\Safe\sprintf('%s.', DataManager::ROOT_ALIAS), '')
