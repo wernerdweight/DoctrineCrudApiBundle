@@ -5,6 +5,7 @@ namespace WernerDweight\DoctrineCrudApiBundle\Tests;
 
 use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 use Symfony\Bridge\Doctrine\DependencyInjection\CompilerPass\RegisterEventListenersAndSubscribersPass;
+use Symfony\Bridge\Doctrine\SchemaListener\PdoCacheAdapterDoctrineSchemaSubscriber;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Component\Config\Loader\LoaderInterface;
@@ -92,5 +93,9 @@ class TestKernel extends Kernel
             ),
             PassConfig::TYPE_BEFORE_OPTIMIZATION
         );
+        // available in Symfony 5.1 and higher
+        if (!class_exists(PdoCacheAdapterDoctrineSchemaSubscriber::class)) {
+            $builder->removeDefinition('doctrine.orm.listeners.pdo_cache_adapter_doctrine_schema_subscriber');
+        }
     }
 }
