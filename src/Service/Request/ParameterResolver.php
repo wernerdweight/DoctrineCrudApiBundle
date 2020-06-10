@@ -327,19 +327,19 @@ class ParameterResolver
         $this->parameters
             ->set(ParameterEnum::OFFSET, $query->getInt(ParameterEnum::OFFSET, 0))
             ->set(ParameterEnum::LIMIT, $query->getInt(ParameterEnum::LIMIT, PHP_INT_MAX))
-            ->set(ParameterEnum::FILTER, $this->parameterValidator->validateFilter($query->get(ParameterEnum::FILTER)))
+            ->set(ParameterEnum::FILTER, $this->parameterValidator->validateFilter($query->all(ParameterEnum::FILTER)))
             ->set(
                 ParameterEnum::ORDER_BY,
-                $this->parameterValidator->validateOrderBy($query->get(ParameterEnum::ORDER_BY))
+                $this->parameterValidator->validateOrderBy($query->all(ParameterEnum::ORDER_BY))
             )
             ->set(
                 ParameterEnum::GROUP_BY,
-                $this->parameterValidator->validateGroupBy($query->get(ParameterEnum::GROUP_BY))
+                $this->parameterValidator->validateGroupBy($query->all(ParameterEnum::GROUP_BY))
             )
             ->set(
                 ParameterEnum::RESPONSE_STRUCTURE,
                 $this->parameterValidator->validateResponseStructure(
-                    $query->get(ParameterEnum::RESPONSE_STRUCTURE),
+                    $query->all(ParameterEnum::RESPONSE_STRUCTURE),
                     (clone $this->getStringy(ParameterEnum::ENTITY_NAME))->lowercaseFirst()
                 )
             )
@@ -361,7 +361,7 @@ class ParameterResolver
             ->set(
                 ParameterEnum::RESPONSE_STRUCTURE,
                 $this->parameterValidator->validateResponseStructure(
-                    $query->get(ParameterEnum::RESPONSE_STRUCTURE),
+                    $query->all(ParameterEnum::RESPONSE_STRUCTURE),
                     (clone $this->getStringy(ParameterEnum::ENTITY_NAME))->lowercaseFirst()
                 )
             )
@@ -382,13 +382,13 @@ class ParameterResolver
             ->set(
                 ParameterEnum::FIELDS,
                 $this->parameterValidator->validateFields(
-                    $request->get(ParameterEnum::FIELDS)
+                    $request->all(ParameterEnum::FIELDS)
                 )
             )
             ->set(
                 ParameterEnum::RESPONSE_STRUCTURE,
                 $this->parameterValidator->validateResponseStructure(
-                    $query->get(ParameterEnum::RESPONSE_STRUCTURE),
+                    $query->all(ParameterEnum::RESPONSE_STRUCTURE),
                     (clone $this->getStringy(ParameterEnum::ENTITY_NAME))->lowercaseFirst()
                 )
             )
@@ -410,7 +410,7 @@ class ParameterResolver
             ->set(
                 ParameterEnum::FIELDS,
                 $this->parameterValidator->validateFields(
-                    $request->get(ParameterEnum::FIELDS)
+                    $request->all(ParameterEnum::FIELDS)
                 )
             )
             ->set(
