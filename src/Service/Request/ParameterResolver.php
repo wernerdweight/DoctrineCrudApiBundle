@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace WernerDweight\DoctrineCrudApiBundle\Service\Request;
 
+use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use WernerDweight\DoctrineCrudApiBundle\Exception\InvalidRequestException;
@@ -317,6 +318,20 @@ class ParameterResolver
     }
 
     /**
+     * @param InputBag<mixed> $query
+     * @param string          $key
+     *
+     * @return mixed[]|null
+     */
+    private function getArrayValueFromQuery(InputBag $query, string $key): ?array
+    {
+        if (true !== $query->has($key)) {
+            return null;
+        }
+        return $query->all($key);
+    }
+
+    /**
      * @return ParameterResolver
      */
     public function resolveList(): self
@@ -327,19 +342,26 @@ class ParameterResolver
         $this->parameters
             ->set(ParameterEnum::OFFSET, $query->getInt(ParameterEnum::OFFSET, 0))
             ->set(ParameterEnum::LIMIT, $query->getInt(ParameterEnum::LIMIT, PHP_INT_MAX))
-            ->set(ParameterEnum::FILTER, $this->parameterValidator->validateFilter($query->all(ParameterEnum::FILTER)))
+            ->set(
+                ParameterEnum::FILTER,
+                $this->parameterValidator->validateFilter($this->getArrayValueFromQuery($query, ParameterEnum::FILTER))
+            )
             ->set(
                 ParameterEnum::ORDER_BY,
-                $this->parameterValidator->validateOrderBy($query->all(ParameterEnum::ORDER_BY))
+                $this->parameterValidator->validateOrderBy(
+                    $this->getArrayValueFromQuery($query, ParameterEnum::ORDER_BY)
+                )
             )
             ->set(
                 ParameterEnum::GROUP_BY,
-                $this->parameterValidator->validateGroupBy($query->all(ParameterEnum::GROUP_BY))
+                $this->parameterValidator->validateGroupBy(
+                    $this->getArrayValueFromQuery($query, ParameterEnum::GROUP_BY)
+                )
             )
             ->set(
                 ParameterEnum::RESPONSE_STRUCTURE,
                 $this->parameterValidator->validateResponseStructure(
-                    $query->all(ParameterEnum::RESPONSE_STRUCTURE),
+                    $this->getArrayValueFromQuery($query, ParameterEnum::RESPONSE_STRUCTURE),
                     (clone $this->getStringy(ParameterEnum::ENTITY_NAME))->lowercaseFirst()
                 )
             )
@@ -361,7 +383,7 @@ class ParameterResolver
             ->set(
                 ParameterEnum::RESPONSE_STRUCTURE,
                 $this->parameterValidator->validateResponseStructure(
-                    $query->all(ParameterEnum::RESPONSE_STRUCTURE),
+                    $this->getArrayValueFromQuery($query, ParameterEnum::RESPONSE_STRUCTURE),
                     (clone $this->getStringy(ParameterEnum::ENTITY_NAME))->lowercaseFirst()
                 )
             )
@@ -388,7 +410,7 @@ class ParameterResolver
             ->set(
                 ParameterEnum::RESPONSE_STRUCTURE,
                 $this->parameterValidator->validateResponseStructure(
-                    $query->all(ParameterEnum::RESPONSE_STRUCTURE),
+                    $this->getArrayValueFromQuery($query, ParameterEnum::RESPONSE_STRUCTURE),
                     (clone $this->getStringy(ParameterEnum::ENTITY_NAME))->lowercaseFirst()
                 )
             )
