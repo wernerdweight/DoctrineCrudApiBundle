@@ -129,7 +129,10 @@ class ParameterValidator
      */
     private function validateFilteringConditions(RA $conditions): RA
     {
-        return $conditions->map(function (RA $condition): RA {
+        return $conditions->map(function ($condition): RA {
+            if (!$condition instanceof RA) {
+                throw new FilteringException(FilteringException::EXCEPTION_INVALID_CONDITION);
+            }
             if (true === $condition->hasKey(ParameterEnum::FILTER_CONDITIONS)) {
                 return new RA([
                     ParameterEnum::FILTER_LOGIC => $this->validateFilteringLogic(

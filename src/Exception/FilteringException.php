@@ -15,6 +15,8 @@ class FilteringException extends AbstractSimpleReturnableException
     public const EXCEPTION_INVALID_ORDERING_DIRECTION = 4;
     /** @var int */
     public const EXCEPTION_INVALID_AGGREGATE_FUNCTION = 5;
+    /** @var int */
+    public const EXCEPTION_INVALID_CONDITION = 6;
 
     /** @var string[] */
     protected static $messages = [
@@ -23,5 +25,6 @@ class FilteringException extends AbstractSimpleReturnableException
         self::EXCEPTION_INVALID_FILTER_OPERATOR => '%s is not a valid filtering operator! Use one of %s.',
         self::EXCEPTION_INVALID_ORDERING_DIRECTION => '%s is not a valid ordering direction! Use one of %s.',
         self::EXCEPTION_INVALID_AGGREGATE_FUNCTION => '%s is not a valid aggregate function! Use one of %s.',
+        self::EXCEPTION_INVALID_CONDITION => 'Invalid filtering condition!',
     ];
 }
