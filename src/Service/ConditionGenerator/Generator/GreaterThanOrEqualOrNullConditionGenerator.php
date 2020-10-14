@@ -6,6 +6,9 @@ namespace WernerDweight\DoctrineCrudApiBundle\Service\ConditionGenerator\Generat
 use Doctrine\ORM\Query\Expr;
 use WernerDweight\DoctrineCrudApiBundle\Service\Request\ParameterEnum;
 
+/**
+ * @SuppressWarnings(PHPMD.LongClassName)
+ */
 final class GreaterThanOrEqualOrNullConditionGenerator implements ConditionGeneratorInterface
 {
     /**
