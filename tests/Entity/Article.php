@@ -64,11 +64,6 @@ final class Article implements ApiEntityInterface
 
     /**
      * Article constructor.
-     *
-     * @param int           $id
-     * @param string        $title
-     * @param Author|null   $author
-     * @param Category|null $category
      */
     public function __construct(int $id, string $title, ?Author $author, ?Category $category)
     {
@@ -78,33 +73,21 @@ final class Article implements ApiEntityInterface
         $this->category = $category;
     }
 
-    /**
-     * @return int
-     */
     public function getId(): int
     {
         return $this->id;
     }
 
-    /**
-     * @return string
-     */
     public function getTitle(): string
     {
         return $this->title;
     }
 
-    /**
-     * @return Author|null
-     */
     public function getAuthor(): ?Author
     {
         return $this->author;
     }
 
-    /**
-     * @return Category|null
-     */
     public function getCategory(): ?Category
     {
         return $this->category;

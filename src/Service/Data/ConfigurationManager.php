@@ -37,9 +37,6 @@ class ConfigurationManager
     }
 
     /**
-     * @param string                  $class
-     * @param DoctrineCrudApiMetadata $metadata
-     *
      * @return ConfigurationManager
      */
     public function setConfiguration(string $class, DoctrineCrudApiMetadata $metadata): self
@@ -49,10 +46,6 @@ class ConfigurationManager
     }
 
     /**
-     * @param string $class
-     *
-     * @return DoctrineCrudApiMetadata
-     *
      * @throws \Safe\Exceptions\StringsException
      * @throws \WernerDweight\RA\Exception\RAException
      */
@@ -69,28 +62,18 @@ class ConfigurationManager
                         ->getConfigurationForEntityClass($class);
                 }
             }
-            throw new ConfigurationManagerException(
-                ConfigurationManagerException::EXCEPTION_NO_CONFIGURATION_FOR_ENTITY,
-                [$class]
-            );
+            throw new ConfigurationManagerException(ConfigurationManagerException::EXCEPTION_NO_CONFIGURATION_FOR_ENTITY, [$class]);
         }
 
         /** @var DoctrineCrudApiMetadata|null $configuration */
         $configuration = $this->configuration->get($class);
         if (null === $configuration) {
-            throw new ConfigurationManagerException(
-                ConfigurationManagerException::EXCEPTION_INVALID_CONFIGURATION_FOR_ENTITY,
-                [$class]
-            );
+            throw new ConfigurationManagerException(ConfigurationManagerException::EXCEPTION_INVALID_CONFIGURATION_FOR_ENTITY, [$class]);
         }
         return $configuration;
     }
 
     /**
-     * @param ApiEntityInterface $entity
-     *
-     * @return DoctrineCrudApiMetadata
-     *
      * @throws \WernerDweight\RA\Exception\RAException
      */
     public function getConfigurationForEntity(ApiEntityInterface $entity): DoctrineCrudApiMetadata
@@ -99,9 +82,6 @@ class ConfigurationManager
         return $this->getConfigurationForEntityClass((string)$className);
     }
 
-    /**
-     * @return RA
-     */
     public function createConfigurationObject(): RA
     {
         return (new RA())

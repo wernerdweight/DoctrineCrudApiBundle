@@ -28,8 +28,6 @@ final class ExceptionEventSubscriber implements EventSubscriberInterface
 
     /**
      * ExceptionEventSubscriber constructor.
-     *
-     * @param LoggerInterface $logger
      */
     public function __construct(LoggerInterface $logger)
     {
@@ -49,12 +47,9 @@ final class ExceptionEventSubscriber implements EventSubscriberInterface
         ];
     }
 
-    /**
-     * @param ExceptionEvent $event
-     */
     public function catchReturnableException(ExceptionEvent $event): void
     {
-        $exception = $event->getException();
+        $exception = $event->getThrowable();
         if ($exception instanceof ReturnableExceptionInterface) {
             $responseData = $exception->getResponseData()->toArray(RA::RECURSIVE);
             $event->setResponse(
@@ -80,12 +75,9 @@ final class ExceptionEventSubscriber implements EventSubscriberInterface
         }
     }
 
-    /**
-     * @param ExceptionEvent $event
-     */
     public function catchAnyException(ExceptionEvent $event): void
     {
-        $exception = $event->getException();
+        $exception = $event->getThrowable();
         $event->setResponse(
             new JsonResponse(
                 [self::MESSAGE_KEY => self::GENERIC_ERROR_MESSAGE],

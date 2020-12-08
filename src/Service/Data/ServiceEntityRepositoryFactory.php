@@ -39,20 +39,13 @@ class ServiceEntityRepositoryFactory
     }
 
     /**
-     * @param string $className
-     *
-     * @return ServiceEntityRepository
-     *
      * @throws ServiceEntityRepositoryFactoryException
      * @throws RAException
      */
     public function get(string $className): ServiceEntityRepository
     {
         if (true !== $this->repositories->hasKey($className)) {
-            throw new ServiceEntityRepositoryFactoryException(
-                ServiceEntityRepositoryFactoryException::INVALID_ENTITY_CLASS,
-                [$className]
-            );
+            throw new ServiceEntityRepositoryFactoryException(ServiceEntityRepositoryFactoryException::INVALID_ENTITY_CLASS, [$className]);
         }
         /** @var ServiceEntityRepository $repository */
         $repository = $this->repositories->get($className);

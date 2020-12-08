@@ -4,9 +4,9 @@ declare(strict_types=1);
 namespace WernerDweight\DoctrineCrudApiBundle\Mapping\Driver;
 
 use Doctrine\Common\Annotations\AnnotationReader;
-use Doctrine\Common\Persistence\Mapping\Driver\FileDriver;
-use Doctrine\Common\Persistence\Mapping\Driver\FileLocator;
 use Doctrine\ORM\Mapping\ClassMetadata;
+use Doctrine\Persistence\Mapping\Driver\FileDriver;
+use Doctrine\Persistence\Mapping\Driver\FileLocator;
 use SimpleXMLElement;
 use WernerDweight\DoctrineCrudApiBundle\Exception\XmlDriverException;
 use WernerDweight\DoctrineCrudApiBundle\Mapping\Type\DoctrineCrudApiMappingTypeInterface;
@@ -28,8 +28,6 @@ final class Xml extends AbstractDriver implements DoctrineCrudApiDriverInterface
 
     /**
      * Xml constructor.
-     *
-     * @param XmlMappingTypeFactory $mappingTypeFactory
      */
     public function __construct(XmlMappingTypeFactory $mappingTypeFactory)
     {
@@ -37,8 +35,6 @@ final class Xml extends AbstractDriver implements DoctrineCrudApiDriverInterface
     }
 
     /**
-     * @param FileLocator $locator
-     *
      * @return Xml
      */
     public function setLocator(FileLocator $locator): DoctrineCrudApiDriverInterface
@@ -48,8 +44,6 @@ final class Xml extends AbstractDriver implements DoctrineCrudApiDriverInterface
     }
 
     /**
-     * @param AnnotationReader $reader
-     *
      * @return Xml
      */
     public function setAnnotationReader(AnnotationReader $reader): DoctrineCrudApiDriverInterface
@@ -58,8 +52,6 @@ final class Xml extends AbstractDriver implements DoctrineCrudApiDriverInterface
     }
 
     /**
-     * @param string $fileName
-     *
      * @return mixed[]
      *
      * @throws \Safe\Exceptions\SimplexmlException
@@ -88,11 +80,9 @@ final class Xml extends AbstractDriver implements DoctrineCrudApiDriverInterface
     }
 
     /**
-     * @param string $entityName
-     *
      * @return SimpleXMLElement|ClassMetadata
      *
-     * @throws \Doctrine\Common\Persistence\Mapping\MappingException
+     * @throws \Doctrine\Persistence\Mapping\MappingException
      * @throws \Safe\Exceptions\SimplexmlException
      */
     private function getXmlMapping(string $entityName): object
@@ -110,8 +100,6 @@ final class Xml extends AbstractDriver implements DoctrineCrudApiDriverInterface
 
     /**
      * @param SimpleXMLElement $mapping
-     *
-     * @return bool
      */
     private function isAccessible(object $mapping): bool
     {
@@ -135,10 +123,7 @@ final class Xml extends AbstractDriver implements DoctrineCrudApiDriverInterface
     }
 
     /**
-     * @param RA      $config
      * @param mixed[] $mapping
-     *
-     * @return RA
      *
      * @throws \WernerDweight\RA\Exception\RAException
      */
@@ -162,12 +147,7 @@ final class Xml extends AbstractDriver implements DoctrineCrudApiDriverInterface
     }
 
     /**
-     * @param ClassMetadata $metadata
-     * @param RA            $config
-     *
-     * @return RA
-     *
-     * @throws \Doctrine\Common\Persistence\Mapping\MappingException
+     * @throws \Doctrine\Persistence\Mapping\MappingException
      * @throws \Safe\Exceptions\SimplexmlException
      * @throws \WernerDweight\RA\Exception\RAException
      */

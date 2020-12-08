@@ -11,7 +11,6 @@ final class JsonValueResolver implements PropertyValueResolverInterface
 {
     /**
      * @param mixed $value
-     * @param RA    $configuration
      *
      * @return mixed[]|null
      */

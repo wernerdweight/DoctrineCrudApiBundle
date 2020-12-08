@@ -52,8 +52,6 @@ final class Category implements ApiEntityInterface
     /**
      * Category constructor.
      *
-     * @param int                                                              $id
-     * @param string                                                           $title
      * @param ArrayCollection<int, Article>|PersistentCollection<int, Article> $articles
      */
     public function __construct(int $id, string $title, Collection $articles)
@@ -63,17 +61,11 @@ final class Category implements ApiEntityInterface
         $this->articles = $articles;
     }
 
-    /**
-     * @return int
-     */
     public function getId(): int
     {
         return $this->id;
     }
 
-    /**
-     * @return string
-     */
     public function getTitle(): string
     {
         return $this->title;

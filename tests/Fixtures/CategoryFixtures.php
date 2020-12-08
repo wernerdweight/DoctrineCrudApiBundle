@@ -8,9 +8,6 @@ use WernerDweight\DoctrineCrudApiBundle\Tests\Entity\Category;
 
 class CategoryFixtures
 {
-    /**
-     * @return Category
-     */
     public static function createEmptyCategory(): Category
     {
         return new Category(
@@ -20,9 +17,6 @@ class CategoryFixtures
         );
     }
 
-    /**
-     * @return Category
-     */
     public static function createCategoryWithArticles(): Category
     {
         return new Category(

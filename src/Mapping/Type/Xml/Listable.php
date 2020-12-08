@@ -14,12 +14,6 @@ final class Listable extends AbstractType implements DoctrineCrudApiMappingTypeI
     private const DEFAULT_TRUE_VALUES = ['true', '1'];
 
     /**
-     * @param \SimpleXMLElement $propertyMapping
-     * @param \SimpleXMLElement $filteredMapping
-     * @param RA                $config
-     *
-     * @return RA
-     *
      * @throws \WernerDweight\RA\Exception\RAException
      */
     protected function readExtraConfiguration(
@@ -40,9 +34,6 @@ final class Listable extends AbstractType implements DoctrineCrudApiMappingTypeI
         return $config;
     }
 
-    /**
-     * @return string
-     */
     public function getType(): string
     {
         return DoctrineCrudApiMappingTypeInterface::LISTABLE;

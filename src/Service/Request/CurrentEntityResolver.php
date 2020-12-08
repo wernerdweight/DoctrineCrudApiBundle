@@ -26,9 +26,6 @@ class CurrentEntityResolver
 
     /**
      * CurrentEntityResolver constructor.
-     *
-     * @param RequestStack           $requestStack
-     * @param EntityManagerInterface $entityManager
      */
     public function __construct(RequestStack $requestStack, EntityManagerInterface $entityManager)
     {
@@ -40,9 +37,6 @@ class CurrentEntityResolver
         $this->entityManager = $entityManager;
     }
 
-    /**
-     * @return Stringy
-     */
     public function getCurrentEntity(): Stringy
     {
         if (null === $this->currentEntity) {
@@ -56,8 +50,6 @@ class CurrentEntityResolver
     }
 
     /**
-     * @return Stringy
-     *
      * @throws \Safe\Exceptions\StringsException
      * @throws \Safe\Exceptions\SplException
      */
@@ -73,9 +65,7 @@ class CurrentEntityResolver
                     return $this->currentEntityFQCN;
                 }
             }
-            throw new InvalidRequestException(InvalidRequestException::EXCEPTION_INVALID_FILTERING_ENTITY, [
-                $entityName,
-            ]);
+            throw new InvalidRequestException(InvalidRequestException::EXCEPTION_INVALID_FILTERING_ENTITY, [$entityName]);
         }
         return $this->currentEntityFQCN;
     }

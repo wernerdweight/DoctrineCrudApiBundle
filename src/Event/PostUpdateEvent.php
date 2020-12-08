@@ -16,17 +16,12 @@ class PostUpdateEvent extends Event
 
     /**
      * PostUpdateEvent constructor.
-     *
-     * @param ApiEntityInterface $item
      */
     public function __construct(ApiEntityInterface $item)
     {
         $this->item = $item;
     }
 
-    /**
-     * @return ApiEntityInterface
-     */
     public function getItem(): ApiEntityInterface
     {
         return $this->item;

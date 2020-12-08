@@ -12,9 +12,6 @@ final class Metadata extends AbstractType implements DoctrineCrudApiMappingTypeI
     /**
      * @param \SimpleXMLElement $propertyMapping
      * @param \SimpleXMLElement $filteredMapping
-     * @param RA                $config
-     *
-     * @return RA
      *
      * @throws \WernerDweight\RA\Exception\RAException
      */
@@ -50,9 +47,6 @@ final class Metadata extends AbstractType implements DoctrineCrudApiMappingTypeI
         return $config;
     }
 
-    /**
-     * @return string
-     */
     public function getType(): string
     {
         return DoctrineCrudApiMappingTypeInterface::METADATA;

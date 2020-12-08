@@ -8,9 +8,6 @@ use WernerDweight\RA\RA;
 
 class DoctrineCrudApiResponseStructureFixtures
 {
-    /**
-     * @return RA
-     */
     public static function createArticleResponseStructure(): RA
     {
         return new RA([

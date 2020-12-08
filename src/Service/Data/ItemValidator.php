@@ -19,19 +19,12 @@ class ItemValidator
 
     /**
      * ItemValidator constructor.
-     *
-     * @param ValidatorInterface $validator
      */
     public function __construct(ValidatorInterface $validator)
     {
         $this->validator = $validator;
     }
 
-    /**
-     * @param ApiEntityInterface $item
-     *
-     * @return bool
-     */
     public function validate(ApiEntityInterface $item): bool
     {
         /** @var ConstraintViolationList<ConstraintViolationInterface> $errors */
@@ -39,10 +32,7 @@ class ItemValidator
         if ($errors->count() > 0) {
             /** @var \ArrayIterator<int, ConstraintViolationInterface> $errorIterator */
             $errorIterator = $errors->getIterator();
-            throw new ItemValidatorReturnableException(
-                ItemValidatorReturnableException::INVALID_ITEM,
-                $errorIterator->getArrayCopy()
-            );
+            throw new ItemValidatorReturnableException(ItemValidatorReturnableException::INVALID_ITEM, $errorIterator->getArrayCopy());
         }
         return true;
     }

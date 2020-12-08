@@ -9,10 +9,6 @@ use WernerDweight\Stringy\Stringy;
 class Printer
 {
     /**
-     * @param object $value
-     *
-     * @return string
-     *
      * @throws \Safe\Exceptions\PcreException
      */
     private function printObject(object $value): string
@@ -29,8 +25,6 @@ class Printer
 
     /**
      * @param mixed $value
-     *
-     * @return string
      *
      * @throws \Safe\Exceptions\PcreException
      */

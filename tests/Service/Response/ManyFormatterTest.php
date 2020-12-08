@@ -12,11 +12,6 @@ use WernerDweight\RA\RA;
 class ManyFormatterTest extends DoctrineMetadataKernelTestCase
 {
     /**
-     * @param RA      $expected
-     * @param RA      $items
-     * @param RA|null $responseStructure
-     * @param string  $prefix
-     *
      * @dataProvider provideValues
      */
     public function testFormat(

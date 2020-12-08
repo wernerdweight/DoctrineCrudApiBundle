@@ -12,11 +12,7 @@ use WernerDweight\Stringy\Stringy;
 final class Updatable extends AbstractType implements DoctrineCrudApiMappingTypeInterface
 {
     /**
-     * @param Stringy             $propertyName
      * @param UpdatableAnnotation $annotation
-     * @param RA                  $config
-     *
-     * @return RA
      */
     protected function readExtraConfiguration(Stringy $propertyName, Annotation $annotation, RA $config): RA
     {
@@ -28,9 +24,6 @@ final class Updatable extends AbstractType implements DoctrineCrudApiMappingType
         return $config;
     }
 
-    /**
-     * @return string
-     */
     public function getType(): string
     {
         return DoctrineCrudApiMappingTypeInterface::UPDATABLE;

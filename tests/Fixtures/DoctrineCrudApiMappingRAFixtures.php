@@ -8,9 +8,6 @@ use WernerDweight\RA\RA;
 
 class DoctrineCrudApiMappingRAFixtures
 {
-    /**
-     * @return RA
-     */
     public static function createEmptyMapping(): RA
     {
         return (new RA())
@@ -25,9 +22,6 @@ class DoctrineCrudApiMappingRAFixtures
             ;
     }
 
-    /**
-     * @return RA
-     */
     public static function createArticleMapping(): RA
     {
         return (new RA())

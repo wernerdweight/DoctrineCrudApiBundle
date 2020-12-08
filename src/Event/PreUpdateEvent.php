@@ -16,17 +16,12 @@ class PreUpdateEvent extends Event
 
     /**
      * PreUpdateEvent constructor.
-     *
-     * @param ApiEntityInterface $item
      */
     public function __construct(ApiEntityInterface $item)
     {
         $this->item = $item;
     }
 
-    /**
-     * @return ApiEntityInterface
-     */
     public function getItem(): ApiEntityInterface
     {
         return $this->item;

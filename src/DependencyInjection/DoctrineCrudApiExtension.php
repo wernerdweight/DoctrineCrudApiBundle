@@ -11,8 +11,7 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 class DoctrineCrudApiExtension extends Extension
 {
     /**
-     * @param mixed[]          $configs
-     * @param ContainerBuilder $container
+     * @param mixed[] $configs
      *
      * @throws \Exception
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)

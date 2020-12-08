@@ -15,9 +15,6 @@ class DataManagerReturnableException extends AbstractReturnableException
         self::UNKNOWN_ENTITY_REQUESTED => 'The requested item doesn\'t exist!',
     ];
 
-    /**
-     * @return int
-     */
     public function getStatusCode(): int
     {
         return Response::HTTP_NOT_FOUND;

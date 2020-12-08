@@ -17,8 +17,6 @@ class OutputVoter
 
     /**
      * @param string|RA $value
-     *
-     * @return bool
      */
     private function isRegularValue($value): bool
     {
@@ -28,10 +26,7 @@ class OutputVoter
     }
 
     /**
-     * @param Stringy $field
-     * @param mixed   $value
-     *
-     * @return bool
+     * @param mixed $value
      *
      * @throws \Safe\Exceptions\PcreException
      * @throws \Safe\Exceptions\StringsException
@@ -43,12 +38,6 @@ class OutputVoter
             );
     }
 
-    /**
-     * @param RA      $responseStructure
-     * @param Stringy $path
-     *
-     * @return RA|null
-     */
     private function traverseResponseStructure(RA $responseStructure, Stringy $path): ?RA
     {
         $segments = new RA($path->explode(ParameterEnum::FIELD_SEPARATOR));
@@ -80,12 +69,6 @@ class OutputVoter
     }
 
     /**
-     * @param Stringy                 $field
-     * @param DoctrineCrudApiMetadata $configuration
-     * @param RA|null                 $responseStructure
-     *
-     * @return bool
-     *
      * @throws \Safe\Exceptions\MbstringException
      * @throws \Safe\Exceptions\PcreException
      * @throws \Safe\Exceptions\StringsException

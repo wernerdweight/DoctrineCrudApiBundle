@@ -11,12 +11,6 @@ use WernerDweight\DoctrineCrudApiBundle\Service\Request\ParameterEnum;
  */
 final class GreaterThanOrEqualOrNullConditionGenerator implements ConditionGeneratorInterface
 {
-    /**
-     * @param string $field
-     * @param string $parameterName
-     *
-     * @return string
-     */
     public function generate(string $field, string $parameterName): string
     {
         $expression = new Expr();
@@ -26,9 +20,6 @@ final class GreaterThanOrEqualOrNullConditionGenerator implements ConditionGener
         ));
     }
 
-    /**
-     * @return string
-     */
     public function getOperator(): string
     {
         return ParameterEnum::FILTER_OPERATOR_GREATER_THAN_OR_EQUAL_OR_NULL;

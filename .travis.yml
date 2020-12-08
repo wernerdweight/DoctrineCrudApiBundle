@@ -1,13 +1,12 @@
 language: php
 
 php:
-  - '7.2'
   - '7.3'
   - '7.4'
 
 script:
   - composer install --ignore-platform-reqs
-  - composer victor show
+  - composer outdated --direct
   - composer update
   - composer phpstan
   - composer ecs

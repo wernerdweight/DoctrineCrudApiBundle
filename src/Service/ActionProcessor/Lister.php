@@ -22,10 +22,6 @@ class Lister
 
     /**
      * Lister constructor.
-     *
-     * @param ParameterResolver $parameterResolver
-     * @param DataManager       $dataManager
-     * @param ListingFormatter  $formatter
      */
     public function __construct(
         ParameterResolver $parameterResolver,
@@ -38,8 +34,6 @@ class Lister
     }
 
     /**
-     * @return RA
-     *
      * @throws \Safe\Exceptions\PcreException
      * @throws \Safe\Exceptions\StringsException
      * @throws \WernerDweight\RA\Exception\RAException
@@ -61,8 +55,6 @@ class Lister
     }
 
     /**
-     * @return RA
-     *
      * @throws \Safe\Exceptions\PcreException
      * @throws \Safe\Exceptions\StringsException
      * @throws \WernerDweight\RA\Exception\RAException
@@ -75,8 +67,6 @@ class Lister
     }
 
     /**
-     * @return int
-     *
      * @throws \Doctrine\ORM\NonUniqueResultException
      * @throws \Safe\Exceptions\PcreException
      * @throws \Safe\Exceptions\StringsException
@@ -90,8 +80,6 @@ class Lister
     }
 
     /**
-     * @return int
-     *
      * @throws \Doctrine\ORM\NonUniqueResultException
      * @throws \Safe\Exceptions\PcreException
      * @throws \Safe\Exceptions\StringsException

@@ -26,10 +26,6 @@ class ParameterResolver
 
     /**
      * ParameterResolver constructor.
-     *
-     * @param RequestStack          $requestStack
-     * @param ParameterValidator    $parameterValidator
-     * @param CurrentEntityResolver $currentEntityResolver
      */
     public function __construct(
         RequestStack $requestStack,
@@ -48,19 +44,12 @@ class ParameterResolver
         $this->currentEntityResolver = $currentEntityResolver;
     }
 
-    /**
-     * @param string $key
-     *
-     * @return bool
-     */
     public function hasKey(string $key): bool
     {
         return $this->parameters->hasKey($key);
     }
 
     /**
-     * @param string $key
-     *
      * @return mixed
      *
      * @throws \WernerDweight\RA\Exception\RAException
@@ -71,10 +60,6 @@ class ParameterResolver
     }
 
     /**
-     * @param string $key
-     *
-     * @return bool
-     *
      * @throws \WernerDweight\RA\Exception\RAException
      */
     public function getBool(string $key): bool
@@ -83,10 +68,6 @@ class ParameterResolver
     }
 
     /**
-     * @param string $key
-     *
-     * @return bool|null
-     *
      * @throws \WernerDweight\RA\Exception\RAException
      */
     public function getBoolOrNull(string $key): ?bool
@@ -95,10 +76,6 @@ class ParameterResolver
     }
 
     /**
-     * @param string $key
-     *
-     * @return int
-     *
      * @throws \WernerDweight\RA\Exception\RAException
      */
     public function getInt(string $key): int
@@ -107,10 +84,6 @@ class ParameterResolver
     }
 
     /**
-     * @param string $key
-     *
-     * @return int|null
-     *
      * @throws \WernerDweight\RA\Exception\RAException
      */
     public function getIntOrNull(string $key): ?int
@@ -119,10 +92,6 @@ class ParameterResolver
     }
 
     /**
-     * @param string $key
-     *
-     * @return float
-     *
      * @throws \WernerDweight\RA\Exception\RAException
      */
     public function getFloat(string $key): float
@@ -131,10 +100,6 @@ class ParameterResolver
     }
 
     /**
-     * @param string $key
-     *
-     * @return float|null
-     *
      * @throws \WernerDweight\RA\Exception\RAException
      */
     public function getFloatOrNull(string $key): ?float
@@ -143,10 +108,6 @@ class ParameterResolver
     }
 
     /**
-     * @param string $key
-     *
-     * @return string
-     *
      * @throws \WernerDweight\RA\Exception\RAException
      */
     public function getString(string $key): string
@@ -155,10 +116,6 @@ class ParameterResolver
     }
 
     /**
-     * @param string $key
-     *
-     * @return string|null
-     *
      * @throws \WernerDweight\RA\Exception\RAException
      */
     public function getStringOrNull(string $key): ?string
@@ -167,8 +124,6 @@ class ParameterResolver
     }
 
     /**
-     * @param string $key
-     *
      * @return mixed[]
      *
      * @throws \WernerDweight\RA\Exception\RAException
@@ -179,8 +134,6 @@ class ParameterResolver
     }
 
     /**
-     * @param string $key
-     *
      * @return mixed[]|null
      *
      * @throws \WernerDweight\RA\Exception\RAException
@@ -191,10 +144,6 @@ class ParameterResolver
     }
 
     /**
-     * @param string $key
-     *
-     * @return RA
-     *
      * @throws \WernerDweight\RA\Exception\RAException
      */
     public function getRA(string $key): RA
@@ -203,10 +152,6 @@ class ParameterResolver
     }
 
     /**
-     * @param string $key
-     *
-     * @return RA|null
-     *
      * @throws \WernerDweight\RA\Exception\RAException
      */
     public function getRAOrNull(string $key): ?RA
@@ -214,11 +159,6 @@ class ParameterResolver
         return $this->parameters->getRAOrNull($key);
     }
 
-    /**
-     * @param string $key
-     *
-     * @return Stringy
-     */
     public function getStringy(string $key): Stringy
     {
         /** @var Stringy $value */
@@ -226,11 +166,6 @@ class ParameterResolver
         return $value;
     }
 
-    /**
-     * @param string $key
-     *
-     * @return Stringy|null
-     */
     public function getStringyOrNull(string $key): ?Stringy
     {
         /** @var Stringy|null $value */
@@ -239,10 +174,6 @@ class ParameterResolver
     }
 
     /**
-     * @param string $key
-     *
-     * @return callable
-     *
      * @throws \WernerDweight\RA\Exception\RAException
      */
     public function getCallable(string $key): callable
@@ -251,10 +182,6 @@ class ParameterResolver
     }
 
     /**
-     * @param string $key
-     *
-     * @return callable|null
-     *
      * @throws \WernerDweight\RA\Exception\RAException
      */
     public function getCallableOrNull(string $key): ?callable
@@ -263,8 +190,6 @@ class ParameterResolver
     }
 
     /**
-     * @param string $key
-     *
      * @return iterable<mixed, mixed>
      *
      * @throws \WernerDweight\RA\Exception\RAException
@@ -275,8 +200,6 @@ class ParameterResolver
     }
 
     /**
-     * @param string $key
-     *
      * @return iterable<mixed, mixed>|null
      *
      * @throws \WernerDweight\RA\Exception\RAException
@@ -286,17 +209,12 @@ class ParameterResolver
         return $this->parameters->getIterableOrNull($key);
     }
 
-    /**
-     * @return RA
-     */
     public function eject(): RA
     {
         return clone $this->parameters;
     }
 
     /**
-     * @return string
-     *
      * @throws \Safe\Exceptions\StringsException
      */
     public function getEntityPrefix(): string
@@ -319,7 +237,6 @@ class ParameterResolver
 
     /**
      * @param InputBag<mixed> $query
-     * @param string          $key
      *
      * @return mixed[]|null
      */

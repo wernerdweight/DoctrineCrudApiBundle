@@ -9,21 +9,11 @@ use WernerDweight\RA\RA;
 
 final class Accessible implements DoctrineCrudApiMappingTypeInterface
 {
-    /**
-     * @return string
-     */
     public function getType(): string
     {
         return DoctrineCrudApiMappingTypeInterface::ACCESSIBLE;
     }
 
-    /**
-     * @param object $propertyMapping
-     * @param object $filteredMapping
-     * @param RA     $config
-     *
-     * @return RA
-     */
     public function readConfiguration(object $propertyMapping, object $filteredMapping, RA $config): RA
     {
         throw new AnnotationDriverException(AnnotationDriverException::NO_CONFIGURATION_NEEDED_FOR_ACCESSIBLE);

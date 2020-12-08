@@ -14,8 +14,6 @@ class RelationJoiner
 
     /**
      * RelationJoiner constructor.
-     *
-     * @param FilteringHelper $filteringHelper
      */
     public function __construct(FilteringHelper $filteringHelper)
     {
@@ -23,9 +21,6 @@ class RelationJoiner
     }
 
     /**
-     * @param QueryBuilder $queryBuilder
-     * @param Stringy      $field
-     *
      * @return RelationJoiner
      *
      * @throws \Safe\Exceptions\PcreException

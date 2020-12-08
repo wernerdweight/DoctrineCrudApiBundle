@@ -27,10 +27,6 @@ class MetadataFactory
 
     /**
      * MetadataFactory constructor.
-     *
-     * @param EntityManagerInterface $entityManager
-     * @param ConfigurationManager   $configurationManager
-     * @param MetadataDriverFactory  $driverFactory
      */
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -43,8 +39,6 @@ class MetadataFactory
     }
 
     /**
-     * @param ClassMetadata $metadata
-     *
      * @return MetadataFactory
      *
      * @throws \Doctrine\Common\Annotations\AnnotationException

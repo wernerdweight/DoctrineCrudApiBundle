@@ -9,11 +9,6 @@ use WernerDweight\DoctrineCrudApiBundle\Service\ActionProcessor\Lister;
 
 final class LengthController extends AbstractController implements DoctrineCrudApiControllerInterface
 {
-    /**
-     * @param Lister $lister
-     *
-     * @return JsonResponse
-     */
     public function index(Lister $lister): JsonResponse
     {
         $length = $lister->getItemCount();

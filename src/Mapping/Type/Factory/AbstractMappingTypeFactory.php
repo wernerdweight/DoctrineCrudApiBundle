@@ -32,19 +32,12 @@ abstract class AbstractMappingTypeFactory
     }
 
     /**
-     * @param string $type
-     *
-     * @return DoctrineCrudApiMappingTypeInterface
-     *
      * @throws \WernerDweight\RA\Exception\RAException
      */
     public function get(string $type): DoctrineCrudApiMappingTypeInterface
     {
         if (true !== $this->types->hasKey($type)) {
-            throw new MappingTypeFactoryException(
-                MappingTypeFactoryException::INVALID_MAPPING_TYPE,
-                [$type]
-            );
+            throw new MappingTypeFactoryException(MappingTypeFactoryException::INVALID_MAPPING_TYPE, [$type]);
         }
         return $this->types->get($type);
     }

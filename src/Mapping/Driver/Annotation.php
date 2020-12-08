@@ -4,8 +4,8 @@ declare(strict_types=1);
 namespace WernerDweight\DoctrineCrudApiBundle\Mapping\Driver;
 
 use Doctrine\Common\Annotations\AnnotationReader;
-use Doctrine\Common\Persistence\Mapping\Driver\FileLocator;
 use Doctrine\ORM\Mapping\ClassMetadata;
+use Doctrine\Persistence\Mapping\Driver\FileLocator;
 use WernerDweight\DoctrineCrudApiBundle\Entity\ApiEntityInterface;
 use WernerDweight\DoctrineCrudApiBundle\Exception\AnnotationDriverException;
 use WernerDweight\DoctrineCrudApiBundle\Mapping\Type\DoctrineCrudApiMappingTypeInterface;
@@ -23,8 +23,6 @@ final class Annotation extends AbstractDriver implements DoctrineCrudApiDriverIn
 
     /**
      * Annotation constructor.
-     *
-     * @param AnnotationMappingTypeFactory $mappingTypeFactory
      */
     public function __construct(AnnotationMappingTypeFactory $mappingTypeFactory)
     {
@@ -32,8 +30,6 @@ final class Annotation extends AbstractDriver implements DoctrineCrudApiDriverIn
     }
 
     /**
-     * @param FileLocator $locator
-     *
      * @return Annotation
      */
     public function setLocator(FileLocator $locator): DoctrineCrudApiDriverInterface
@@ -42,8 +38,6 @@ final class Annotation extends AbstractDriver implements DoctrineCrudApiDriverIn
     }
 
     /**
-     * @param AnnotationReader $reader
-     *
      * @return Annotation
      */
     public function setAnnotationReader(AnnotationReader $reader): DoctrineCrudApiDriverInterface
@@ -55,29 +49,24 @@ final class Annotation extends AbstractDriver implements DoctrineCrudApiDriverIn
     /**
      * @param \ReflectionClass<ApiEntityInterface> $reflectedEntity
      *
-     * @return bool
-     *
      * @throws \Safe\Exceptions\StringsException
      */
     private function isAccessible(\ReflectionClass $reflectedEntity): bool
     {
+        /** @var class-string $annotationClassName */
+        $annotationClassName = \Safe\sprintf(
+            '%s\\%s',
+            DoctrineCrudApiMappingTypeInterface::ANNOTATION_NAMESPACE,
+            ucfirst(DoctrineCrudApiMappingTypeInterface::ACCESSIBLE)
+        );
         $accessibleAnnotation = $this->annotationReader->getClassAnnotation(
             $reflectedEntity,
-            \Safe\sprintf(
-                '%s\\%s',
-                DoctrineCrudApiMappingTypeInterface::ANNOTATION_NAMESPACE,
-                ucfirst(DoctrineCrudApiMappingTypeInterface::ACCESSIBLE)
-            )
+            $annotationClassName
         );
         return null !== $accessibleAnnotation;
     }
 
     /**
-     * @param ClassMetadata $metadata
-     * @param RA            $config
-     *
-     * @return RA
-     *
      * @throws \Safe\Exceptions\StringsException
      * @throws \WernerDweight\RA\Exception\RAException
      */
@@ -93,6 +82,7 @@ final class Annotation extends AbstractDriver implements DoctrineCrudApiDriverIn
 
         foreach ($reflectedEntity->getProperties() as $reflectedProperty) {
             foreach (DoctrineCrudApiMappingTypeInterface::MAPPING_TYPES as $mappingType) {
+                /** @var class-string $annotationClassName */
                 $annotationClassName = \Safe\sprintf(
                     '%s\\%s',
                     DoctrineCrudApiMappingTypeInterface::ANNOTATION_NAMESPACE,

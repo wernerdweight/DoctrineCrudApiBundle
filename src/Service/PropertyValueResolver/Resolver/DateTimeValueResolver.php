@@ -13,7 +13,6 @@ final class DateTimeValueResolver implements PropertyValueResolverInterface
 {
     /**
      * @param mixed $value
-     * @param RA    $configuration
      *
      * @return DateTime|null
      *

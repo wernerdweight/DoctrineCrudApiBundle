@@ -13,7 +13,6 @@ final class DateTimeImmutableValueResolver implements PropertyValueResolverInter
 {
     /**
      * @param mixed $value
-     * @param RA    $configuration
      *
      * @return DateTimeImmutable|null
      */

@@ -11,8 +11,7 @@ use WernerDweight\Stringy\Stringy;
 class PrinterTest extends TestCase
 {
     /**
-     * @param string $expected
-     * @param mixed  $value
+     * @param mixed $value
      *
      * @dataProvider provideValues
      *

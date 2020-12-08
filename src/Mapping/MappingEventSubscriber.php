@@ -14,8 +14,6 @@ final class MappingEventSubscriber implements EventSubscriber
 
     /**
      * EventSubscriber constructor.
-     *
-     * @param MetadataFactory $metadataFactory
      */
     public function __construct(MetadataFactory $metadataFactory)
     {
@@ -32,9 +30,6 @@ final class MappingEventSubscriber implements EventSubscriber
         ];
     }
 
-    /**
-     * @param LoadClassMetadataEventArgs $args
-     */
     public function loadClassMetadata(LoadClassMetadataEventArgs $args): void
     {
         $this->metadataFactory->extendClassMetadata($args->getClassMetadata());

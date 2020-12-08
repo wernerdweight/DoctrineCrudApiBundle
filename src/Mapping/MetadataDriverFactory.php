@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace WernerDweight\DoctrineCrudApiBundle\Mapping;
 
-use Doctrine\Common\Persistence\Mapping\Driver\MappingDriver;
-use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\Mapping\Driver\MappingDriver;
+use Doctrine\Persistence\Mapping\Driver\MappingDriverChain;
 use WernerDweight\DoctrineCrudApiBundle\Exception\MetadataFactoryException;
 use WernerDweight\DoctrineCrudApiBundle\Mapping\Driver\Chain;
 use WernerDweight\DoctrineCrudApiBundle\Mapping\Driver\DoctrineCrudApiDriverInterface;
@@ -27,10 +27,6 @@ class MetadataDriverFactory
 
     /**
      * MetadataDriverFactory constructor.
-     *
-     * @param EntityManagerInterface $entityManager
-     * @param DriverFactory          $driverFactory
-     * @param RegularDriverFactory   $regularDriverFactory
      */
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -43,10 +39,6 @@ class MetadataDriverFactory
     }
 
     /**
-     * @param MappingDriverChain $mappingDriver
-     *
-     * @return Chain
-     *
      * @throws \Doctrine\Common\Annotations\AnnotationException
      * @throws \WernerDweight\RA\Exception\RAException
      */
@@ -64,10 +56,6 @@ class MetadataDriverFactory
     }
 
     /**
-     * @param MappingDriver $mappingDriver
-     *
-     * @return DoctrineCrudApiDriverInterface
-     *
      * @throws \Doctrine\Common\Annotations\AnnotationException
      * @throws \WernerDweight\RA\Exception\RAException
      */
@@ -84,8 +72,6 @@ class MetadataDriverFactory
     }
 
     /**
-     * @return DoctrineCrudApiDriverInterface
-     *
      * @throws \Doctrine\Common\Annotations\AnnotationException
      * @throws \Doctrine\ORM\ORMException
      * @throws \WernerDweight\RA\Exception\RAException
@@ -95,9 +81,7 @@ class MetadataDriverFactory
         if (null === $this->driver) {
             $implementation = $this->entityManager->getConfiguration()->getMetadataDriverImpl();
             if (null === $implementation) {
-                throw new MetadataFactoryException(
-                    MetadataFactoryException::UNKNOWN_DEFAULT_DRIVER_IMPLEMENTATION
-                );
+                throw new MetadataFactoryException(MetadataFactoryException::UNKNOWN_DEFAULT_DRIVER_IMPLEMENTATION);
             }
             $this->driver = $this->getCustomDriver($implementation);
         }

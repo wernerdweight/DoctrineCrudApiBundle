@@ -9,12 +9,6 @@ use WernerDweight\RA\RA;
 abstract class AbstractType implements DoctrineCrudApiMappingTypeInterface
 {
     /**
-     * @param \SimpleXMLElement $propertyMapping
-     * @param \SimpleXMLElement $filteredMapping
-     * @param RA                $config
-     *
-     * @return RA
-     *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     protected function readExtraConfiguration(
@@ -28,9 +22,6 @@ abstract class AbstractType implements DoctrineCrudApiMappingTypeInterface
     /**
      * @param \SimpleXMLElement $propertyMapping
      * @param \SimpleXMLElement $filteredMapping
-     * @param RA                $config
-     *
-     * @return RA
      *
      * @throws \WernerDweight\RA\Exception\RAException
      */

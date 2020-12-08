@@ -4,8 +4,8 @@ declare(strict_types=1);
 namespace WernerDweight\DoctrineCrudApiBundle\Mapping;
 
 use Doctrine\Common\Annotations\AnnotationReader;
-use Doctrine\Common\Persistence\Mapping\Driver\MappingDriver;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
+use Doctrine\Persistence\Mapping\Driver\MappingDriver;
 use WernerDweight\DoctrineCrudApiBundle\Exception\MetadataFactoryException;
 use WernerDweight\DoctrineCrudApiBundle\Mapping\Driver\Annotation;
 use WernerDweight\DoctrineCrudApiBundle\Mapping\Driver\DoctrineCrudApiDriverInterface;
@@ -24,19 +24,12 @@ class RegularDriverFactory
 
     /**
      * RegularDriverFactory constructor.
-     *
-     * @param DriverFactory $driverFactory
      */
     public function __construct(DriverFactory $driverFactory)
     {
         $this->driverFactory = $driverFactory;
     }
 
-    /**
-     * @param Stringy $shortDriverName
-     *
-     * @return Stringy
-     */
     private function getRegularDriverName(Stringy $shortDriverName): Stringy
     {
         $shortDriverName = $shortDriverName->substring(
@@ -54,11 +47,6 @@ class RegularDriverFactory
     }
 
     /**
-     * @param MappingDriver $mappingDriver
-     * @param Stringy       $shortDriverName
-     *
-     * @return DoctrineCrudApiDriverInterface
-     *
      * @throws \Doctrine\Common\Annotations\AnnotationException
      * @throws \WernerDweight\RA\Exception\RAException
      */
@@ -80,9 +68,6 @@ class RegularDriverFactory
             return $driver;
         }
 
-        throw new MetadataFactoryException(
-            MetadataFactoryException::UNEXPECTED_DRIVER,
-            [get_class($driver)]
-        );
+        throw new MetadataFactoryException(MetadataFactoryException::UNEXPECTED_DRIVER, [get_class($driver)]);
     }
 }

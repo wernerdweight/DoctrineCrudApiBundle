@@ -24,10 +24,6 @@ class DoctrineCrudApiMetadata
 
     /**
      * DoctrineCrudApiMetadata constructor.
-     *
-     * @param string        $name
-     * @param ClassMetadata $doctrineMetadata
-     * @param RA            $apiMetadata
      */
     public function __construct(string $name, ClassMetadata $doctrineMetadata, RA $apiMetadata)
     {
@@ -36,34 +32,23 @@ class DoctrineCrudApiMetadata
         $this->apiMetadata = $apiMetadata;
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @return string
-     */
     public function getShortName(): string
     {
         $name = new Stringy($this->getName());
         return (string)($name->substring($name->getPositionOfLastSubstring('\\') + 1));
     }
 
-    /**
-     * @return ClassMetadata
-     */
     public function getDoctrineMetadata(): ClassMetadata
     {
         return $this->doctrineMetadata;
     }
 
     /**
-     * @return RA
-     *
      * @throws \WernerDweight\RA\Exception\RAException
      */
     public function getListableFields(): RA
@@ -72,8 +57,6 @@ class DoctrineCrudApiMetadata
     }
 
     /**
-     * @return RA
-     *
      * @throws \WernerDweight\RA\Exception\RAException
      */
     public function getDefaultListableFields(): RA
@@ -82,8 +65,6 @@ class DoctrineCrudApiMetadata
     }
 
     /**
-     * @return RA
-     *
      * @throws \WernerDweight\RA\Exception\RAException
      */
     public function getCreatableFields(): RA
@@ -92,8 +73,6 @@ class DoctrineCrudApiMetadata
     }
 
     /**
-     * @return RA
-     *
      * @throws \WernerDweight\RA\Exception\RAException
      */
     public function getCreatableNested(): RA
@@ -102,8 +81,6 @@ class DoctrineCrudApiMetadata
     }
 
     /**
-     * @return RA
-     *
      * @throws \WernerDweight\RA\Exception\RAException
      */
     public function getUpdatableFields(): RA
@@ -112,8 +89,6 @@ class DoctrineCrudApiMetadata
     }
 
     /**
-     * @return RA
-     *
      * @throws \WernerDweight\RA\Exception\RAException
      */
     public function getUpdatableNested(): RA
@@ -122,11 +97,6 @@ class DoctrineCrudApiMetadata
     }
 
     /**
-     * @param string  $field
-     * @param RA|null $metadata
-     *
-     * @return RA
-     *
      * @throws \WernerDweight\RA\Exception\RAException
      */
     private function patchMissingFieldMetadata(string $field, ?RA $metadata): RA
@@ -150,12 +120,6 @@ class DoctrineCrudApiMetadata
         return $extendedFieldMetadata;
     }
 
-    /**
-     * @param string  $field
-     * @param RA|null $metadata
-     *
-     * @return RA|null
-     */
     private function extendFieldMetadata(string $field, ?RA $metadata = null): ?RA
     {
         if (null !== $metadata &&
@@ -173,10 +137,6 @@ class DoctrineCrudApiMetadata
     }
 
     /**
-     * @param string $field
-     *
-     * @return RA|null
-     *
      * @throws \WernerDweight\RA\Exception\RAException
      */
     public function getFieldMetadata(string $field): ?RA
@@ -189,10 +149,6 @@ class DoctrineCrudApiMetadata
     }
 
     /**
-     * @param string $field
-     *
-     * @return string|null
-     *
      * @throws \WernerDweight\RA\Exception\RAException
      */
     public function getFieldType(string $field): ?string
@@ -207,11 +163,6 @@ class DoctrineCrudApiMetadata
         return null;
     }
 
-    /**
-     * @param string $field
-     *
-     * @return string|null
-     */
     public function getInternalFieldType(string $field): ?string
     {
         $dotrineMetadata = $this->getDoctrineMetadata()->fieldMappings;

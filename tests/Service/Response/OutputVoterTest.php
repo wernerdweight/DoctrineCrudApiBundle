@@ -14,11 +14,6 @@ use WernerDweight\Stringy\Stringy;
 class OutputVoterTest extends TestCase
 {
     /**
-     * @param bool                    $expected
-     * @param Stringy                 $field
-     * @param DoctrineCrudApiMetadata $metadata
-     * @param RA|null                 $responseStructure
-     *
      * @throws \WernerDweight\RA\Exception\RAException
      *
      * @dataProvider provideValues

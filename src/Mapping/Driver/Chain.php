@@ -4,8 +4,8 @@ declare(strict_types=1);
 namespace WernerDweight\DoctrineCrudApiBundle\Mapping\Driver;
 
 use Doctrine\Common\Annotations\AnnotationReader;
-use Doctrine\Common\Persistence\Mapping\Driver\FileLocator;
 use Doctrine\ORM\Mapping\ClassMetadata;
+use Doctrine\Persistence\Mapping\Driver\FileLocator;
 use WernerDweight\DoctrineCrudApiBundle\Exception\ChainDriverException;
 use WernerDweight\RA\RA;
 use WernerDweight\Stringy\Stringy;
@@ -30,8 +30,6 @@ final class Chain extends AbstractDriver implements DoctrineCrudApiDriverInterfa
     }
 
     /**
-     * @param FileLocator $locator
-     *
      * @return Chain
      */
     public function setLocator(FileLocator $locator): DoctrineCrudApiDriverInterface
@@ -40,8 +38,6 @@ final class Chain extends AbstractDriver implements DoctrineCrudApiDriverInterfa
     }
 
     /**
-     * @param AnnotationReader $reader
-     *
      * @return Chain
      */
     public function setAnnotationReader(AnnotationReader $reader): DoctrineCrudApiDriverInterface
@@ -49,12 +45,6 @@ final class Chain extends AbstractDriver implements DoctrineCrudApiDriverInterfa
         throw new ChainDriverException(ChainDriverException::NO_READER_NEEDED);
     }
 
-    /**
-     * @param ClassMetadata $metadata
-     * @param RA            $config
-     *
-     * @return RA
-     */
     public function readMetadata(ClassMetadata $metadata, RA $config): RA
     {
         /** @var DoctrineCrudApiDriverInterface $driver */
@@ -72,9 +62,6 @@ final class Chain extends AbstractDriver implements DoctrineCrudApiDriverInterfa
     }
 
     /**
-     * @param DoctrineCrudApiDriverInterface $driver
-     * @param string                         $namespace
-     *
      * @return Chain
      */
     public function addDriver(DoctrineCrudApiDriverInterface $driver, string $namespace): self
@@ -83,25 +70,17 @@ final class Chain extends AbstractDriver implements DoctrineCrudApiDriverInterfa
         return $this;
     }
 
-    /**
-     * @return RA
-     */
     public function getDrivers(): RA
     {
         return $this->drivers;
     }
 
-    /**
-     * @return DoctrineCrudApiDriverInterface|null
-     */
     public function getDefaultDriver(): ?DoctrineCrudApiDriverInterface
     {
         return $this->defaultDriver;
     }
 
     /**
-     * @param DoctrineCrudApiDriverInterface $driver
-     *
      * @return Chain
      */
     public function setDefaultDriver(DoctrineCrudApiDriverInterface $driver): self

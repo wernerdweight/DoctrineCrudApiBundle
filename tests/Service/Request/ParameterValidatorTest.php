@@ -14,9 +14,6 @@ use WernerDweight\Stringy\Stringy;
 
 class ParameterValidatorTest extends DoctrineMetadataKernelTestCase
 {
-    /**
-     * @param string $prefix
-     */
     private function prepareRequest(string $prefix = 'article'): void
     {
         /** @var RequestStack $requestStack */
@@ -33,7 +30,6 @@ class ParameterValidatorTest extends DoctrineMetadataKernelTestCase
     }
 
     /**
-     * @param RA           $expected
      * @param mixed[]|null $filter
      *
      * @dataProvider provideFilterValues
@@ -48,7 +44,6 @@ class ParameterValidatorTest extends DoctrineMetadataKernelTestCase
     }
 
     /**
-     * @param RA            $expected
      * @param string[]|null $orderBy
      *
      * @dataProvider provideOrderByValues
@@ -63,7 +58,6 @@ class ParameterValidatorTest extends DoctrineMetadataKernelTestCase
     }
 
     /**
-     * @param RA|null       $expected
      * @param string[]|null $groupBy
      *
      * @dataProvider provideGroupByValues
@@ -78,9 +72,7 @@ class ParameterValidatorTest extends DoctrineMetadataKernelTestCase
     }
 
     /**
-     * @param RA|null      $expected
      * @param mixed[]|null $responseStructure
-     * @param Stringy      $entityName
      *
      * @dataProvider provideResponseStructureValues
      */
@@ -94,7 +86,6 @@ class ParameterValidatorTest extends DoctrineMetadataKernelTestCase
     }
 
     /**
-     * @param RA            $expected
      * @param string[]|null $fields
      *
      * @dataProvider provideFieldsValues

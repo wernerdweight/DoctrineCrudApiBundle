@@ -9,7 +9,6 @@ interface PropertyValueResolverInterface
 {
     /**
      * @param mixed $value
-     * @param RA    $configuration
      *
      * @return mixed
      */

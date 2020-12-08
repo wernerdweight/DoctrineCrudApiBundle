@@ -17,10 +17,8 @@ use WernerDweight\Stringy\Stringy;
 class ValueGetterTest extends TestCase
 {
     /**
-     * @param mixed              $expected
-     * @param ApiEntityInterface $entity
-     * @param Stringy            $field
-     * @param mixed[]            $args
+     * @param mixed   $expected
+     * @param mixed[] $args
      *
      * @dataProvider provideEntities
      */
@@ -36,10 +34,6 @@ class ValueGetterTest extends TestCase
     }
 
     /**
-     * @param ApiEntityInterface|null $expected
-     * @param ApiEntityInterface      $entity
-     * @param Stringy                 $field
-     *
      * @throws \Safe\Exceptions\StringsException
      *
      * @dataProvider provideRelatedEntities
@@ -55,11 +49,6 @@ class ValueGetterTest extends TestCase
     }
 
     /**
-     * @param RA                      $expected
-     * @param ApiEntityInterface      $entity
-     * @param Stringy                 $field
-     * @param DoctrineCrudApiMetadata $metadata
-     *
      * @throws \WernerDweight\RA\Exception\RAException
      *
      * @dataProvider provideRelatedCollections

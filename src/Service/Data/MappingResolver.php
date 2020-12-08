@@ -19,8 +19,6 @@ class MappingResolver
 
     /**
      * MappingResolver constructor.
-     *
-     * @param PropertyValueResolverFactory $propertyValueResolverFactory
      */
     public function __construct(PropertyValueResolverFactory $propertyValueResolverFactory)
     {
@@ -28,7 +26,6 @@ class MappingResolver
     }
 
     /**
-     * @param RA    $configuration
      * @param mixed $value
      *
      * @return mixed
@@ -43,12 +40,7 @@ class MappingResolver
     }
 
     /**
-     * @param ApiEntityInterface      $item
-     * @param DoctrineCrudApiMetadata $metadata
-     * @param string                  $field
-     * @param mixed                   $value
-     *
-     * @return ApiEntityInterface
+     * @param mixed $value
      *
      * @throws \WernerDweight\RA\Exception\RAException
      */
@@ -59,25 +51,13 @@ class MappingResolver
         $value
     ): ApiEntityInterface {
         if (true !== $metadata->getUpdatableNested()->contains($field)) {
-            throw new UpdaterReturnableException(
-                UpdaterReturnableException::INVALID_NESTING,
-                [
-                    'root' => $metadata->getShortName(),
-                    'nested' => $field,
-                    'value' => $value instanceof RA ? $value->toArray(RA::RECURSIVE) : $value,
-                ]
-            );
+            throw new UpdaterReturnableException(UpdaterReturnableException::INVALID_NESTING, ['root' => $metadata->getShortName(), 'nested' => $field, 'value' => $value instanceof RA ? $value->toArray(RA::RECURSIVE) : $value]);
         }
         return $item;
     }
 
     /**
-     * @param string                  $field
-     * @param mixed                   $value
-     * @param DoctrineCrudApiMetadata $metadata
-     * @param RA                      $fieldMetadata
-     *
-     * @return string
+     * @param mixed $value
      *
      * @throws \WernerDweight\RA\Exception\RAException
      */
@@ -88,23 +68,11 @@ class MappingResolver
         RA $fieldMetadata
     ): string {
         if (true !== $metadata->getCreatableNested()->contains($field)) {
-            throw new CreatorReturnableException(
-                CreatorReturnableException::INVALID_NESTING,
-                [
-                    'root' => $metadata->getShortName(),
-                    'nested' => $field,
-                    'value' => $value instanceof RA ? $value->toArray(RA::RECURSIVE) : $value,
-                ]
-            );
+            throw new CreatorReturnableException(CreatorReturnableException::INVALID_NESTING, ['root' => $metadata->getShortName(), 'nested' => $field, 'value' => $value instanceof RA ? $value->toArray(RA::RECURSIVE) : $value]);
         }
         return $fieldMetadata->getString(DoctrineCrudApiMappingTypeInterface::METADATA_CLASS);
     }
 
-    /**
-     * @param RA $fieldMetadata
-     *
-     * @return RA
-     */
     public function getNestedCollectionItemMetadata(RA $fieldMetadata): RA
     {
         return (clone $fieldMetadata)->set(
@@ -114,9 +82,6 @@ class MappingResolver
     }
 
     /**
-     * @param DoctrineCrudApiMetadata $metadata
-     * @param string                  $field
-     *
      * @return mixed[]
      *
      * @throws \WernerDweight\RA\Exception\RAException

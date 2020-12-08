@@ -16,9 +16,6 @@ use WernerDweight\RA\RA;
 class FormatterTest extends DoctrineMetadataKernelTestCase
 {
     /**
-     * @param RA|null $responseStructure
-     * @param string  $prefix
-     *
      * @throws \WernerDweight\RA\Exception\RAException
      */
     private function prepareRequest(?RA $responseStructure, string $prefix): void
@@ -45,11 +42,6 @@ class FormatterTest extends DoctrineMetadataKernelTestCase
     }
 
     /**
-     * @param RA                 $expected
-     * @param ApiEntityInterface $item
-     * @param RA|null            $responseStructure
-     * @param string             $prefix
-     *
      * @dataProvider provideValues
      */
     public function testFormat(

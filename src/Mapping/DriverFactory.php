@@ -39,19 +39,12 @@ class DriverFactory
     }
 
     /**
-     * @param string $driverType
-     *
-     * @return DoctrineCrudApiDriverInterface
-     *
      * @throws \WernerDweight\RA\Exception\RAException
      */
     public function get(string $driverType): DoctrineCrudApiDriverInterface
     {
         if (true !== $this->drivers->hasKey($driverType)) {
-            throw new DriverFactoryException(
-                DriverFactoryException::INVALID_DRIVER_TYPE,
-                [$driverType]
-            );
+            throw new DriverFactoryException(DriverFactoryException::INVALID_DRIVER_TYPE, [$driverType]);
         }
         return $this->drivers->get($driverType);
     }

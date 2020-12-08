@@ -15,9 +15,7 @@ abstract class AbstractReturnableException extends AbstractEnhancedException imp
     /**
      * ItemValidatorReturnableException constructor.
      *
-     * @param int             $code
-     * @param mixed[]         $payload
-     * @param \Throwable|null $previous
+     * @param mixed[] $payload
      */
     public function __construct(int $code, array $payload = [], ?\Throwable $previous = null)
     {
@@ -25,17 +23,11 @@ abstract class AbstractReturnableException extends AbstractEnhancedException imp
         $this->responseData = new RA($payload, RA::RECURSIVE);
     }
 
-    /**
-     * @return RA
-     */
     public function getResponseData(): RA
     {
         return $this->responseData;
     }
 
-    /**
-     * @return int
-     */
     public function getStatusCode(): int
     {
         return Response::HTTP_BAD_REQUEST;

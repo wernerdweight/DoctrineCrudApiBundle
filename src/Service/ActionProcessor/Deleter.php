@@ -31,12 +31,6 @@ class Deleter
 
     /**
      * Deleter constructor.
-     *
-     * @param ParameterResolver              $parameterResolver
-     * @param DataManager                    $dataManager
-     * @param Formatter                      $formatter
-     * @param EntityManagerInterface         $entityManager
-     * @param DoctrineCrudApiEventDispatcher $eventDispatcher
      */
     public function __construct(
         ParameterResolver $parameterResolver,
@@ -53,8 +47,6 @@ class Deleter
     }
 
     /**
-     * @return ApiEntityInterface
-     *
      * @throws \WernerDweight\RA\Exception\RAException
      */
     private function fetch(): ApiEntityInterface
@@ -65,8 +57,6 @@ class Deleter
     }
 
     /**
-     * @return RA
-     *
      * @throws \WernerDweight\RA\Exception\RAException
      */
     public function getItem(): RA

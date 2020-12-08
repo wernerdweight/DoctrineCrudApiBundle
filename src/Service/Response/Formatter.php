@@ -25,10 +25,6 @@ class Formatter
 
     /**
      * Formatter constructor.
-     *
-     * @param ConfigurationManager $configurationManager
-     * @param OutputVoter          $outputVoter
-     * @param ValueGetter          $valueGetter
      */
     public function __construct(
         ConfigurationManager $configurationManager,
@@ -41,12 +37,6 @@ class Formatter
     }
 
     /**
-     * @param ApiEntityInterface      $item
-     * @param Stringy                 $field
-     * @param DoctrineCrudApiMetadata $configuration
-     * @param string                  $prefix
-     * @param RA|null                 $responseStructure
-     *
      * @return mixed
      *
      * @throws \WernerDweight\RA\Exception\RAException
@@ -77,13 +67,6 @@ class Formatter
         throw new FormatterException(FormatterException::EXCEPTION_INVALID_METADATA_TYPE, [$type]);
     }
 
-    /**
-     * @param ApiEntityInterface $item
-     * @param RA|null            $responseStructure
-     * @param string             $prefix
-     *
-     * @return RA
-     */
     public function format(
         ApiEntityInterface $item,
         ?RA $responseStructure,

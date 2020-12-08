@@ -11,9 +11,6 @@ final class IntegerValueResolver implements PropertyValueResolverInterface
 {
     /**
      * @param mixed $value
-     * @param RA    $configuration
-     *
-     * @return int|null
      */
     public function getPropertyValue($value, RA $configuration): ?int
     {

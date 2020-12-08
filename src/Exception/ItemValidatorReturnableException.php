@@ -16,9 +16,6 @@ class ItemValidatorReturnableException extends AbstractReturnableException
         self::INVALID_ITEM => 'Item is not valid!',
     ];
 
-    /**
-     * @return RA
-     */
     public function getResponseData(): RA
     {
         $responseData = parent::getResponseData();

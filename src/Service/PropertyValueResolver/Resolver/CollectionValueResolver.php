@@ -17,8 +17,6 @@ final class CollectionValueResolver implements PropertyValueResolverInterface
 
     /**
      * CollectionValueResolver constructor.
-     *
-     * @param EntityValueResolver $entityValueResolver
      */
     public function __construct(EntityValueResolver $entityValueResolver)
     {
@@ -27,18 +25,15 @@ final class CollectionValueResolver implements PropertyValueResolverInterface
 
     /**
      * @param RA $value
-     * @param RA $configuration
      *
      * @return ArrayCollection<mixed, mixed>|null
      */
     public function getPropertyValue($value, RA $configuration): ?ArrayCollection
     {
         if (true !== $configuration->hasKey(DoctrineCrudApiMappingTypeInterface::METADATA_CLASS)) {
-            throw new MappingResolverException(
-                MappingResolverException::EXCEPTION_MISSING_TARGET_ENTITY,
-                [implode(', ', $this->getPropertyTypes())]
-            );
+            throw new MappingResolverException(MappingResolverException::EXCEPTION_MISSING_TARGET_ENTITY, [implode(', ', $this->getPropertyTypes())]);
         }
+        /** @var class-string $className */
         $className = $configuration->getString(DoctrineCrudApiMappingTypeInterface::METADATA_CLASS);
 
         return new ArrayCollection(

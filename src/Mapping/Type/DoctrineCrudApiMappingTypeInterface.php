@@ -49,17 +49,7 @@ interface DoctrineCrudApiMappingTypeInterface
     /** @var string */
     public const METADATA_PAYLOAD_ARGUMENT = 'argument';
 
-    /**
-     * @return string
-     */
     public function getType(): string;
 
-    /**
-     * @param object $propertyMapping
-     * @param object $filteredMapping
-     * @param RA     $config
-     *
-     * @return RA
-     */
     public function readConfiguration(object $propertyMapping, object $filteredMapping, RA $config): RA;
 }

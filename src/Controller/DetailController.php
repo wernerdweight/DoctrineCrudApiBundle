@@ -10,11 +10,6 @@ use WernerDweight\RA\RA;
 
 final class DetailController extends AbstractController implements DoctrineCrudApiControllerInterface
 {
-    /**
-     * @param Detailer $detailer
-     *
-     * @return JsonResponse
-     */
     public function index(Detailer $detailer): JsonResponse
     {
         $item = $detailer->getItem();

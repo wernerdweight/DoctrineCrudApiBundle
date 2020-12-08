@@ -35,13 +35,6 @@ class Updater
 
     /**
      * Updater constructor.
-     *
-     * @param ParameterResolver              $parameterResolver
-     * @param Formatter                      $formatter
-     * @param DoctrineCrudApiEventDispatcher $eventDispatcher
-     * @param EntityManagerInterface         $entityManager
-     * @param ItemValidator                  $itemValidator
-     * @param ModifyHelper                   $modifyHelper
      */
     public function __construct(
         ParameterResolver $parameterResolver,
@@ -60,8 +53,6 @@ class Updater
     }
 
     /**
-     * @return RA
-     *
      * @throws \Safe\Exceptions\StringsException
      * @throws \WernerDweight\RA\Exception\RAException
      */

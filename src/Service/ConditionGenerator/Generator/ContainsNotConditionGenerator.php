@@ -8,12 +8,6 @@ use WernerDweight\DoctrineCrudApiBundle\Service\Request\ParameterEnum;
 
 final class ContainsNotConditionGenerator implements ConditionGeneratorInterface
 {
-    /**
-     * @param string $field
-     * @param string $parameterName
-     *
-     * @return string
-     */
     public function generate(string $field, string $parameterName): string
     {
         $expression = new Expr();
@@ -23,9 +17,6 @@ final class ContainsNotConditionGenerator implements ConditionGeneratorInterface
         ));
     }
 
-    /**
-     * @return string
-     */
     public function getOperator(): string
     {
         return ParameterEnum::FILTER_OPERATOR_CONTAINS_NOT;

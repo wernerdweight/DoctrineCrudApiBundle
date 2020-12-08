@@ -14,9 +14,7 @@ use WernerDweight\Stringy\Stringy;
 class ValueGetter
 {
     /**
-     * @param ApiEntityInterface $item
-     * @param Stringy            $field
-     * @param mixed[]            $args
+     * @param mixed[] $args
      *
      * @return mixed
      */
@@ -36,16 +34,10 @@ class ValueGetter
         if (true === property_exists($item, $field)) {
             return $item->$field;
         }
-        throw new FormatterException(
-            FormatterException::EXCEPTION_NO_PROPERTY_GETTER,
-            [$field, get_class($item)]
-        );
+        throw new FormatterException(FormatterException::EXCEPTION_NO_PROPERTY_GETTER, [$field, get_class($item)]);
     }
 
     /**
-     * @param ApiEntityInterface $item
-     * @param Stringy            $field
-     *
      * @return mixed
      *
      * @throws \Safe\Exceptions\StringsException
@@ -56,12 +48,6 @@ class ValueGetter
     }
 
     /**
-     * @param ApiEntityInterface      $item
-     * @param Stringy                 $field
-     * @param DoctrineCrudApiMetadata $configuration
-     *
-     * @return RA
-     *
      * @throws \WernerDweight\RA\Exception\RAException
      */
     public function getRelatedCollectionValue(

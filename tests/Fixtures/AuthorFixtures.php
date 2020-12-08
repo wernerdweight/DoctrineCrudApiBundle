@@ -7,9 +7,6 @@ use WernerDweight\DoctrineCrudApiBundle\Tests\Entity\Author;
 
 class AuthorFixtures
 {
-    /**
-     * @return Author
-     */
     public static function createAuthor(): Author
     {
         return new Author(

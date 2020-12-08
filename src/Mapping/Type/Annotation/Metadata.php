@@ -13,9 +13,6 @@ final class Metadata extends AbstractType implements DoctrineCrudApiMappingTypeI
     /**
      * @param Stringy            $propertyName
      * @param MetadataAnnotation $annotation
-     * @param RA                 $config
-     *
-     * @return RA
      *
      * @throws \WernerDweight\RA\Exception\RAException
      */
@@ -32,9 +29,6 @@ final class Metadata extends AbstractType implements DoctrineCrudApiMappingTypeI
         return $config;
     }
 
-    /**
-     * @return string
-     */
     public function getType(): string
     {
         return DoctrineCrudApiMappingTypeInterface::METADATA;

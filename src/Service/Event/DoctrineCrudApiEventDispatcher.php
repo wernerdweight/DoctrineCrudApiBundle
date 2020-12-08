@@ -21,19 +21,12 @@ class DoctrineCrudApiEventDispatcher
 
     /**
      * DoctrineCrudApiEventDispatcher constructor.
-     *
-     * @param EventDispatcherInterface $eventDispatcher
      */
     public function __construct(EventDispatcherInterface $eventDispatcher)
     {
         $this->eventDispatcher = $eventDispatcher;
     }
 
-    /**
-     * @param ApiEntityInterface $item
-     *
-     * @return PreValidateEvent
-     */
     public function dispatchPreValidate(ApiEntityInterface $item): PreValidateEvent
     {
         /** @var PreValidateEvent $event */
@@ -41,11 +34,6 @@ class DoctrineCrudApiEventDispatcher
         return $event;
     }
 
-    /**
-     * @param ApiEntityInterface $item
-     *
-     * @return PrePersistEvent
-     */
     public function dispatchPrePersist(ApiEntityInterface $item): PrePersistEvent
     {
         /** @var PrePersistEvent $event */
@@ -53,11 +41,6 @@ class DoctrineCrudApiEventDispatcher
         return $event;
     }
 
-    /**
-     * @param ApiEntityInterface $item
-     *
-     * @return PostCreateEvent
-     */
     public function dispatchPostCreate(ApiEntityInterface $item): PostCreateEvent
     {
         /** @var PostCreateEvent $event */
@@ -66,11 +49,7 @@ class DoctrineCrudApiEventDispatcher
     }
 
     /**
-     * @param ApiEntityInterface $item
-     * @param string             $field
-     * @param mixed              $value
-     *
-     * @return PreSetPropertyEvent
+     * @param mixed $value
      */
     public function dispatchPreSetProperty(ApiEntityInterface $item, string $field, $value): PreSetPropertyEvent
     {
@@ -79,11 +58,6 @@ class DoctrineCrudApiEventDispatcher
         return $event;
     }
 
-    /**
-     * @param ApiEntityInterface $item
-     *
-     * @return PreUpdateEvent
-     */
     public function dispatchPreUpdate(ApiEntityInterface $item): PreUpdateEvent
     {
         /** @var PreUpdateEvent $event */
@@ -91,11 +65,6 @@ class DoctrineCrudApiEventDispatcher
         return $event;
     }
 
-    /**
-     * @param ApiEntityInterface $item
-     *
-     * @return PostUpdateEvent
-     */
     public function dispatchPostUpdate(ApiEntityInterface $item): PostUpdateEvent
     {
         /** @var PostUpdateEvent $event */
@@ -103,11 +72,6 @@ class DoctrineCrudApiEventDispatcher
         return $event;
     }
 
-    /**
-     * @param ApiEntityInterface $item
-     *
-     * @return PreDeleteEvent
-     */
     public function dispatchPreDelete(ApiEntityInterface $item): PreDeleteEvent
     {
         /** @var PreDeleteEvent $event */
@@ -115,11 +79,6 @@ class DoctrineCrudApiEventDispatcher
         return $event;
     }
 
-    /**
-     * @param ApiEntityInterface $item
-     *
-     * @return PostDeleteEvent
-     */
     public function dispatchPostDelete(ApiEntityInterface $item): PostDeleteEvent
     {
         /** @var PostDeleteEvent $event */

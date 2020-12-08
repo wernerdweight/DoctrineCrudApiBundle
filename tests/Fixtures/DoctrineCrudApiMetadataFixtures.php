@@ -9,9 +9,6 @@ use WernerDweight\DoctrineCrudApiBundle\Tests\Entity\Article;
 
 class DoctrineCrudApiMetadataFixtures
 {
-    /**
-     * @return DoctrineCrudApiMetadata
-     */
     public static function createEmptyMetadata(): DoctrineCrudApiMetadata
     {
         return new DoctrineCrudApiMetadata(
@@ -21,9 +18,6 @@ class DoctrineCrudApiMetadataFixtures
         );
     }
 
-    /**
-     * @return DoctrineCrudApiMetadata
-     */
     public static function createArticleMetadata(): DoctrineCrudApiMetadata
     {
         return new DoctrineCrudApiMetadata(

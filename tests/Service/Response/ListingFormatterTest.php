@@ -16,9 +16,6 @@ use WernerDweight\RA\RA;
 class ListingFormatterTest extends DoctrineMetadataKernelTestCase
 {
     /**
-     * @param RA|null $groupBy
-     * @param RA|null $responseStructure
-     *
      * @throws \WernerDweight\RA\Exception\RAException
      */
     private function prepareRequest(?RA $groupBy, ?RA $responseStructure): void
@@ -48,11 +45,6 @@ class ListingFormatterTest extends DoctrineMetadataKernelTestCase
     }
 
     /**
-     * @param RA      $expected
-     * @param RA      $items
-     * @param RA|null $groupBy
-     * @param RA|null $responseStructure
-     *
      * @dataProvider provideValues
      */
     public function testFormatListing(

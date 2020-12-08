@@ -10,11 +10,6 @@ use WernerDweight\RA\RA;
 
 final class DeleteController extends AbstractController implements DoctrineCrudApiControllerInterface
 {
-    /**
-     * @param Deleter $deleter
-     *
-     * @return JsonResponse
-     */
     public function index(Deleter $deleter): JsonResponse
     {
         $item = $deleter->getItem();

@@ -24,10 +24,6 @@ class ListingFormatter
 
     /**
      * ListingFormatter constructor.
-     *
-     * @param ParameterResolver $parameterResolver
-     * @param Printer           $printer
-     * @param ManyFormatter     $formatter
      */
     public function __construct(
         ParameterResolver $parameterResolver,
@@ -39,11 +35,6 @@ class ListingFormatter
         $this->formatter = $formatter;
     }
 
-    /**
-     * @param RA $aggregateFields
-     *
-     * @return RA
-     */
     private function formatGroupAggregates(RA $aggregateFields): RA
     {
         return $aggregateFields
@@ -53,10 +44,7 @@ class ListingFormatter
                 $lastUnderscorePosition = $field
                     ->getPositionOfLastSubstring(QueryBuilderDecorator::AGGREGATE_FUNCTION_SEPARATOR);
                 if (null === $lastUnderscorePosition) {
-                    throw new FormatterException(
-                        FormatterException::EXCEPTION_INVALID_AGGREGATE_FIELD_NAME,
-                        [$field]
-                    );
+                    throw new FormatterException(FormatterException::EXCEPTION_INVALID_AGGREGATE_FIELD_NAME, [$field]);
                 }
                 $functionName = (clone $field)->substring(0, $lastUnderscorePosition);
                 $field = $field->substring($lastUnderscorePosition + 1);
@@ -68,13 +56,6 @@ class ListingFormatter
             }, $aggregateFields->keys());
     }
 
-    /**
-     * @param RA     $groups
-     * @param int    $level
-     * @param string $groupingField
-     *
-     * @return RA
-     */
     private function formatGroupped(RA $groups, int $level, string $groupingField): RA
     {
         return $groups->map(function (RA $group) use ($groupingField, $level): RA {
@@ -95,12 +76,6 @@ class ListingFormatter
     }
 
     /**
-     * @param RA  $items
-     * @param int $level
-     * @param RA  $groupBy
-     *
-     * @return RA
-     *
      * @throws \WernerDweight\RA\Exception\RAException
      */
     private function formatGrouppedListing(RA $items, int $level, RA $groupBy): RA
@@ -113,11 +88,6 @@ class ListingFormatter
     }
 
     /**
-     * @param RA       $items
-     * @param int|null $level
-     *
-     * @return RA
-     *
      * @throws \WernerDweight\RA\Exception\RAException
      */
     public function formatListing(RA $items, ?int $level = null): RA

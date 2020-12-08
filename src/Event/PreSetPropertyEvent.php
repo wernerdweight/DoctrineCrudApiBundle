@@ -23,9 +23,7 @@ class PreSetPropertyEvent extends Event
     /**
      * PreSetPropertyEvent constructor.
      *
-     * @param ApiEntityInterface $item
-     * @param string             $propertyName
-     * @param mixed              $value
+     * @param mixed $value
      */
     public function __construct(ApiEntityInterface $item, string $propertyName, $value)
     {
@@ -34,17 +32,11 @@ class PreSetPropertyEvent extends Event
         $this->value = $value;
     }
 
-    /**
-     * @return ApiEntityInterface
-     */
     public function getItem(): ApiEntityInterface
     {
         return $this->item;
     }
 
-    /**
-     * @return string
-     */
     public function getPropertyName(): string
     {
         return $this->propertyName;

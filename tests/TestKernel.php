@@ -32,20 +32,13 @@ class TestKernel extends Kernel
         ];
     }
 
-    /**
-     * @param RouteCollectionBuilder $routes
-     */
     protected function configureRoutes(RouteCollectionBuilder $routes): void
     {
     }
 
-    /**
-     * @param ContainerBuilder $builder
-     * @param LoaderInterface  $loader
-     */
     protected function configureContainer(ContainerBuilder $builder, LoaderInterface $loader): void
     {
-        $loader->load(__DIR__ . '/../vendor/symfony/framework-bundle/Resources/config/test.xml');
+        $loader->load(__DIR__ . '/../vendor/symfony/framework-bundle/Resources/config/test.php');
         $loader->load(__DIR__ . '/../vendor/doctrine/doctrine-bundle/Resources/config/dbal.xml');
         $loader->load(__DIR__ . '/../vendor/doctrine/doctrine-bundle/Resources/config/orm.xml');
         $loader->load(__DIR__ . '/../src/Resources/config/services.yaml');

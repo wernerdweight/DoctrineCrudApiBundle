@@ -31,12 +31,6 @@ class ModifyHelper
 
     /**
      * CreateHelper constructor.
-     *
-     * @param CurrentEntityResolver       $currentEntityResolver
-     * @param ConfigurationManager        $configurationManager
-     * @param PropertyValueResolverHelper $propertyValueResolverHelper
-     * @param MappingResolver             $mappingResolver
-     * @param DataManager                 $dataManager
      */
     public function __construct(
         CurrentEntityResolver $currentEntityResolver,
@@ -55,12 +49,7 @@ class ModifyHelper
     }
 
     /**
-     * @param string                  $field
-     * @param mixed                   $value
-     * @param DoctrineCrudApiMetadata $metadata
-     * @param RA                      $fieldMetadata
-     *
-     * @return ApiEntityInterface
+     * @param mixed $value
      *
      * @throws \Safe\Exceptions\StringsException
      * @throws \WernerDweight\RA\Exception\RAException
@@ -79,12 +68,7 @@ class ModifyHelper
     }
 
     /**
-     * @param ApiEntityInterface      $item
-     * @param mixed                   $value
-     * @param DoctrineCrudApiMetadata $metadata
-     * @param string                  $field
-     *
-     * @return ApiEntityInterface
+     * @param mixed $value
      *
      * @throws \WernerDweight\RA\Exception\RAException
      */
@@ -99,9 +83,7 @@ class ModifyHelper
     }
 
     /**
-     * @param string                  $field
-     * @param mixed                   $value
-     * @param DoctrineCrudApiMetadata $metadata
+     * @param mixed $value
      *
      * @return mixed
      *
@@ -147,13 +129,6 @@ class ModifyHelper
     }
 
     /**
-     * @param ApiEntityInterface      $item
-     * @param string                  $field
-     * @param RA                      $fieldValues
-     * @param DoctrineCrudApiMetadata $configuration
-     *
-     * @return ApiEntityInterface
-     *
      * @throws \Safe\Exceptions\StringsException
      * @throws \WernerDweight\RA\Exception\RAException
      */
@@ -172,11 +147,6 @@ class ModifyHelper
     }
 
     /**
-     * @param RA          $values
-     * @param string|null $itemClassName
-     *
-     * @return ApiEntityInterface
-     *
      * @throws \Safe\Exceptions\StringsException
      * @throws \WernerDweight\RA\Exception\RAException
      */
@@ -195,11 +165,6 @@ class ModifyHelper
     }
 
     /**
-     * @param ApiEntityInterface $item
-     * @param RA                 $values
-     *
-     * @return ApiEntityInterface
-     *
      * @throws \WernerDweight\RA\Exception\RAException
      */
     public function update(ApiEntityInterface $item, RA $values): ApiEntityInterface
@@ -212,19 +177,11 @@ class ModifyHelper
         return $item;
     }
 
-    /**
-     * @param string $primaryKey
-     *
-     * @return ApiEntityInterface
-     */
     public function fetch(string $primaryKey): ApiEntityInterface
     {
         return $this->dataManager->getItem($primaryKey);
     }
 
-    /**
-     * @return RA
-     */
     public function getNestedItems(): RA
     {
         return $this->nestedItems;

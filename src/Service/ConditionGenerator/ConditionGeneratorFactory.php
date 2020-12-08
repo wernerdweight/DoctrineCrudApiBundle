@@ -33,19 +33,12 @@ class ConditionGeneratorFactory
     }
 
     /**
-     * @param string $operator
-     *
-     * @return ConditionGeneratorInterface
-     *
      * @throws \WernerDweight\RA\Exception\RAException
      */
     public function get(string $operator): ConditionGeneratorInterface
     {
         if (true !== $this->conditionGenerators->hasKey($operator)) {
-            throw new FilteringException(
-                FilteringException::EXCEPTION_INVALID_FILTER_OPERATOR,
-                [$operator, implode(', ', ParameterEnum::AVAILABLE_FILTERING_OPERATORS)]
-            );
+            throw new FilteringException(FilteringException::EXCEPTION_INVALID_FILTER_OPERATOR, [$operator, implode(', ', ParameterEnum::AVAILABLE_FILTERING_OPERATORS)]);
         }
         /** @var ConditionGeneratorInterface $conditionGenerator */
         $conditionGenerator = $this->conditionGenerators->get($operator);

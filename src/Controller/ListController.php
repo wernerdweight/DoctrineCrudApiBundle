@@ -10,11 +10,6 @@ use WernerDweight\RA\RA;
 
 final class ListController extends AbstractController implements DoctrineCrudApiControllerInterface
 {
-    /**
-     * @param Lister $lister
-     *
-     * @return JsonResponse
-     */
     public function index(Lister $lister): JsonResponse
     {
         $items = $lister->getItems();

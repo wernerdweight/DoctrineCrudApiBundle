@@ -10,11 +10,6 @@ use WernerDweight\RA\RA;
 
 final class UpdateController extends AbstractController implements DoctrineCrudApiControllerInterface
 {
-    /**
-     * @param Updater $updater
-     *
-     * @return JsonResponse
-     */
     public function index(Updater $updater): JsonResponse
     {
         $item = $updater->updateItem();

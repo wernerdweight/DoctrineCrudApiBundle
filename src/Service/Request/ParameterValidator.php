@@ -21,9 +21,6 @@ class ParameterValidator
 
     /**
      * ParameterValidator constructor.
-     *
-     * @param RepositoryManager $repositoryManager
-     * @param MappingResolver   $mappingResolver
      */
     public function __construct(RepositoryManager $repositoryManager, MappingResolver $mappingResolver)
     {
@@ -31,43 +28,23 @@ class ParameterValidator
         $this->mappingResolver = $mappingResolver;
     }
 
-    /**
-     * @param string $operator
-     *
-     * @return string
-     */
     private function validateFilteringOperator(string $operator): string
     {
         if (true !== in_array($operator, ParameterEnum::AVAILABLE_FILTERING_OPERATORS, true)) {
-            throw new FilteringException(
-                FilteringException::EXCEPTION_INVALID_FILTER_OPERATOR,
-                [$operator, implode(', ', ParameterEnum::AVAILABLE_FILTERING_OPERATORS)]
-            );
+            throw new FilteringException(FilteringException::EXCEPTION_INVALID_FILTER_OPERATOR, [$operator, implode(', ', ParameterEnum::AVAILABLE_FILTERING_OPERATORS)]);
         }
         return $operator;
     }
 
-    /**
-     * @param string $direction
-     *
-     * @return string
-     */
     private function validateDirection(string $direction): string
     {
         if (true !== in_array($direction, ParameterEnum::AVAILABLE_ORDERING_DIRECTIONS, true)) {
-            throw new FilteringException(
-                FilteringException::EXCEPTION_INVALID_ORDERING_DIRECTION,
-                [$direction, implode(', ', ParameterEnum::AVAILABLE_ORDERING_DIRECTIONS)]
-            );
+            throw new FilteringException(FilteringException::EXCEPTION_INVALID_ORDERING_DIRECTION, [$direction, implode(', ', ParameterEnum::AVAILABLE_ORDERING_DIRECTIONS)]);
         }
         return $direction;
     }
 
     /**
-     * @param Stringy $field
-     *
-     * @return bool
-     *
      * @throws \Safe\Exceptions\StringsException
      * @throws \WernerDweight\RA\Exception\RAException
      */
@@ -79,9 +56,7 @@ class ParameterValidator
     }
 
     /**
-     * @param Stringy $field
-     * @param string  $operator
-     * @param mixed   $value
+     * @param mixed $value
      *
      * @return mixed
      *
@@ -122,11 +97,6 @@ class ParameterValidator
         return $value;
     }
 
-    /**
-     * @param RA $conditions
-     *
-     * @return RA
-     */
     private function validateFilteringConditions(RA $conditions): RA
     {
         return $conditions->map(function ($condition): RA {
@@ -168,26 +138,16 @@ class ParameterValidator
         });
     }
 
-    /**
-     * @param string $logic
-     *
-     * @return string
-     */
     private function validateFilteringLogic(string $logic): string
     {
         if (true !== in_array($logic, ParameterEnum::AVAILABLE_FILTERING_LOGICS, true)) {
-            throw new FilteringException(
-                FilteringException::EXCEPTION_INVALID_FILTER_LOGIC,
-                [$logic, implode(', ', ParameterEnum::AVAILABLE_FILTERING_LOGICS)]
-            );
+            throw new FilteringException(FilteringException::EXCEPTION_INVALID_FILTER_LOGIC, [$logic, implode(', ', ParameterEnum::AVAILABLE_FILTERING_LOGICS)]);
         }
         return $logic;
     }
 
     /**
      * @param mixed[]|null $filter
-     *
-     * @return RA
      */
     public function validateFilter(?array $filter): RA
     {
@@ -213,8 +173,6 @@ class ParameterValidator
 
     /**
      * @param string[]|null $orderBy
-     *
-     * @return RA
      */
     public function validateOrderBy(?array $orderBy): RA
     {
@@ -241,11 +199,6 @@ class ParameterValidator
         });
     }
 
-    /**
-     * @param RA|null $aggregates
-     *
-     * @return RA|null
-     */
     private function validateAggregates(?RA $aggregates): ?RA
     {
         if (null === $aggregates) {
@@ -255,10 +208,7 @@ class ParameterValidator
         $aggregates->walk(function (RA $aggregate): void {
             $function = mb_strtolower($aggregate->getString(ParameterEnum::GROUP_BY_AGGREGATE_FUNCTION));
             if (true !== in_array($function, ParameterEnum::AVAILABLE_AGGREGATE_FUNCTIONS, true)) {
-                throw new FilteringException(
-                    FilteringException::EXCEPTION_INVALID_AGGREGATE_FUNCTION,
-                    [$function, implode(', ', ParameterEnum::AVAILABLE_AGGREGATE_FUNCTIONS)]
-                );
+                throw new FilteringException(FilteringException::EXCEPTION_INVALID_AGGREGATE_FUNCTION, [$function, implode(', ', ParameterEnum::AVAILABLE_AGGREGATE_FUNCTIONS)]);
             }
         });
 
@@ -267,8 +217,6 @@ class ParameterValidator
 
     /**
      * @param string[]|null $groupBy
-     *
-     * @return RA|null
      */
     public function validateGroupBy(?array $groupBy): ?RA
     {
@@ -298,9 +246,6 @@ class ParameterValidator
 
     /**
      * @param mixed[]|null $responseStructure
-     * @param Stringy      $entityName
-     *
-     * @return RA|null
      */
     public function validateResponseStructure(?array $responseStructure, Stringy $entityName): ?RA
     {
@@ -312,8 +257,6 @@ class ParameterValidator
 
     /**
      * @param string[]|null $fields
-     *
-     * @return RA
      */
     public function validateFields(?array $fields): RA
     {

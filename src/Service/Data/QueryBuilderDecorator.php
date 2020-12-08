@@ -29,10 +29,6 @@ class QueryBuilderDecorator
 
     /**
      * QueryBuilderDecorator constructor.
-     *
-     * @param FilteringDecorator $filteringDecorator
-     * @param FilteringHelper    $filteringHelper
-     * @param RelationJoiner     $relationJoiner
      */
     public function __construct(
         FilteringDecorator $filteringDecorator,
@@ -45,9 +41,6 @@ class QueryBuilderDecorator
     }
 
     /**
-     * @param QueryBuilder $queryBuilder
-     * @param RA           $filterData
-     *
      * @return QueryBuilderDecorator
      */
     public function applyFiltering(QueryBuilder $queryBuilder, RA $filterData): self
@@ -67,9 +60,6 @@ class QueryBuilderDecorator
     }
 
     /**
-     * @param QueryBuilder $queryBuilder
-     * @param RA           $orderings
-     *
      * @return QueryBuilderDecorator
      */
     public function applyOrdering(QueryBuilder $queryBuilder, RA $orderings): self
@@ -80,10 +70,7 @@ class QueryBuilderDecorator
             $direction = $orderData->getString(ParameterEnum::ORDER_BY_DIRECTION);
 
             if (true !== in_array($direction, ParameterEnum::AVAILABLE_ORDERING_DIRECTIONS, true)) {
-                throw new FilteringException(
-                    FilteringException::EXCEPTION_INVALID_ORDERING_DIRECTION,
-                    [$direction, implode(', ', ParameterEnum::AVAILABLE_ORDERING_DIRECTIONS)]
-                );
+                throw new FilteringException(FilteringException::EXCEPTION_INVALID_ORDERING_DIRECTION, [$direction, implode(', ', ParameterEnum::AVAILABLE_ORDERING_DIRECTIONS)]);
             }
 
             if (true === $this->filteringHelper->isEmbed($field)) {
@@ -98,10 +85,6 @@ class QueryBuilderDecorator
     }
 
     /**
-     * @param QueryBuilder $queryBuilder
-     * @param int          $offset
-     * @param int          $limit
-     *
      * @return QueryBuilderDecorator
      */
     public function applyPagination(QueryBuilder $queryBuilder, int $offset, int $limit): self
@@ -113,9 +96,6 @@ class QueryBuilderDecorator
     }
 
     /**
-     * @param QueryBuilder $queryBuilder
-     * @param Stringy      $field
-     *
      * @return QueryBuilderDecorator
      *
      * @throws \Safe\Exceptions\PcreException
@@ -133,9 +113,6 @@ class QueryBuilderDecorator
     }
 
     /**
-     * @param QueryBuilder $queryBuilder
-     * @param RA           $aggregates
-     *
      * @return QueryBuilderDecorator
      */
     public function applyAggregates(QueryBuilder $queryBuilder, RA $aggregates): self

@@ -12,11 +12,7 @@ use WernerDweight\Stringy\Stringy;
 final class Creatable extends AbstractType implements DoctrineCrudApiMappingTypeInterface
 {
     /**
-     * @param Stringy             $propertyName
      * @param CreatableAnnotation $annotation
-     * @param RA                  $config
-     *
-     * @return RA
      */
     protected function readExtraConfiguration(Stringy $propertyName, Annotation $annotation, RA $config): RA
     {
@@ -28,9 +24,6 @@ final class Creatable extends AbstractType implements DoctrineCrudApiMappingType
         return $config;
     }
 
-    /**
-     * @return string
-     */
     public function getType(): string
     {
         return DoctrineCrudApiMappingTypeInterface::CREATABLE;

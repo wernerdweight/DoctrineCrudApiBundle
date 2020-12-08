@@ -23,10 +23,6 @@ class Detailer
 
     /**
      * Detailer constructor.
-     *
-     * @param ParameterResolver $parameterResolver
-     * @param DataManager       $dataManager
-     * @param Formatter         $formatter
      */
     public function __construct(
         ParameterResolver $parameterResolver,
@@ -39,8 +35,6 @@ class Detailer
     }
 
     /**
-     * @return ApiEntityInterface
-     *
      * @throws \WernerDweight\RA\Exception\RAException
      */
     private function fetch(): ApiEntityInterface
@@ -51,8 +45,6 @@ class Detailer
     }
 
     /**
-     * @return RA
-     *
      * @throws \WernerDweight\RA\Exception\RAException
      */
     public function getItem(): RA

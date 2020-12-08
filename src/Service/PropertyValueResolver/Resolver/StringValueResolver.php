@@ -11,9 +11,6 @@ final class StringValueResolver implements PropertyValueResolverInterface
 {
     /**
      * @param mixed $value
-     * @param RA    $configuration
-     *
-     * @return string|null
      */
     public function getPropertyValue($value, RA $configuration): ?string
     {

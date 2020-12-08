@@ -40,10 +40,6 @@ class RepositoryManager
 
     /**
      * RepositoryManager constructor.
-     *
-     * @param EntityManagerInterface         $entityManager
-     * @param ServiceEntityRepositoryFactory $repositoryFactory
-     * @param CurrentEntityResolver          $currentEntityResolver
      */
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -56,8 +52,6 @@ class RepositoryManager
     }
 
     /**
-     * @return Stringy
-     *
      * @throws RAException
      */
     public function getCurrentEntityName(): Stringy
@@ -68,9 +62,6 @@ class RepositoryManager
         return $this->currentEntityName;
     }
 
-    /**
-     * @return Stringy
-     */
     public function getCurrentEntityFQCN(): Stringy
     {
         if (null === $this->currentEntityFQCN) {
@@ -80,8 +71,6 @@ class RepositoryManager
     }
 
     /**
-     * @return ServiceEntityRepository
-     *
      * @throws RAException
      */
     public function getCurrentRepository(): ServiceEntityRepository
@@ -92,19 +81,11 @@ class RepositoryManager
         return $this->currentRepository;
     }
 
-    /**
-     * @param string $entityFQCN
-     *
-     * @return ClassMetadata
-     */
     private function getEntityMetadata(string $entityFQCN): ClassMetadata
     {
         return $this->entityManager->getClassMetadata($entityFQCN);
     }
 
-    /**
-     * @return ClassMetadata
-     */
     public function getCurrentMetadata(): ClassMetadata
     {
         if (null === $this->currentMetadata) {
@@ -113,11 +94,6 @@ class RepositoryManager
         return $this->currentMetadata;
     }
 
-    /**
-     * @param ClassMetadata $metadata
-     *
-     * @return RA
-     */
     private function getEntityMappings(ClassMetadata $metadata): RA
     {
         return (new RA())
@@ -127,9 +103,6 @@ class RepositoryManager
             );
     }
 
-    /**
-     * @return RA
-     */
     public function getCurrentMappings(): RA
     {
         if (null === $this->currentMappings) {
@@ -139,11 +112,6 @@ class RepositoryManager
     }
 
     /**
-     * @param Stringy $field
-     * @param RA|null $mappings
-     *
-     * @return RA|null
-     *
      * @throws RAException
      */
     public function getMappingForField(Stringy $field, ?RA $mappings = null): ?RA

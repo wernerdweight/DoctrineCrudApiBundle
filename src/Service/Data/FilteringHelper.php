@@ -38,8 +38,6 @@ class FilteringHelper
 
     /**
      * FilteringHelper constructor.
-     *
-     * @param RepositoryManager $repositoryManager
      */
     public function __construct(RepositoryManager $repositoryManager)
     {
@@ -47,10 +45,6 @@ class FilteringHelper
     }
 
     /**
-     * @param RA $filterData
-     *
-     * @return string
-     *
      * @throws \WernerDweight\RA\Exception\RAException
      */
     public function getFilteringLogic(RA $filterData): string
@@ -59,19 +53,12 @@ class FilteringHelper
             $filterData->getStringOrNull(ParameterEnum::FILTER_LOGIC) ?? ParameterEnum::FILTER_LOGIC_AND
         );
         if (true !== in_array($logic, ParameterEnum::AVAILABLE_FILTERING_LOGICS, true)) {
-            throw new FilteringException(
-                FilteringException::EXCEPTION_INVALID_FILTER_LOGIC,
-                [$logic, implode(', ', ParameterEnum::AVAILABLE_FILTERING_LOGICS)]
-            );
+            throw new FilteringException(FilteringException::EXCEPTION_INVALID_FILTER_LOGIC, [$logic, implode(', ', ParameterEnum::AVAILABLE_FILTERING_LOGICS)]);
         }
         return $logic;
     }
 
     /**
-     * @param RA $conditionData
-     *
-     * @return Stringy
-     *
      * @throws \WernerDweight\RA\Exception\RAException
      */
     public function getFilteringField(RA $conditionData): Stringy
@@ -85,10 +72,6 @@ class FilteringHelper
     }
 
     /**
-     * @param RA $filterData
-     *
-     * @return string
-     *
      * @throws \WernerDweight\RA\Exception\RAException
      */
     public function getFilteringOperator(RA $filterData): string
@@ -97,29 +80,16 @@ class FilteringHelper
             $filterData->getStringOrNull(ParameterEnum::FILTER_OPERATOR) ?? ParameterEnum::FILTER_OPERATOR_EQUAL
         );
         if (true !== in_array($operator, ParameterEnum::AVAILABLE_FILTERING_OPERATORS, true)) {
-            throw new FilteringException(
-                FilteringException::EXCEPTION_INVALID_FILTER_OPERATOR,
-                [$operator, implode(', ', ParameterEnum::AVAILABLE_FILTERING_OPERATORS)]
-            );
+            throw new FilteringException(FilteringException::EXCEPTION_INVALID_FILTER_OPERATOR, [$operator, implode(', ', ParameterEnum::AVAILABLE_FILTERING_OPERATORS)]);
         }
         return $operator;
     }
 
-    /**
-     * @param string $value
-     *
-     * @return bool
-     */
     public function containsWildcard(string $value): bool
     {
         return null !== (new Stringy($value))->getPositionOfSubstring(ParameterEnum::FILTER_VALUE_WILDCARD);
     }
 
-    /**
-     * @param string $operator
-     *
-     * @return string
-     */
     public function replaceWildcardOperator(string $operator): string
     {
         if (ParameterEnum::FILTER_OPERATOR_EQUAL === $operator) {
@@ -132,10 +102,6 @@ class FilteringHelper
     }
 
     /**
-     * @param Stringy $field
-     *
-     * @return bool
-     *
      * @throws \Safe\Exceptions\StringsException
      */
     public function isManyToManyField(Stringy $field): bool
@@ -147,10 +113,6 @@ class FilteringHelper
     }
 
     /**
-     * @param Stringy $field
-     *
-     * @return Stringy
-     *
      * @throws \Safe\Exceptions\PcreException
      */
     public function getFilteringPathForField(Stringy $field): Stringy
@@ -165,10 +127,6 @@ class FilteringHelper
     }
 
     /**
-     * @param Stringy $field
-     *
-     * @return Stringy
-     *
      * @throws \Safe\Exceptions\PcreException
      * @throws \Safe\Exceptions\StringsException
      */
@@ -184,11 +142,6 @@ class FilteringHelper
         return $field;
     }
 
-    /**
-     * @param Stringy $field
-     *
-     * @return bool
-     */
     public function isEmbed(Stringy $field): bool
     {
         if (null !== $field->getPositionOfSubstring(ParameterEnum::FIELD_SEPARATOR)) {
@@ -198,11 +151,6 @@ class FilteringHelper
         return false;
     }
 
-    /**
-     * @param string $operator
-     *
-     * @return bool
-     */
     public function isBinaryOperator(string $operator): bool
     {
         return in_array($operator, self::BINARY_OPERATORS, true);

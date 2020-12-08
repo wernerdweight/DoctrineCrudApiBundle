@@ -8,9 +8,6 @@ use WernerDweight\DoctrineCrudApiBundle\Tests\Entity\Article;
 
 class ArticleFixtures
 {
-    /**
-     * @return Article
-     */
     public static function createArticle(): Article
     {
         return new Article(
@@ -21,9 +18,6 @@ class ArticleFixtures
         );
     }
 
-    /**
-     * @return Article
-     */
     public static function createArticleWithoutAuthor(): Article
     {
         return new Article(
@@ -34,9 +28,6 @@ class ArticleFixtures
         );
     }
 
-    /**
-     * @return Article
-     */
     public static function createArticleWithoutCategory(): Article
     {
         return new Article(

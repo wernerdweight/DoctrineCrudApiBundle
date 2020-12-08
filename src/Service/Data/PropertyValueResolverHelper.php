@@ -5,7 +5,7 @@ namespace WernerDweight\DoctrineCrudApiBundle\Service\Data;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\Common\Inflector\Inflector;
+use Doctrine\Inflector\Inflector;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use WernerDweight\DoctrineCrudApiBundle\Entity\ApiEntityInterface;
@@ -30,9 +30,6 @@ class PropertyValueResolverHelper
 
     /**
      * PropertyValueResolverHelper constructor.
-     *
-     * @param DoctrineCrudApiEventDispatcher $eventDispatcher
-     * @param RequestStack                   $requestStack
      */
     public function __construct(DoctrineCrudApiEventDispatcher $eventDispatcher, RequestStack $requestStack)
     {
@@ -46,10 +43,7 @@ class PropertyValueResolverHelper
     }
 
     /**
-     * @param mixed  $value
-     * @param string $type
-     *
-     * @return bool
+     * @param mixed $value
      */
     public function isNewEntity($value, string $type): bool
     {
@@ -60,8 +54,6 @@ class PropertyValueResolverHelper
 
     /**
      * @param mixed $collectionValue
-     *
-     * @return bool
      */
     public function isNewCollectionItem($collectionValue): bool
     {
@@ -70,10 +62,7 @@ class PropertyValueResolverHelper
     }
 
     /**
-     * @param mixed  $value
-     * @param string $type
-     *
-     * @return bool
+     * @param mixed $value
      */
     public function isUpdatableEntity($value, string $type): bool
     {
@@ -86,8 +75,6 @@ class PropertyValueResolverHelper
 
     /**
      * @param mixed $collectionValue
-     *
-     * @return bool
      */
     public function isUpdatableCollectionItem($collectionValue): bool
     {
@@ -98,10 +85,7 @@ class PropertyValueResolverHelper
     }
 
     /**
-     * @param mixed  $value
-     * @param string $type
-     *
-     * @return bool
+     * @param mixed $value
      */
     public function isCollection($value, string $type): bool
     {
@@ -109,9 +93,7 @@ class PropertyValueResolverHelper
     }
 
     /**
-     * @param ApiEntityInterface $item
-     * @param string             $field
-     * @param mixed              $value
+     * @param mixed $value
      *
      * @return mixed
      */
@@ -123,11 +105,7 @@ class PropertyValueResolverHelper
     }
 
     /**
-     * @param string             $field
-     * @param mixed              $resolvedValue
-     * @param ApiEntityInterface $item
-     *
-     * @return ApiEntityInterface
+     * @param mixed $resolvedValue
      *
      * @throws \Safe\Exceptions\StringsException
      * @SuppressWarnings(PHPMD.StaticAccess)

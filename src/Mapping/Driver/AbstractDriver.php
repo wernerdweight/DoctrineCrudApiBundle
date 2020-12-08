@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace WernerDweight\DoctrineCrudApiBundle\Mapping\Driver;
 
-use Doctrine\Common\Persistence\Mapping\Driver\MappingDriver;
+use Doctrine\Persistence\Mapping\Driver\MappingDriver;
 
 abstract class AbstractDriver implements DoctrineCrudApiDriverInterface
 {
@@ -12,11 +12,6 @@ abstract class AbstractDriver implements DoctrineCrudApiDriverInterface
      */
     protected $originalDriver;
 
-    /**
-     * @param MappingDriver $driver
-     *
-     * @return DoctrineCrudApiDriverInterface
-     */
     public function setOriginalDriver(MappingDriver $driver): DoctrineCrudApiDriverInterface
     {
         $this->originalDriver = $driver;

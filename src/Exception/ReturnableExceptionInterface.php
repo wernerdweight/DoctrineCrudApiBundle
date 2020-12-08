@@ -5,17 +5,12 @@ namespace WernerDweight\DoctrineCrudApiBundle\Exception;
 
 use WernerDweight\RA\RA;
 
-interface ReturnableExceptionInterface
+interface ReturnableExceptionInterface extends \Throwable
 {
     /**
      * Returns data that will be printed as JSON response.
-     *
-     * @return RA
      */
     public function getResponseData(): RA;
 
-    /**
-     * @return int
-     */
     public function getStatusCode(): int;
 }

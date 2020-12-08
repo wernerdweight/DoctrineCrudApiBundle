@@ -27,10 +27,6 @@ class FilteringDecorator
 
     /**
      * FilteringDecorator constructor.
-     *
-     * @param ConditionGeneratorFactory $conditionGeneratorFactory
-     * @param FilteringHelper           $filteringHelper
-     * @param RelationJoiner            $relationJoiner
      */
     public function __construct(
         ConditionGeneratorFactory $conditionGeneratorFactory,
@@ -43,12 +39,6 @@ class FilteringDecorator
     }
 
     /**
-     * @param Stringy $field
-     * @param string  $operator
-     * @param string  $parameterName
-     *
-     * @return string
-     *
      * @throws \Safe\Exceptions\PcreException
      * @throws \Safe\Exceptions\StringsException
      */
@@ -59,13 +49,6 @@ class FilteringDecorator
     }
 
     /**
-     * @param QueryBuilder $queryBuilder
-     * @param RA           $conditionData
-     * @param int          $conditionKey
-     * @param int          $filteringKey
-     *
-     * @return string
-     *
      * @throws \Safe\Exceptions\StringsException
      * @throws \WernerDweight\RA\Exception\RAException
      */
@@ -109,13 +92,6 @@ class FilteringDecorator
         return $condition;
     }
 
-    /**
-     * @param QueryBuilder $queryBuilder
-     * @param RA           $conditions
-     * @param int          $filteringKey
-     *
-     * @return RA
-     */
     public function prepareFilteringConditions(QueryBuilder $queryBuilder, RA $conditions, int $filteringKey): RA
     {
         return $conditions->map(function (RA $conditionData, int $key) use ($queryBuilder, $filteringKey): string {

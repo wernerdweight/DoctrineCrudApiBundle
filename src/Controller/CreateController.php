@@ -10,11 +10,6 @@ use WernerDweight\RA\RA;
 
 final class CreateController extends AbstractController implements DoctrineCrudApiControllerInterface
 {
-    /**
-     * @param Creator $creator
-     *
-     * @return JsonResponse
-     */
     public function index(Creator $creator): JsonResponse
     {
         $item = $creator->createItem();

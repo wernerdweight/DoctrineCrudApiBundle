@@ -26,9 +26,6 @@ class DataManager
 
     /**
      * DataManager constructor.
-     *
-     * @param RepositoryManager     $repositoryManager
-     * @param QueryBuilderDecorator $queryBuilderDecorator
      */
     public function __construct(RepositoryManager $repositoryManager, QueryBuilderDecorator $queryBuilderDecorator)
     {
@@ -37,13 +34,6 @@ class DataManager
     }
 
     /**
-     * @param int $offset
-     * @param int $limit
-     * @param RA  $orderBy
-     * @param RA  $filters
-     *
-     * @return RA
-     *
      * @throws \Safe\Exceptions\StringsException
      * @throws \WernerDweight\RA\Exception\RAException
      */
@@ -69,14 +59,6 @@ class DataManager
     }
 
     /**
-     * @param int $offset
-     * @param int $limit
-     * @param RA  $orderBy
-     * @param RA  $filter
-     * @param RA  $groupBy
-     *
-     * @return RA
-     *
      * @throws \Safe\Exceptions\PcreException
      * @throws \Safe\Exceptions\StringsException
      * @throws \WernerDweight\RA\Exception\RAException
@@ -128,11 +110,6 @@ class DataManager
     }
 
     /**
-     * @param RA      $filter
-     * @param RA|null $groupBy
-     *
-     * @return int
-     *
      * @throws \Doctrine\ORM\NonUniqueResultException
      * @throws \Safe\Exceptions\PcreException
      * @throws \Safe\Exceptions\StringsException
@@ -158,10 +135,6 @@ class DataManager
     }
 
     /**
-     * @param string $primaryKey
-     *
-     * @return ApiEntityInterface
-     *
      * @throws \WernerDweight\RA\Exception\RAException
      */
     public function getItem(string $primaryKey): ApiEntityInterface

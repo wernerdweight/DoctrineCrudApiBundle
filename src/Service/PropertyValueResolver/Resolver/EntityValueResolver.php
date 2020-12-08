@@ -18,8 +18,6 @@ final class EntityValueResolver implements PropertyValueResolverInterface
 
     /**
      * EntityValueResolver constructor.
-     *
-     * @param EntityManagerInterface $entityManager
      */
     public function __construct(EntityManagerInterface $entityManager)
     {
@@ -27,10 +25,7 @@ final class EntityValueResolver implements PropertyValueResolverInterface
     }
 
     /**
-     * @param RA     $itemData
-     * @param string $className
-     *
-     * @return ApiEntityInterface
+     * @param class-string $className
      */
     public function resolve(RA $itemData, string $className): ApiEntityInterface
     {
@@ -38,28 +33,20 @@ final class EntityValueResolver implements PropertyValueResolverInterface
         /** @var ApiEntityInterface|null $item */
         $item = $this->entityManager->find($className, $id);
         if (null === $item) {
-            throw new MappingResolverException(
-                MappingResolverException::EXCEPTION_UNKNOWN_RELATED_ENTITY,
-                [$className, $id]
-            );
+            throw new MappingResolverException(MappingResolverException::EXCEPTION_UNKNOWN_RELATED_ENTITY, [$className, $id]);
         }
         return $item;
     }
 
     /**
      * @param RA|string|int $value
-     * @param RA            $configuration
-     *
-     * @return ApiEntityInterface|null
      */
     public function getPropertyValue($value, RA $configuration): ?ApiEntityInterface
     {
         if (true !== $configuration->hasKey(DoctrineCrudApiMappingTypeInterface::METADATA_CLASS)) {
-            throw new MappingResolverException(
-                MappingResolverException::EXCEPTION_MISSING_TARGET_ENTITY,
-                [implode(', ', $this->getPropertyTypes())]
-            );
+            throw new MappingResolverException(MappingResolverException::EXCEPTION_MISSING_TARGET_ENTITY, [implode(', ', $this->getPropertyTypes())]);
         }
+        /** @var class-string $className */
         $className = $configuration->getString(DoctrineCrudApiMappingTypeInterface::METADATA_CLASS);
 
         if ($value instanceof RA) {
