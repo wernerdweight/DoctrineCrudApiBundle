@@ -12,6 +12,9 @@ use WernerDweight\DoctrineCrudApiBundle\Mapping\Driver\Chain;
 use WernerDweight\DoctrineCrudApiBundle\Mapping\Driver\DoctrineCrudApiDriverInterface;
 use WernerDweight\Stringy\Stringy;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class MetadataDriverFactory
 {
     /** @var EntityManagerInterface */
