@@ -70,7 +70,10 @@ class QueryBuilderDecorator
             $direction = $orderData->getString(ParameterEnum::ORDER_BY_DIRECTION);
 
             if (true !== in_array($direction, ParameterEnum::AVAILABLE_ORDERING_DIRECTIONS, true)) {
-                throw new FilteringException(FilteringException::EXCEPTION_INVALID_ORDERING_DIRECTION, [$direction, implode(', ', ParameterEnum::AVAILABLE_ORDERING_DIRECTIONS)]);
+                throw new FilteringException(FilteringException::EXCEPTION_INVALID_ORDERING_DIRECTION, [
+                    $direction,
+                    implode(', ', ParameterEnum::AVAILABLE_ORDERING_DIRECTIONS),
+                ]);
             }
 
             if (true === $this->filteringHelper->isEmbed($field)) {

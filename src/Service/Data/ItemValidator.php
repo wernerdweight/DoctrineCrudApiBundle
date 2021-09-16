@@ -32,7 +32,10 @@ class ItemValidator
         if ($errors->count() > 0) {
             /** @var \ArrayIterator<int, ConstraintViolationInterface> $errorIterator */
             $errorIterator = $errors->getIterator();
-            throw new ItemValidatorReturnableException(ItemValidatorReturnableException::INVALID_ITEM, $errorIterator->getArrayCopy());
+            throw new ItemValidatorReturnableException(
+                ItemValidatorReturnableException::INVALID_ITEM,
+                $errorIterator->getArrayCopy()
+            );
         }
         return true;
     }

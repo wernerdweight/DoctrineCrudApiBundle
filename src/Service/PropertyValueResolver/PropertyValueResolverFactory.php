@@ -39,7 +39,12 @@ class PropertyValueResolverFactory
     public function get(string $type): PropertyValueResolverInterface
     {
         if (true !== $this->propertyValueResolvers->hasKey($type)) {
-            throw new PropertyValueResolverFactoryException(PropertyValueResolverFactoryException::INVALID_PROPERTY_TYPE, [$type ]);
+            throw new PropertyValueResolverFactoryException(
+                PropertyValueResolverFactoryException::INVALID_PROPERTY_TYPE,
+                [
+                $type,
+            
+            ]);
         }
         /** @var PropertyValueResolverInterface $propertyValueResolver */
         $propertyValueResolver = $this->propertyValueResolvers->get($type);

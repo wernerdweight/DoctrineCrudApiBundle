@@ -33,7 +33,10 @@ final class EntityValueResolver implements PropertyValueResolverInterface
         /** @var ApiEntityInterface|null $item */
         $item = $this->entityManager->find($className, $id);
         if (null === $item) {
-            throw new MappingResolverException(MappingResolverException::EXCEPTION_UNKNOWN_RELATED_ENTITY, [$className, $id]);
+            throw new MappingResolverException(MappingResolverException::EXCEPTION_UNKNOWN_RELATED_ENTITY, [
+                $className,
+                $id,
+            ]);
         }
         return $item;
     }
@@ -44,7 +47,9 @@ final class EntityValueResolver implements PropertyValueResolverInterface
     public function getPropertyValue($value, RA $configuration): ?ApiEntityInterface
     {
         if (true !== $configuration->hasKey(DoctrineCrudApiMappingTypeInterface::METADATA_CLASS)) {
-            throw new MappingResolverException(MappingResolverException::EXCEPTION_MISSING_TARGET_ENTITY, [implode(', ', $this->getPropertyTypes())]);
+            throw new MappingResolverException(MappingResolverException::EXCEPTION_MISSING_TARGET_ENTITY, [
+                implode(', ', $this->getPropertyTypes()),
+            ]);
         }
         /** @var class-string $className */
         $className = $configuration->getString(DoctrineCrudApiMappingTypeInterface::METADATA_CLASS);

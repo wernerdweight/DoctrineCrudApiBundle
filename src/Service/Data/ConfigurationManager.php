@@ -62,13 +62,23 @@ class ConfigurationManager
                         ->getConfigurationForEntityClass($class);
                 }
             }
-            throw new ConfigurationManagerException(ConfigurationManagerException::EXCEPTION_NO_CONFIGURATION_FOR_ENTITY, [$class ]);
+            throw new ConfigurationManagerException(
+                ConfigurationManagerException::EXCEPTION_NO_CONFIGURATION_FOR_ENTITY,
+                [
+                $class,
+            
+            ]);
         }
 
         /** @var DoctrineCrudApiMetadata|null $configuration */
         $configuration = $this->configuration->get($class);
         if (null === $configuration) {
-            throw new ConfigurationManagerException(ConfigurationManagerException::EXCEPTION_INVALID_CONFIGURATION_FOR_ENTITY, [$class ]);
+            throw new ConfigurationManagerException(
+                ConfigurationManagerException::EXCEPTION_INVALID_CONFIGURATION_FOR_ENTITY,
+                [
+                $class,
+            
+            ]);
         }
         return $configuration;
     }

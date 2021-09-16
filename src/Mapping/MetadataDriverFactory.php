@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace WernerDweight\DoctrineCrudApiBundle\Mapping;
 
+use Doctrine\Bundle\DoctrineBundle\Mapping\MappingDriver as DoctrineBundleMappingDriver;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\Mapping\Driver\MappingDriver;
 use Doctrine\Persistence\Mapping\Driver\MappingDriverChain;
@@ -64,6 +65,9 @@ class MetadataDriverFactory
         $shortDriverName = new Stringy(get_class($mappingDriver));
         $shortDriverName = $shortDriverName->substring($shortDriverName->getPositionOfLastSubstring('\\') + 1);
 
+        if ($mappingDriver instanceof DoctrineBundleMappingDriver) {
+            $mappingDriver = $mappingDriver->getDriver();
+        }
         if ($mappingDriver instanceof MappingDriverChain) {
             return $this->getChainDriver($mappingDriver);
         }

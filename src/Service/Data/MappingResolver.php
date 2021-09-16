@@ -51,7 +51,9 @@ class MappingResolver
         $value
     ): ApiEntityInterface {
         if (true !== $metadata->getUpdatableNested()->contains($field)) {
-            throw new UpdaterReturnableException(UpdaterReturnableException::INVALID_NESTING, ['root' => $metadata->getShortName(), 'nested' => $field, 'value' => $value instanceof RA ? $value->toArray(RA::RECURSIVE) : $value]);
+            throw new UpdaterReturnableException(UpdaterReturnableException::INVALID_NESTING, ['root' => $metadata->getShortName(), 'nested' => $field, 'value' => $value instanceof RA ? $value->toArray(
+                RA::RECURSIVE
+            ) : $value]);
         }
         return $item;
     }
@@ -68,7 +70,9 @@ class MappingResolver
         RA $fieldMetadata
     ): string {
         if (true !== $metadata->getCreatableNested()->contains($field)) {
-            throw new CreatorReturnableException(CreatorReturnableException::INVALID_NESTING, ['root' => $metadata->getShortName(), 'nested' => $field, 'value' => $value instanceof RA ? $value->toArray(RA::RECURSIVE) : $value]);
+            throw new CreatorReturnableException(CreatorReturnableException::INVALID_NESTING, ['root' => $metadata->getShortName(), 'nested' => $field, 'value' => $value instanceof RA ? $value->toArray(
+                RA::RECURSIVE
+            ) : $value]);
         }
         return $fieldMetadata->getString(DoctrineCrudApiMappingTypeInterface::METADATA_CLASS);
     }

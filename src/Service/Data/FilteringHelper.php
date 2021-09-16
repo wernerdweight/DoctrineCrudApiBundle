@@ -53,7 +53,10 @@ class FilteringHelper
             $filterData->getStringOrNull(ParameterEnum::FILTER_LOGIC) ?? ParameterEnum::FILTER_LOGIC_AND
         );
         if (true !== in_array($logic, ParameterEnum::AVAILABLE_FILTERING_LOGICS, true)) {
-            throw new FilteringException(FilteringException::EXCEPTION_INVALID_FILTER_LOGIC, [$logic, implode(', ', ParameterEnum::AVAILABLE_FILTERING_LOGICS)]);
+            throw new FilteringException(FilteringException::EXCEPTION_INVALID_FILTER_LOGIC, [
+                $logic,
+                implode(', ', ParameterEnum::AVAILABLE_FILTERING_LOGICS),
+            ]);
         }
         return $logic;
     }
@@ -80,7 +83,10 @@ class FilteringHelper
             $filterData->getStringOrNull(ParameterEnum::FILTER_OPERATOR) ?? ParameterEnum::FILTER_OPERATOR_EQUAL
         );
         if (true !== in_array($operator, ParameterEnum::AVAILABLE_FILTERING_OPERATORS, true)) {
-            throw new FilteringException(FilteringException::EXCEPTION_INVALID_FILTER_OPERATOR, [$operator, implode(', ', ParameterEnum::AVAILABLE_FILTERING_OPERATORS)]);
+            throw new FilteringException(FilteringException::EXCEPTION_INVALID_FILTER_OPERATOR, [
+                $operator,
+                implode(', ', ParameterEnum::AVAILABLE_FILTERING_OPERATORS),
+            ]);
         }
         return $operator;
     }

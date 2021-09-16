@@ -65,7 +65,9 @@ class CurrentEntityResolver
                     return $this->currentEntityFQCN;
                 }
             }
-            throw new InvalidRequestException(InvalidRequestException::EXCEPTION_INVALID_FILTERING_ENTITY, [$entityName]);
+            throw new InvalidRequestException(InvalidRequestException::EXCEPTION_INVALID_FILTERING_ENTITY, [
+                $entityName,
+            ]);
         }
         return $this->currentEntityFQCN;
     }

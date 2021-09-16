@@ -31,7 +31,10 @@ class ParameterValidator
     private function validateFilteringOperator(string $operator): string
     {
         if (true !== in_array($operator, ParameterEnum::AVAILABLE_FILTERING_OPERATORS, true)) {
-            throw new FilteringException(FilteringException::EXCEPTION_INVALID_FILTER_OPERATOR, [$operator, implode(', ', ParameterEnum::AVAILABLE_FILTERING_OPERATORS)]);
+            throw new FilteringException(FilteringException::EXCEPTION_INVALID_FILTER_OPERATOR, [
+                $operator,
+                implode(', ', ParameterEnum::AVAILABLE_FILTERING_OPERATORS),
+            ]);
         }
         return $operator;
     }
@@ -39,7 +42,10 @@ class ParameterValidator
     private function validateDirection(string $direction): string
     {
         if (true !== in_array($direction, ParameterEnum::AVAILABLE_ORDERING_DIRECTIONS, true)) {
-            throw new FilteringException(FilteringException::EXCEPTION_INVALID_ORDERING_DIRECTION, [$direction, implode(', ', ParameterEnum::AVAILABLE_ORDERING_DIRECTIONS)]);
+            throw new FilteringException(FilteringException::EXCEPTION_INVALID_ORDERING_DIRECTION, [
+                $direction,
+                implode(', ', ParameterEnum::AVAILABLE_ORDERING_DIRECTIONS),
+            ]);
         }
         return $direction;
     }
@@ -141,7 +147,10 @@ class ParameterValidator
     private function validateFilteringLogic(string $logic): string
     {
         if (true !== in_array($logic, ParameterEnum::AVAILABLE_FILTERING_LOGICS, true)) {
-            throw new FilteringException(FilteringException::EXCEPTION_INVALID_FILTER_LOGIC, [$logic, implode(', ', ParameterEnum::AVAILABLE_FILTERING_LOGICS)]);
+            throw new FilteringException(FilteringException::EXCEPTION_INVALID_FILTER_LOGIC, [
+                $logic,
+                implode(', ', ParameterEnum::AVAILABLE_FILTERING_LOGICS),
+            ]);
         }
         return $logic;
     }
@@ -208,7 +217,10 @@ class ParameterValidator
         $aggregates->walk(function (RA $aggregate): void {
             $function = mb_strtolower($aggregate->getString(ParameterEnum::GROUP_BY_AGGREGATE_FUNCTION));
             if (true !== in_array($function, ParameterEnum::AVAILABLE_AGGREGATE_FUNCTIONS, true)) {
-                throw new FilteringException(FilteringException::EXCEPTION_INVALID_AGGREGATE_FUNCTION, [$function, implode(', ', ParameterEnum::AVAILABLE_AGGREGATE_FUNCTIONS)]);
+                throw new FilteringException(FilteringException::EXCEPTION_INVALID_AGGREGATE_FUNCTION, [
+                    $function,
+                    implode(', ', ParameterEnum::AVAILABLE_AGGREGATE_FUNCTIONS),
+                ]);
             }
         });
 
@@ -239,7 +251,7 @@ class ParameterValidator
                 $entry->hasKey(ParameterEnum::GROUP_BY_AGGREGATES)
                     ? $this->validateAggregates($entry->getRAOrNull(ParameterEnum::GROUP_BY_AGGREGATES))
                     : null
-                ) ?? new RA();
+            ) ?? new RA();
             return new RA(compact('field', 'direction', 'aggregates'));
         });
     }

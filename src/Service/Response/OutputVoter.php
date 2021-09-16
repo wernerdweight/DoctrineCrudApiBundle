@@ -34,8 +34,8 @@ class OutputVoter
     private function isValueAllowed(Stringy $field, $value): bool
     {
         return ParameterEnum::TRUE_VALUE === $value || $value instanceof RA || (
-                true === is_string($value) && $field->pregMatch(\Safe\sprintf('/\b%s\b/i', $value))
-            );
+            true === is_string($value) && $field->pregMatch(\Safe\sprintf('/\b%s\b/i', $value))
+        );
     }
 
     private function traverseResponseStructure(RA $responseStructure, Stringy $path): ?RA
