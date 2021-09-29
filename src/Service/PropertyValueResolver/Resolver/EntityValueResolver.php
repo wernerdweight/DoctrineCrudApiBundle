@@ -9,6 +9,7 @@ use WernerDweight\DoctrineCrudApiBundle\Entity\ApiEntityInterface;
 use WernerDweight\DoctrineCrudApiBundle\Exception\MappingResolverException;
 use WernerDweight\DoctrineCrudApiBundle\Mapping\Type\DoctrineCrudApiMappingTypeInterface;
 use WernerDweight\DoctrineCrudApiBundle\Service\Data\FilteringHelper;
+use WernerDweight\DoctrineCrudApiBundle\Service\Data\QueryBuilderDecorator;
 use WernerDweight\RA\RA;
 
 final class EntityValueResolver implements PropertyValueResolverInterface
@@ -42,17 +43,31 @@ final class EntityValueResolver implements PropertyValueResolverInterface
     }
 
     /**
+     * @return class-string
+     */
+    private function getPropertyValueTargetEntity(RA $configuration): string
+    {
+        if (true !== $configuration->hasKey(DoctrineCrudApiMappingTypeInterface::METADATA_CLASS)) {
+            if (true !== $configuration->hasKey(QueryBuilderDecorator::DOCTRINE_TARGET_ENTITY)) {
+                throw new MappingResolverException(MappingResolverException::EXCEPTION_MISSING_TARGET_ENTITY, [
+                    implode(', ', $this->getPropertyTypes()),
+                ]);
+            }
+            /** @var class-string $className */
+            $className = $configuration->getString(QueryBuilderDecorator::DOCTRINE_TARGET_ENTITY);
+            return $className;
+        }
+        /** @var class-string $className */
+        $className = $configuration->getString(DoctrineCrudApiMappingTypeInterface::METADATA_CLASS);
+        return $className;
+    }
+
+    /**
      * @param RA|string|int $value
      */
     public function getPropertyValue($value, RA $configuration): ?ApiEntityInterface
     {
-        if (true !== $configuration->hasKey(DoctrineCrudApiMappingTypeInterface::METADATA_CLASS)) {
-            throw new MappingResolverException(MappingResolverException::EXCEPTION_MISSING_TARGET_ENTITY, [
-                implode(', ', $this->getPropertyTypes()),
-            ]);
-        }
-        /** @var class-string $className */
-        $className = $configuration->getString(DoctrineCrudApiMappingTypeInterface::METADATA_CLASS);
+        $className = $this->getPropertyValueTargetEntity($configuration);
 
         if ($value instanceof RA) {
             return $this->resolve($value, $className);
