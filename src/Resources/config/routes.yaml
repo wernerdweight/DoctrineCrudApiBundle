@@ -1,16 +1,24 @@
-wds_doctrine_crud_api_create:
+wds_doctrine_crud_api_create: &wds_doctrine_crud_api_create_with_slash
     path:     /{entityName}/create/
     methods:  [ OPTIONS, POST ]
     controller: WernerDweight\DoctrineCrudApiBundle\Controller\CreateController::index
     defaults:
         _format: json
 
-wds_doctrine_crud_api_delete:
+wds_doctrine_crud_api_create_without_slash:
+    <<: *wds_doctrine_crud_api_create_with_slash
+    path: /{entityName}/create
+
+wds_doctrine_crud_api_delete: &wds_doctrine_crud_api_delete_without_slash
     path:     /{entityName}/delete/{id}
     methods:  [ OPTIONS, DELETE ]
     controller: WernerDweight\DoctrineCrudApiBundle\Controller\DeleteController::index
     defaults:
         _format: json
+
+wds_doctrine_crud_api_delete_with_slash:
+    <<: *wds_doctrine_crud_api_delete_without_slash
+    path: /{entityName}/delete/{id}/
 
 wds_doctrine_crud_api_detail:
     path:     /{entityName}/detail/{id}
@@ -33,10 +41,13 @@ wds_doctrine_crud_api_list:
     defaults:
         _format: json
 
-wds_doctrine_crud_api_update:
+wds_doctrine_crud_api_update: &wds_doctrine_crud_api_update_without_slash
     path:     /{entityName}/update/{id}
     methods:  [ OPTIONS, POST ]
     controller: WernerDweight\DoctrineCrudApiBundle\Controller\UpdateController::index
     defaults:
         _format: json
 
+wds_doctrine_crud_api_update_with_slash:
+    <<: *wds_doctrine_crud_api_update_without_slash
+    path: /{entityName}/update/{id}/
