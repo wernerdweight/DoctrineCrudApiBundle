@@ -8,6 +8,8 @@ wds_doctrine_crud_api_create: &wds_doctrine_crud_api_create_with_slash
 wds_doctrine_crud_api_create_without_slash:
     <<: *wds_doctrine_crud_api_create_with_slash
     path: /{entityName}/create
+    defaults:
+        _route_override: wds_doctrine_crud_api_create
 
 wds_doctrine_crud_api_delete: &wds_doctrine_crud_api_delete_without_slash
     path:     /{entityName}/delete/{id}
@@ -19,6 +21,8 @@ wds_doctrine_crud_api_delete: &wds_doctrine_crud_api_delete_without_slash
 wds_doctrine_crud_api_delete_with_slash:
     <<: *wds_doctrine_crud_api_delete_without_slash
     path: /{entityName}/delete/{id}/
+    defaults:
+        _route_override: wds_doctrine_crud_api_delete
 
 wds_doctrine_crud_api_detail:
     path:     /{entityName}/detail/{id}
@@ -51,3 +55,5 @@ wds_doctrine_crud_api_update: &wds_doctrine_crud_api_update_without_slash
 wds_doctrine_crud_api_update_with_slash:
     <<: *wds_doctrine_crud_api_update_without_slash
     path: /{entityName}/update/{id}/
+    defaults:
+        _route_override: wds_doctrine_crud_api_update
