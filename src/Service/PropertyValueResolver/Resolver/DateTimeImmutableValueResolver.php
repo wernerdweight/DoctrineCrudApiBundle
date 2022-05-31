@@ -22,8 +22,8 @@ final class DateTimeImmutableValueResolver implements PropertyValueResolverInter
             return null;
         }
         return new DateTimeImmutable(
-        // remove localized timezone (some browsers use localized names)
-            (string)((new Stringy($value))->eregReplace('^([^\(]*)\s(.*$', '\\1'))
+            // remove localized timezone (some browsers use localized names)
+            (string)((new Stringy($value))->eregReplace('^([^\(]*)\s(.*)$', '\\1'))
         );
     }
 
