@@ -5,6 +5,7 @@ namespace WernerDweight\DoctrineCrudApiBundle\Service\PropertyValueResolver\Reso
 
 use Doctrine\DBAL\Types\Type;
 use Safe\DateTime;
+use WernerDweight\DoctrineCrudApiBundle\Exception\DateTimeValueResolverException;
 use WernerDweight\DoctrineCrudApiBundle\Service\Request\ParameterEnum;
 use WernerDweight\RA\RA;
 use WernerDweight\Stringy\Stringy;
@@ -28,7 +29,7 @@ final class DateTimeValueResolver implements PropertyValueResolverInterface
         $stringyValue = $stringyValue->eregReplace('^([^\(]*)\s(.*)$', '\\1');
         $isValidDate = $stringyValue->pregMatch('/^(\d{4}-([0]\d|1[0-2])-([0-2]\d|3[01]))|(([0-2]\d|3[01]).([0]\d|1[0-2]).\d{4})/');
         if (false === $isValidDate) {
-            return null;
+            throw new DateTimeValueResolverException(DateTimeValueResolverException::INVALID_VALUE);
         }
         $value = (string)($stringyValue);
         return new DateTime(
