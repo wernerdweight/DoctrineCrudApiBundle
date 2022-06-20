@@ -5,6 +5,7 @@ namespace WernerDweight\DoctrineCrudApiBundle\Service\PropertyValueResolver\Reso
 
 use Doctrine\DBAL\Types\Type;
 use Safe\DateTimeImmutable;
+use WernerDweight\DoctrineCrudApiBundle\Exception\DateTimeValueResolverException;
 use WernerDweight\DoctrineCrudApiBundle\Service\Request\ParameterEnum;
 use WernerDweight\RA\RA;
 use WernerDweight\Stringy\Stringy;
@@ -21,9 +22,16 @@ final class DateTimeImmutableValueResolver implements PropertyValueResolverInter
         if (true === empty($value) || ParameterEnum::NULL_VALUE === $value) {
             return null;
         }
+        $stringyValue = new Stringy($value);
+        // remove localized timezone (some browsers use localized names)
+        $stringyValue = $stringyValue->eregReplace('^([^\(]*)\s(.*)$', '\\1');
+        $isValidDate = $stringyValue->pregMatch('/^(\d{4}-([0]\d|1[0-2])-([0-2]\d|3[01]))|(([0-2]\d|3[01]).([0]\d|1[0-2]).\d{4})/');
+        if (false === $isValidDate) {
+            throw new DateTimeValueResolverException(DateTimeValueResolverException::INVALID_VALUE);
+        }
+        $value = (string)($stringyValue);
         return new DateTimeImmutable(
-            // remove localized timezone (some browsers use localized names)
-            (string)((new Stringy($value))->eregReplace('^([^\(]*)\s(.*)$', '\\1'))
+            $value
         );
     }
 
