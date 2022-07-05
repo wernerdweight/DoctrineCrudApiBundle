@@ -80,20 +80,22 @@ class ParameterValidator
             $value = $this->mappingResolver->resolveValue($configuration, $value);
         }
 
-        if (ParameterEnum::FILTER_OPERATOR_BEGINS_WITH === $operator) {
-            return \Safe\sprintf('%s%s', $value, FilteringDecorator::SQL_WILDCARD);
-        }
-        $containsOperators = [ParameterEnum::FILTER_OPERATOR_CONTAINS, ParameterEnum::FILTER_OPERATOR_CONTAINS_NOT];
-        if (true === in_array($operator, $containsOperators, true)) {
-            return \Safe\sprintf(
-                '%s%s%s',
-                FilteringDecorator::SQL_WILDCARD,
-                $value,
-                FilteringDecorator::SQL_WILDCARD
-            );
-        }
-        if (ParameterEnum::FILTER_OPERATOR_ENDS_WITH === $operator) {
-            return \Safe\sprintf('%s%s', FilteringDecorator::SQL_WILDCARD, $value);
+        if (is_string($value)) {
+            if (ParameterEnum::FILTER_OPERATOR_BEGINS_WITH === $operator) {
+                return \Safe\sprintf('%s%s', $value, FilteringDecorator::SQL_WILDCARD);
+            }
+            $containsOperators = [ParameterEnum::FILTER_OPERATOR_CONTAINS, ParameterEnum::FILTER_OPERATOR_CONTAINS_NOT];
+            if (true === in_array($operator, $containsOperators, true)) {
+                return \Safe\sprintf(
+                    '%s%s%s',
+                    FilteringDecorator::SQL_WILDCARD,
+                    $value,
+                    FilteringDecorator::SQL_WILDCARD
+                );
+            }
+            if (ParameterEnum::FILTER_OPERATOR_ENDS_WITH === $operator) {
+                return \Safe\sprintf('%s%s', FilteringDecorator::SQL_WILDCARD, $value);
+            }
         }
         $emptyOperators = [ParameterEnum::FILTER_OPERATOR_IS_EMPTY, ParameterEnum::FILTER_OPERATOR_IS_NOT_EMPTY];
         if (true === in_array($operator, $emptyOperators, true)) {
