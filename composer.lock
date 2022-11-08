@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2231690487f03a01a121c61b5c0fdbb8",
+    "content-hash": "1fb14b33ce26190db5e383605269f005",
     "packages": [
         {
             "name": "composer/package-versions-deprecated",
@@ -5053,21 +5053,21 @@
         },
         {
             "name": "wernerdweight/ra",
-            "version": "1.2.0",
+            "version": "2.0.0",
             "target-dir": "WernerDweight/RA",
             "source": {
                 "type": "git",
                 "url": "https://github.com/wernerdweight/RA.git",
-                "reference": "b83d76eb8598b7fe48a59d4b981b320817429104"
+                "reference": "85344f7a415a41ed480195f90cdd9ce363ef8cf1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wernerdweight/RA/zipball/b83d76eb8598b7fe48a59d4b981b320817429104",
-                "reference": "b83d76eb8598b7fe48a59d4b981b320817429104",
+                "url": "https://api.github.com/repos/wernerdweight/RA/zipball/85344f7a415a41ed480195f90cdd9ce363ef8cf1",
+                "reference": "85344f7a415a41ed480195f90cdd9ce363ef8cf1",
                 "shasum": ""
             },
             "require": {
-                "php": ">=7.2.0",
+                "php": "^8.1",
                 "thecodingmachine/safe": "^1.0"
             },
             "require-dev": {
@@ -5099,9 +5099,9 @@
             ],
             "support": {
                 "issues": "https://github.com/wernerdweight/RA/issues",
-                "source": "https://github.com/wernerdweight/RA/tree/1.2.0"
+                "source": "https://github.com/wernerdweight/RA/tree/2.0.0"
             },
-            "time": "2020-01-16T16:13:41+00:00"
+            "time": "2022-11-08T12:46:41+00:00"
         },
         {
             "name": "wernerdweight/stringy",
@@ -8983,5 +8983,5 @@
         "php": ">=7.3.0"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.0.0"
+    "plugin-api-version": "2.1.0"
 }
