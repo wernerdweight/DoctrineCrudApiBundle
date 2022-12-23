@@ -25,7 +25,9 @@ final class DateTimeImmutableValueResolver implements PropertyValueResolverInter
         $stringyValue = new Stringy($value);
         // remove localized timezone (some browsers use localized names)
         $stringyValue = $stringyValue->eregReplace('^([^\(]*)\s(.*)$', '\\1');
-        $isValidDate = $stringyValue->pregMatch('/^(\d{4}-(0?\d|1[0-2])-([0-2]?\d|3[01])|([0-2]?\d|3[01])\.(0?\d|1[0-2])\.\d{4}|(0?\d|1[0-2])\/([0-2]?\d|3[01])\/\d{4})/');
+        $isValidDate = $stringyValue->pregMatch(
+            '/^(\d{4}-(0?\d|1[0-2])-([0-2]?\d|3[01])|([0-2]?\d|3[01])\.(0?\d|1[0-2])\.\d{4}|(0?\d|1[0-2])\/([0-2]?\d|3[01])\/\d{4})/'
+        );
         if (false === $isValidDate) {
             throw new DateTimeValueResolverException(DateTimeValueResolverException::INVALID_VALUE);
         }

@@ -84,7 +84,11 @@ class Formatter
                 $metadata = $configuration->getFieldMetadata($field);
                 $fieldObject = new Stringy($field);
                 if (null === $metadata) {
-                    $result->set($field, $this->valueGetter->getEntityPropertyValue($item, $fieldObject));
+                    $value = $this->valueGetter->getEntityPropertyValue($item, $fieldObject);
+                    if ($value instanceof \DateTime) {
+                        $value = new JsonSerializableDateTime($value->format('c'));
+                    }
+                    $result->set($field, $value);
                     return;
                 }
                 $value = $this->getEntityPropertyValueBasedOnMetadata(

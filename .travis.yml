@@ -3,6 +3,7 @@ language: php
 php:
   - '7.3'
   - '7.4'
+  - '8.1'
 
 script:
   - composer install --ignore-platform-reqs
