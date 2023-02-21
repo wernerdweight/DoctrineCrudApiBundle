@@ -16,35 +16,6 @@ use WernerDweight\RA\RA;
 class ListingFormatterTest extends DoctrineMetadataKernelTestCase
 {
     /**
-     * @throws \WernerDweight\RA\Exception\RAException
-     */
-    private function prepareRequest(?RA $groupBy, ?RA $responseStructure): void
-    {
-        /** @var RequestStack $requestStack */
-        $requestStack = self::$container->get(RequestStack::class);
-        $requestStack->push(
-            new Request(
-                [
-                    'responseStructure' => null !== $responseStructure
-                        ? $responseStructure->getRA('article')->toArray(RA::RECURSIVE)
-                        : null,
-                    'groupBy' => null !== $groupBy
-                        ? $groupBy->toArray(RA::RECURSIVE)
-                        : null,
-                ],
-                [],
-                [
-                    'entityName' => 'article',
-                ]
-            )
-        );
-
-        /** @var ParameterResolver $parameterResolver */
-        $parameterResolver = self::$container->get(ParameterResolver::class);
-        $parameterResolver->resolveList();
-    }
-
-    /**
      * @dataProvider provideValues
      */
     public function testFormatListing(
@@ -135,5 +106,35 @@ class ListingFormatterTest extends DoctrineMetadataKernelTestCase
                 DoctrineCrudApiResponseStructureFixtures::createArticleResponseStructure(),
             ],
         ];
+    }
+
+    /**
+     * @throws \WernerDweight\RA\Exception\RAException
+     */
+    private function prepareRequest(?RA $groupBy, ?RA $responseStructure): void
+    {
+        /** @var RequestStack $requestStack */
+        $requestStack = self::$container->get(RequestStack::class);
+        $requestStack->push(
+            new Request(
+                [
+                    'responseStructure' => null !== $responseStructure
+                        ? $responseStructure->getRA('article')
+                            ->toArray(RA::RECURSIVE)
+                        : null,
+                    'groupBy' => null !== $groupBy
+                        ? $groupBy->toArray(RA::RECURSIVE)
+                        : null,
+                ],
+                [],
+                [
+                    'entityName' => 'article',
+                ]
+            )
+        );
+
+        /** @var ParameterResolver $parameterResolver */
+        $parameterResolver = self::$container->get(ParameterResolver::class);
+        $parameterResolver->resolveList();
     }
 }

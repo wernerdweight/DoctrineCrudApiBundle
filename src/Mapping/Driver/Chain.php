@@ -12,18 +12,21 @@ use WernerDweight\Stringy\Stringy;
 
 final class Chain extends AbstractDriver implements DoctrineCrudApiDriverInterface
 {
-    /** @var string */
+    /**
+     * @var string
+     */
     public const NAME = 'Chain';
 
-    /** @var DoctrineCrudApiDriverInterface|null */
+    /**
+     * @var DoctrineCrudApiDriverInterface|null
+     */
     private $defaultDriver;
 
-    /** @var RA */
+    /**
+     * @var RA
+     */
     private $drivers;
 
-    /**
-     * Chain constructor.
-     */
     public function __construct()
     {
         $this->drivers = new RA();
@@ -61,9 +64,6 @@ final class Chain extends AbstractDriver implements DoctrineCrudApiDriverInterfa
         throw new ChainDriverException(ChainDriverException::NO_DRIVER_FOR_ENTITY, [$metadata->name]);
     }
 
-    /**
-     * @return Chain
-     */
     public function addDriver(DoctrineCrudApiDriverInterface $driver, string $namespace): self
     {
         $this->drivers->set($namespace, $driver);
@@ -80,9 +80,6 @@ final class Chain extends AbstractDriver implements DoctrineCrudApiDriverInterfa
         return $this->defaultDriver;
     }
 
-    /**
-     * @return Chain
-     */
     public function setDefaultDriver(DoctrineCrudApiDriverInterface $driver): self
     {
         $this->defaultDriver = $driver;

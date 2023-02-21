@@ -5,66 +5,147 @@ namespace WernerDweight\DoctrineCrudApiBundle\Service\Request;
 
 class ParameterEnum
 {
-    /** @var string */
+    /**
+     * @var string
+     */
     public const OFFSET = 'offset';
 
-    /** @var string */
+    /**
+     * @var string
+     */
     public const LIMIT = 'limit';
 
-    /** @var string */
+    /**
+     * @var string
+     */
     public const FILTER = 'filter';
-    /** @var string */
+
+    /**
+     * @var string
+     */
     public const FILTER_CONDITIONS = 'conditions';
-    /** @var string */
+
+    /**
+     * @var string
+     */
     public const FILTER_LOGIC = 'logic';
-    /** @var string */
+
+    /**
+     * @var string
+     */
     public const FILTER_LOGIC_AND = 'and';
-    /** @var string */
+
+    /**
+     * @var string
+     */
     public const FILTER_LOGIC_OR = 'or';
-    /** @var string[] */
+
+    /**
+     * @var string[]
+     */
     public const AVAILABLE_FILTERING_LOGICS = [
         self::FILTER_LOGIC_AND,
         self::FILTER_LOGIC_OR,
     ];
-    /** @var string */
+
+    /**
+     * @var string
+     */
     public const FIELD_SEPARATOR = '.';
-    /** @var string */
+
+    /**
+     * @var string
+     */
     public const FILTER_FIELD = 'field';
-    /** @var string */
+
+    /**
+     * @var string
+     */
     public const FILTER_OPERATOR = 'operator';
-    /** @var string */
+
+    /**
+     * @var string
+     */
     public const FILTER_OPERATOR_EQUAL = 'eq';
-    /** @var string */
+
+    /**
+     * @var string
+     */
     public const FILTER_OPERATOR_NOT_EQUAL = 'neq';
-    /** @var string */
+
+    /**
+     * @var string
+     */
     public const FILTER_OPERATOR_GREATER_THAN = 'gt';
-    /** @var string */
+
+    /**
+     * @var string
+     */
     public const FILTER_OPERATOR_GREATER_THAN_OR_EQUAL = 'gte';
-    /** @var string */
+
+    /**
+     * @var string
+     */
     public const FILTER_OPERATOR_GREATER_THAN_OR_EQUAL_OR_NULL = 'gten';
-    /** @var string */
+
+    /**
+     * @var string
+     */
     public const FILTER_OPERATOR_LOWER_THAN = 'lt';
-    /** @var string */
+
+    /**
+     * @var string
+     */
     public const FILTER_OPERATOR_LOWER_THAN_OR_EQUAL = 'lte';
-    /** @var string */
+
+    /**
+     * @var string
+     */
     public const FILTER_OPERATOR_BEGINS_WITH = 'begins';
-    /** @var string */
+
+    /**
+     * @var string
+     */
     public const FILTER_OPERATOR_CONTAINS = 'contains';
-    /** @var string */
+
+    /**
+     * @var string
+     */
     public const FILTER_OPERATOR_CONTAINS_NOT = 'not-contains';
-    /** @var string */
+
+    /**
+     * @var string
+     */
     public const FILTER_OPERATOR_ENDS_WITH = 'ends';
-    /** @var string */
+
+    /**
+     * @var string
+     */
     public const FILTER_OPERATOR_IS_NULL = 'null';
-    /** @var string */
+
+    /**
+     * @var string
+     */
     public const FILTER_OPERATOR_IS_NOT_NULL = 'not-null';
-    /** @var string */
+
+    /**
+     * @var string
+     */
     public const FILTER_OPERATOR_IS_EMPTY = 'empty';
-    /** @var string */
+
+    /**
+     * @var string
+     */
     public const FILTER_OPERATOR_IS_NOT_EMPTY = 'not-empty';
-    /** @var string */
+
+    /**
+     * @var string
+     */
     public const FILTER_OPERATOR_IN = 'in';
-    /** @var string[] */
+
+    /**
+     * @var string[]
+     */
     public const AVAILABLE_FILTERING_OPERATORS = [
         self::FILTER_OPERATOR_EQUAL,
         self::FILTER_OPERATOR_NOT_EQUAL,
@@ -83,61 +164,133 @@ class ParameterEnum
         self::FILTER_OPERATOR_IS_NOT_EMPTY,
         self::FILTER_OPERATOR_IN,
     ];
-    /** @var string */
+
+    /**
+     * @var string
+     */
     public const FILTER_VALUE = 'value';
-    /** @var string */
+
+    /**
+     * @var string
+     */
     public const FILTER_VALUE_WILDCARD = '*';
 
-    /** @var string */
+    /**
+     * @var string
+     */
     public const ORDER_BY = 'orderBy';
-    /** @var string */
+
+    /**
+     * @var string
+     */
     public const ORDER_BY_FIELD = 'field';
-    /** @var string */
+
+    /**
+     * @var string
+     */
     public const ORDER_BY_DIRECTION = 'direction';
-    /** @var string */
+
+    /**
+     * @var string
+     */
     public const ORDER_BY_DIRECTION_ASC = 'asc';
-    /** @var string */
+
+    /**
+     * @var string
+     */
     public const ORDER_BY_DIRECTION_DESC = 'desc';
-    /** @var string[] */
+
+    /**
+     * @var string[]
+     */
     public const AVAILABLE_ORDERING_DIRECTIONS = [
         self::ORDER_BY_DIRECTION_ASC,
         self::ORDER_BY_DIRECTION_DESC,
     ];
 
-    /** @var string */
+    /**
+     * @var string
+     */
     public const GROUP_BY = 'groupBy';
-    /** @var string */
+
+    /**
+     * @var string
+     */
     public const GROUP_BY_FIELD = 'field';
-    /** @var string */
+
+    /**
+     * @var string
+     */
     public const GROUP_BY_DIRECTION = 'direction';
-    /** @var string */
+
+    /**
+     * @var string
+     */
     public const GROUP_BY_DIRECTION_ASC = 'asc';
-    /** @var string */
+
+    /**
+     * @var string
+     */
     public const GROUP_BY_DIRECTION_DESC = 'desc';
-    /** @var string */
+
+    /**
+     * @var string
+     */
     public const GROUP_BY_AGGREGATES = 'aggregates';
-    /** @var string */
+
+    /**
+     * @var string
+     */
     public const GROUP_BY_AGGREGATE_FUNCTION = 'function';
-    /** @var string */
+
+    /**
+     * @var string
+     */
     public const GROUP_BY_AGGREGATE_FIELD = 'field';
-    /** @var string */
+
+    /**
+     * @var string
+     */
     public const GROUP_BY_ITEMS = 'items';
-    /** @var string */
+
+    /**
+     * @var string
+     */
     public const GROUP_BY_VALUE = 'value';
-    /** @var string */
+
+    /**
+     * @var string
+     */
     public const GROUP_BY_HAS_GROUPS = 'hasGroups';
 
-    /** @var string */
+    /**
+     * @var string
+     */
     public const GROUP_BY_AGGREGATE_FUNCTION_AVG = 'avg';
-    /** @var string */
+
+    /**
+     * @var string
+     */
     public const GROUP_BY_AGGREGATE_FUNCTION_COUNT = 'count';
-    /** @var string */
+
+    /**
+     * @var string
+     */
     public const GROUP_BY_AGGREGATE_FUNCTION_MIN = 'min';
-    /** @var string */
+
+    /**
+     * @var string
+     */
     public const GROUP_BY_AGGREGATE_FUNCTION_MAX = 'max';
-    /** @var string */
+
+    /**
+     * @var string
+     */
     public const GROUP_BY_AGGREGATE_FUNCTION_SUM = 'sum';
-    /** @var string[] */
+
+    /**
+     * @var string[]
+     */
     public const AVAILABLE_AGGREGATE_FUNCTIONS = [
         self::GROUP_BY_AGGREGATE_FUNCTION_AVG,
         self::GROUP_BY_AGGREGATE_FUNCTION_COUNT,
@@ -146,30 +299,58 @@ class ParameterEnum
         self::GROUP_BY_AGGREGATE_FUNCTION_SUM,
     ];
 
-    /** @var string */
+    /**
+     * @var string
+     */
     public const RESPONSE_STRUCTURE = 'responseStructure';
 
-    /** @var string */
+    /**
+     * @var string
+     */
     public const ENTITY_NAME = 'entityName';
 
-    /** @var string */
+    /**
+     * @var string
+     */
     public const NULL_VALUE = 'null';
-    /** @var string */
+
+    /**
+     * @var string
+     */
     public const EMPTY_VALUE = '';
-    /** @var string */
+
+    /**
+     * @var string
+     */
     public const TRUE_VALUE = 'true';
-    /** @var string */
+
+    /**
+     * @var string
+     */
     public const FALSE_VALUE = 'false';
-    /** @var string */
+
+    /**
+     * @var string
+     */
     public const ARRAY_VALUE = 'array';
-    /** @var string */
+
+    /**
+     * @var string
+     */
     public const OBJECT_VALUE = 'object';
-    /** @var string */
+
+    /**
+     * @var string
+     */
     public const UNDEFINED_VALUE = 'undefined';
 
-    /** @var string */
+    /**
+     * @var string
+     */
     public const PRIMARY_KEY = 'id';
 
-    /** @var string */
+    /**
+     * @var string
+     */
     public const FIELDS = 'fields';
 }

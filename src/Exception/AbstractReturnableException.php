@@ -9,7 +9,9 @@ use WernerDweight\RA\RA;
 
 abstract class AbstractReturnableException extends AbstractEnhancedException implements ReturnableExceptionInterface
 {
-    /** @var RA */
+    /**
+     * @var RA
+     */
     private $responseData;
 
     /**

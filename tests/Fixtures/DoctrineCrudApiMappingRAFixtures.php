@@ -19,7 +19,7 @@ class DoctrineCrudApiMappingRAFixtures
             ->set(DoctrineCrudApiMappingTypeInterface::UPDATABLE, new RA())
             ->set(DoctrineCrudApiMappingTypeInterface::UPDATABLE_NESTED, new RA())
             ->set(DoctrineCrudApiMappingTypeInterface::METADATA, new RA())
-            ;
+        ;
     }
 
     public static function createArticleMapping(): RA
@@ -33,6 +33,6 @@ class DoctrineCrudApiMappingRAFixtures
             ->set(DoctrineCrudApiMappingTypeInterface::UPDATABLE, new RA(['title', 'author', 'category']))
             ->set(DoctrineCrudApiMappingTypeInterface::UPDATABLE_NESTED, new RA())
             ->set(DoctrineCrudApiMappingTypeInterface::METADATA, new RA())
-            ;
+        ;
     }
 }

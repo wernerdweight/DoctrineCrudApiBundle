@@ -17,6 +17,7 @@ class DoctrineMetadataKernelTestCase extends KernelTestCase
         self::bootKernel();
         /** @var EntityManager $entityManager */
         $entityManager = self::$container->get(EntityManagerInterface::class);
-        $entityManager->getMetadataFactory()->getAllMetadata();
+        $entityManager->getMetadataFactory()
+            ->getAllMetadata();
     }
 }

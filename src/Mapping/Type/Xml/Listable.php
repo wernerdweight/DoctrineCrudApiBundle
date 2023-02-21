@@ -8,10 +8,20 @@ use WernerDweight\RA\RA;
 
 final class Listable extends AbstractType implements DoctrineCrudApiMappingTypeInterface
 {
-    /** @var string */
+    /**
+     * @var string
+     */
     private const ATTRIBUTE_DEFAULT = 'default';
-    /** @var stirng[] */
+
+    /**
+     * @var stirng[]
+     */
     private const DEFAULT_TRUE_VALUES = ['true', '1'];
+
+    public function getType(): string
+    {
+        return DoctrineCrudApiMappingTypeInterface::LISTABLE;
+    }
 
     /**
      * @throws \WernerDweight\RA\Exception\RAException
@@ -32,10 +42,5 @@ final class Listable extends AbstractType implements DoctrineCrudApiMappingTypeI
                 ->push((string)($attributes['name'] ?: $attributes['field']));
         }
         return $config;
-    }
-
-    public function getType(): string
-    {
-        return DoctrineCrudApiMappingTypeInterface::LISTABLE;
     }
 }

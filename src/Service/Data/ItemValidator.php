@@ -11,15 +11,16 @@ use WernerDweight\DoctrineCrudApiBundle\Exception\ItemValidatorReturnableExcepti
 
 class ItemValidator
 {
-    /** @var string */
+    /**
+     * @var string
+     */
     public const API_VALIDATION_GROUP = 'api';
 
-    /** @var ValidatorInterface */
+    /**
+     * @var ValidatorInterface
+     */
     private $validator;
 
-    /**
-     * ItemValidator constructor.
-     */
     public function __construct(ValidatorInterface $validator)
     {
         $this->validator = $validator;

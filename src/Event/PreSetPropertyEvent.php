@@ -8,16 +8,24 @@ use WernerDweight\DoctrineCrudApiBundle\Entity\ApiEntityInterface;
 
 class PreSetPropertyEvent extends Event
 {
-    /** @var string */
+    /**
+     * @var string
+     */
     public const NAME = 'wds.doctrine_crud_api_bundle.item.pre_set_property';
 
-    /** @var mixed */
+    /**
+     * @var mixed
+     */
     private $value;
 
-    /** @var string */
+    /**
+     * @var string
+     */
     private $propertyName;
 
-    /** @var ApiEntityInterface */
+    /**
+     * @var ApiEntityInterface
+     */
     private $item;
 
     /**
@@ -52,8 +60,6 @@ class PreSetPropertyEvent extends Event
 
     /**
      * @param mixed $value
-     *
-     * @return PreSetPropertyEvent
      */
     public function setValue($value): self
     {

@@ -14,24 +14,31 @@ use WernerDweight\RA\RA;
 
 class Deleter
 {
-    /** @var ParameterResolver */
+    /**
+     * @var ParameterResolver
+     */
     private $parameterResolver;
 
-    /** @var DataManager */
+    /**
+     * @var DataManager
+     */
     private $dataManager;
 
-    /** @var Formatter */
+    /**
+     * @var Formatter
+     */
     private $formatter;
 
-    /** @var EntityManagerInterface */
+    /**
+     * @var EntityManagerInterface
+     */
     private $entityManager;
 
-    /** @var DoctrineCrudApiEventDispatcher */
+    /**
+     * @var DoctrineCrudApiEventDispatcher
+     */
     private $eventDispatcher;
 
-    /**
-     * Deleter constructor.
-     */
     public function __construct(
         ParameterResolver $parameterResolver,
         DataManager $dataManager,
@@ -49,16 +56,6 @@ class Deleter
     /**
      * @throws \WernerDweight\RA\Exception\RAException
      */
-    private function fetch(): ApiEntityInterface
-    {
-        return $this->dataManager->getItem(
-            $this->parameterResolver->getString(ParameterEnum::PRIMARY_KEY)
-        );
-    }
-
-    /**
-     * @throws \WernerDweight\RA\Exception\RAException
-     */
     public function getItem(): RA
     {
         $this->parameterResolver->resolveDelete();
@@ -70,5 +67,15 @@ class Deleter
         $this->eventDispatcher->dispatchPostDelete($item);
 
         return $this->formatter->format($item, null, $this->parameterResolver->getEntityPrefix());
+    }
+
+    /**
+     * @throws \WernerDweight\RA\Exception\RAException
+     */
+    private function fetch(): ApiEntityInterface
+    {
+        return $this->dataManager->getItem(
+            $this->parameterResolver->getString(ParameterEnum::PRIMARY_KEY)
+        );
     }
 }

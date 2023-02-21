@@ -14,36 +14,24 @@ use WernerDweight\Stringy\Stringy;
 
 class RegularDriverFactory
 {
-    /** @var string */
+    /**
+     * @var string
+     */
     private const DRIVER_SUFFIX = 'Driver';
-    /** @var string */
-    private const SIMPLIFIED_DRIVER_SUFFIX = 'Simplified';
-
-    /** @var DriverFactory */
-    private $driverFactory;
 
     /**
-     * RegularDriverFactory constructor.
+     * @var string
      */
+    private const SIMPLIFIED_DRIVER_SUFFIX = 'Simplified';
+
+    /**
+     * @var DriverFactory
+     */
+    private $driverFactory;
+
     public function __construct(DriverFactory $driverFactory)
     {
         $this->driverFactory = $driverFactory;
-    }
-
-    private function getRegularDriverName(Stringy $shortDriverName): Stringy
-    {
-        $shortDriverName = $shortDriverName->substring(
-            0,
-            $shortDriverName->getPositionOfSubstring(self::DRIVER_SUFFIX)
-        );
-        $simplifiedPosition = $shortDriverName->getPositionOfSubstring(self::SIMPLIFIED_DRIVER_SUFFIX);
-        $isSimplified = null !== $simplifiedPosition;
-        if (true === $isSimplified) {
-            $shortDriverName = $shortDriverName->substring(
-                $simplifiedPosition + strlen(self::SIMPLIFIED_DRIVER_SUFFIX)
-            );
-        }
-        return $shortDriverName;
     }
 
     /**
@@ -69,5 +57,21 @@ class RegularDriverFactory
         }
 
         throw new MetadataFactoryException(MetadataFactoryException::UNEXPECTED_DRIVER, [get_class($driver)]);
+    }
+
+    private function getRegularDriverName(Stringy $shortDriverName): Stringy
+    {
+        $shortDriverName = $shortDriverName->substring(
+            0,
+            $shortDriverName->getPositionOfSubstring(self::DRIVER_SUFFIX)
+        );
+        $simplifiedPosition = $shortDriverName->getPositionOfSubstring(self::SIMPLIFIED_DRIVER_SUFFIX);
+        $isSimplified = null !== $simplifiedPosition;
+        if (true === $isSimplified) {
+            $shortDriverName = $shortDriverName->substring(
+                $simplifiedPosition + strlen(self::SIMPLIFIED_DRIVER_SUFFIX)
+            );
+        }
+        return $shortDriverName;
     }
 }

@@ -134,7 +134,9 @@ class ValueGetterTest extends TestCase
             [
                 'kitten',
                 new class() implements ApiEntityInterface {
-                    /** @var string string */
+                    /**
+                     * @var string string
+                     */
                     public $kitten = 'kitten';
 
                     public function getId(): int

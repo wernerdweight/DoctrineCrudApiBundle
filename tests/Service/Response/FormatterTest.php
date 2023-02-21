@@ -16,32 +16,6 @@ use WernerDweight\RA\RA;
 class FormatterTest extends DoctrineMetadataKernelTestCase
 {
     /**
-     * @throws \WernerDweight\RA\Exception\RAException
-     */
-    private function prepareRequest(?RA $responseStructure, string $prefix): void
-    {
-        /** @var RequestStack $requestStack */
-        $requestStack = self::$container->get(RequestStack::class);
-        $requestStack->push(
-            new Request(
-                [
-                    'responseStructure' => null !== $responseStructure
-                        ? $responseStructure->getRA('article')->toArray(RA::RECURSIVE)
-                        : null,
-                ],
-                [],
-                [
-                    'entityName' => trim($prefix, '.'),
-                ]
-            )
-        );
-
-        /** @var ParameterResolver $parameterResolver */
-        $parameterResolver = self::$container->get(ParameterResolver::class);
-        $parameterResolver->resolveList();
-    }
-
-    /**
      * @dataProvider provideValues
      */
     public function testFormat(
@@ -86,5 +60,32 @@ class FormatterTest extends DoctrineMetadataKernelTestCase
                 'article.',
             ],
         ];
+    }
+
+    /**
+     * @throws \WernerDweight\RA\Exception\RAException
+     */
+    private function prepareRequest(?RA $responseStructure, string $prefix): void
+    {
+        /** @var RequestStack $requestStack */
+        $requestStack = self::$container->get(RequestStack::class);
+        $requestStack->push(
+            new Request(
+                [
+                    'responseStructure' => null !== $responseStructure
+                        ? $responseStructure->getRA('article')
+                            ->toArray(RA::RECURSIVE)
+                        : null,
+                ],
+                [],
+                [
+                    'entityName' => trim($prefix, '.'),
+                ]
+            )
+        );
+
+        /** @var ParameterResolver $parameterResolver */
+        $parameterResolver = self::$container->get(ParameterResolver::class);
+        $parameterResolver->resolveList();
     }
 }

@@ -15,15 +15,16 @@ use WernerDweight\Stringy\Stringy;
 
 final class Annotation extends AbstractDriver implements DoctrineCrudApiDriverInterface
 {
-    /** @var AnnotationReader */
+    /**
+     * @var AnnotationReader
+     */
     private $annotationReader;
 
-    /** @var AnnotationMappingTypeFactory */
+    /**
+     * @var AnnotationMappingTypeFactory
+     */
     private $mappingTypeFactory;
 
-    /**
-     * Annotation constructor.
-     */
     public function __construct(AnnotationMappingTypeFactory $mappingTypeFactory)
     {
         $this->mappingTypeFactory = $mappingTypeFactory;
@@ -44,26 +45,6 @@ final class Annotation extends AbstractDriver implements DoctrineCrudApiDriverIn
     {
         $this->annotationReader = $reader;
         return $this;
-    }
-
-    /**
-     * @param \ReflectionClass<ApiEntityInterface> $reflectedEntity
-     *
-     * @throws \Safe\Exceptions\StringsException
-     */
-    private function isAccessible(\ReflectionClass $reflectedEntity): bool
-    {
-        /** @var class-string $annotationClassName */
-        $annotationClassName = \Safe\sprintf(
-            '%s\\%s',
-            DoctrineCrudApiMappingTypeInterface::ANNOTATION_NAMESPACE,
-            ucfirst(DoctrineCrudApiMappingTypeInterface::ACCESSIBLE)
-        );
-        $accessibleAnnotation = $this->annotationReader->getClassAnnotation(
-            $reflectedEntity,
-            $annotationClassName
-        );
-        return null !== $accessibleAnnotation;
     }
 
     /**
@@ -96,5 +77,25 @@ final class Annotation extends AbstractDriver implements DoctrineCrudApiDriverIn
             }
         }
         return $config;
+    }
+
+    /**
+     * @param \ReflectionClass<ApiEntityInterface> $reflectedEntity
+     *
+     * @throws \Safe\Exceptions\StringsException
+     */
+    private function isAccessible(\ReflectionClass $reflectedEntity): bool
+    {
+        /** @var class-string $annotationClassName */
+        $annotationClassName = \Safe\sprintf(
+            '%s\\%s',
+            DoctrineCrudApiMappingTypeInterface::ANNOTATION_NAMESPACE,
+            ucfirst(DoctrineCrudApiMappingTypeInterface::ACCESSIBLE)
+        );
+        $accessibleAnnotation = $this->annotationReader->getClassAnnotation(
+            $reflectedEntity,
+            $annotationClassName
+        );
+        return null !== $accessibleAnnotation;
     }
 }

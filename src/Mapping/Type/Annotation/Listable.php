@@ -11,6 +11,11 @@ use WernerDweight\Stringy\Stringy;
 
 final class Listable extends AbstractType implements DoctrineCrudApiMappingTypeInterface
 {
+    public function getType(): string
+    {
+        return DoctrineCrudApiMappingTypeInterface::LISTABLE;
+    }
+
     /**
      * @param ListableAnnotation $annotation
      */
@@ -22,10 +27,5 @@ final class Listable extends AbstractType implements DoctrineCrudApiMappingTypeI
                 ->push((string)$propertyName);
         }
         return $config;
-    }
-
-    public function getType(): string
-    {
-        return DoctrineCrudApiMappingTypeInterface::LISTABLE;
     }
 }

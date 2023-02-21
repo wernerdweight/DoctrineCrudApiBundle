@@ -14,21 +14,6 @@ use WernerDweight\Stringy\Stringy;
 
 class ParameterValidatorTest extends DoctrineMetadataKernelTestCase
 {
-    private function prepareRequest(string $prefix = 'article'): void
-    {
-        /** @var RequestStack $requestStack */
-        $requestStack = self::$container->get(RequestStack::class);
-        $requestStack->push(
-            new Request(
-                [],
-                [],
-                [
-                    'entityName' => $prefix,
-                ]
-            )
-        );
-    }
-
     /**
      * @param mixed[]|null $filter
      *
@@ -107,10 +92,15 @@ class ParameterValidatorTest extends DoctrineMetadataKernelTestCase
         return [
             [new RA(), null],
             [new RA(), []],
-            [new RA(), ['unexpected' => 'value']],
+            [
+                new RA(), [
+                    'unexpected' => 'value',
+                ]],
             [
                 new RA(),
-                [ParameterEnum::FILTER_LOGIC => ParameterEnum::FILTER_LOGIC_OR],
+                [
+                    ParameterEnum::FILTER_LOGIC => ParameterEnum::FILTER_LOGIC_OR,
+                ],
             ],
             [
                 new RA([
@@ -286,5 +276,20 @@ class ParameterValidatorTest extends DoctrineMetadataKernelTestCase
                 ],
             ],
         ];
+    }
+
+    private function prepareRequest(string $prefix = 'article'): void
+    {
+        /** @var RequestStack $requestStack */
+        $requestStack = self::$container->get(RequestStack::class);
+        $requestStack->push(
+            new Request(
+                [],
+                [],
+                [
+                    'entityName' => $prefix,
+                ]
+            )
+        );
     }
 }

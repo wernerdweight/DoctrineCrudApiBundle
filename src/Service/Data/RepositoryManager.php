@@ -14,33 +14,46 @@ use WernerDweight\Stringy\Stringy;
 
 class RepositoryManager
 {
-    /** @var Stringy */
+    /**
+     * @var Stringy
+     */
     private $currentEntityName;
 
-    /** @var Stringy */
+    /**
+     * @var Stringy
+     */
     private $currentEntityFQCN;
 
-    /** @var ServiceEntityRepository|null */
+    /**
+     * @var ServiceEntityRepository|null
+     */
     private $currentRepository;
 
-    /** @var ClassMetadata|null */
+    /**
+     * @var ClassMetadata|null
+     */
     private $currentMetadata;
 
-    /** @var RA|null */
+    /**
+     * @var RA|null
+     */
     private $currentMappings;
 
-    /** @var EntityManagerInterface */
+    /**
+     * @var EntityManagerInterface
+     */
     private $entityManager;
 
-    /** @var ServiceEntityRepositoryFactory */
+    /**
+     * @var ServiceEntityRepositoryFactory
+     */
     private $repositoryFactory;
 
-    /** @var CurrentEntityResolver */
+    /**
+     * @var CurrentEntityResolver
+     */
     private $currentEntityResolver;
 
-    /**
-     * RepositoryManager constructor.
-     */
     public function __construct(
         EntityManagerInterface $entityManager,
         ServiceEntityRepositoryFactory $repositoryFactory,
@@ -81,26 +94,12 @@ class RepositoryManager
         return $this->currentRepository;
     }
 
-    private function getEntityMetadata(string $entityFQCN): ClassMetadata
-    {
-        return $this->entityManager->getClassMetadata($entityFQCN);
-    }
-
     public function getCurrentMetadata(): ClassMetadata
     {
         if (null === $this->currentMetadata) {
             $this->currentMetadata = $this->getEntityMetadata((string)$this->getCurrentEntityFQCN());
         }
         return $this->currentMetadata;
-    }
-
-    private function getEntityMappings(ClassMetadata $metadata): RA
-    {
-        return (new RA())
-            ->merge(
-                new RA($metadata->fieldMappings, RA::RECURSIVE),
-                new RA($metadata->associationMappings, RA::RECURSIVE)
-            );
     }
 
     public function getCurrentMappings(): RA
@@ -146,5 +145,19 @@ class RepositoryManager
         return true === $fieldMappings->hasKey((string)$field)
             ? $fieldMappings->getRA((string)$field)
             : null;
+    }
+
+    private function getEntityMetadata(string $entityFQCN): ClassMetadata
+    {
+        return $this->entityManager->getClassMetadata($entityFQCN);
+    }
+
+    private function getEntityMappings(ClassMetadata $metadata): RA
+    {
+        return (new RA())
+            ->merge(
+                new RA($metadata->fieldMappings, RA::RECURSIVE),
+                new RA($metadata->associationMappings, RA::RECURSIVE)
+            );
     }
 }

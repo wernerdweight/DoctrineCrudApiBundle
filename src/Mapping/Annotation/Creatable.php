@@ -11,6 +11,8 @@ use Doctrine\Common\Annotations\Annotation;
  */
 final class Creatable extends Annotation
 {
-    /** @var bool */
+    /**
+     * @var bool
+     */
     public $nested = false;
 }

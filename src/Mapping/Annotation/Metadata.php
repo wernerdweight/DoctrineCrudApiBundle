@@ -18,9 +18,13 @@ final class Metadata extends Annotation
      */
     public $type;
 
-    /** @var string */
+    /**
+     * @var string
+     */
     public $class;
 
-    /** @var mixed[] */
+    /**
+     * @var mixed[]
+     */
     public $payload = [];
 }

@@ -11,6 +11,11 @@ use WernerDweight\Stringy\Stringy;
 
 final class Creatable extends AbstractType implements DoctrineCrudApiMappingTypeInterface
 {
+    public function getType(): string
+    {
+        return DoctrineCrudApiMappingTypeInterface::CREATABLE;
+    }
+
     /**
      * @param CreatableAnnotation $annotation
      */
@@ -22,10 +27,5 @@ final class Creatable extends AbstractType implements DoctrineCrudApiMappingType
                 ->push((string)$propertyName);
         }
         return $config;
-    }
-
-    public function getType(): string
-    {
-        return DoctrineCrudApiMappingTypeInterface::CREATABLE;
     }
 }

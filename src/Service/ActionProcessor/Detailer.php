@@ -12,18 +12,21 @@ use WernerDweight\RA\RA;
 
 class Detailer
 {
-    /** @var ParameterResolver */
+    /**
+     * @var ParameterResolver
+     */
     private $parameterResolver;
 
-    /** @var DataManager */
+    /**
+     * @var DataManager
+     */
     private $dataManager;
 
-    /** @var Formatter */
+    /**
+     * @var Formatter
+     */
     private $formatter;
 
-    /**
-     * Detailer constructor.
-     */
     public function __construct(
         ParameterResolver $parameterResolver,
         DataManager $dataManager,
@@ -37,16 +40,6 @@ class Detailer
     /**
      * @throws \WernerDweight\RA\Exception\RAException
      */
-    private function fetch(): ApiEntityInterface
-    {
-        return $this->dataManager->getItem(
-            $this->parameterResolver->getString(ParameterEnum::PRIMARY_KEY)
-        );
-    }
-
-    /**
-     * @throws \WernerDweight\RA\Exception\RAException
-     */
     public function getItem(): RA
     {
         $this->parameterResolver->resolveDetail();
@@ -55,6 +48,16 @@ class Detailer
             $item,
             $this->parameterResolver->getRAOrNull(ParameterEnum::RESPONSE_STRUCTURE),
             $this->parameterResolver->getEntityPrefix()
+        );
+    }
+
+    /**
+     * @throws \WernerDweight\RA\Exception\RAException
+     */
+    private function fetch(): ApiEntityInterface
+    {
+        return $this->dataManager->getItem(
+            $this->parameterResolver->getString(ParameterEnum::PRIMARY_KEY)
         );
     }
 }

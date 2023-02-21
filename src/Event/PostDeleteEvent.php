@@ -8,15 +8,16 @@ use WernerDweight\DoctrineCrudApiBundle\Entity\ApiEntityInterface;
 
 class PostDeleteEvent extends Event
 {
-    /** @var string */
+    /**
+     * @var string
+     */
     public const NAME = 'wds.doctrine_crud_api_bundle.item.post_delete';
 
-    /** @var ApiEntityInterface */
+    /**
+     * @var ApiEntityInterface
+     */
     private $item;
 
-    /**
-     * PostDeleteEvent constructor.
-     */
     public function __construct(ApiEntityInterface $item)
     {
         $this->item = $item;

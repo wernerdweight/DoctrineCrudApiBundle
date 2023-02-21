@@ -13,18 +13,21 @@ use WernerDweight\Stringy\Stringy;
 
 class ListingFormatter
 {
-    /** @var ParameterResolver */
+    /**
+     * @var ParameterResolver
+     */
     private $parameterResolver;
 
-    /** @var Printer */
+    /**
+     * @var Printer
+     */
     private $printer;
 
-    /** @var ManyFormatter */
+    /**
+     * @var ManyFormatter
+     */
     private $formatter;
 
-    /**
-     * ListingFormatter constructor.
-     */
     public function __construct(
         ParameterResolver $parameterResolver,
         Printer $printer,
@@ -33,6 +36,22 @@ class ListingFormatter
         $this->parameterResolver = $parameterResolver;
         $this->printer = $printer;
         $this->formatter = $formatter;
+    }
+
+    /**
+     * @throws \WernerDweight\RA\Exception\RAException
+     */
+    public function formatListing(RA $items, ?int $level = null): RA
+    {
+        $groupBy = $this->parameterResolver->getRAOrNull(ParameterEnum::GROUP_BY);
+        if (null === $level) {
+            $level = null !== $groupBy ? $groupBy->length() : 0;
+        }
+        if ($level > 0 && null !== $groupBy) {
+            return $this->formatGrouppedListing($items, $level, $groupBy);
+        }
+        $responseStructure = $this->parameterResolver->getRAOrNull(ParameterEnum::RESPONSE_STRUCTURE);
+        return $this->formatter->format($items, $responseStructure, $this->parameterResolver->getEntityPrefix());
     }
 
     private function formatGroupAggregates(RA $aggregateFields): RA
@@ -85,21 +104,5 @@ class ListingFormatter
             ? (string)$levelConfiguration->get(ParameterEnum::GROUP_BY_FIELD)
             : FilteringHelper::IDENTIFIER_FIELD_NAME;
         return $this->formatGroupped($items, $level, $levelGroupingField);
-    }
-
-    /**
-     * @throws \WernerDweight\RA\Exception\RAException
-     */
-    public function formatListing(RA $items, ?int $level = null): RA
-    {
-        $groupBy = $this->parameterResolver->getRAOrNull(ParameterEnum::GROUP_BY);
-        if (null === $level) {
-            $level = null !== $groupBy ? $groupBy->length() : 0;
-        }
-        if ($level > 0 && null !== $groupBy) {
-            return $this->formatGrouppedListing($items, $level, $groupBy);
-        }
-        $responseStructure = $this->parameterResolver->getRAOrNull(ParameterEnum::RESPONSE_STRUCTURE);
-        return $this->formatter->format($items, $responseStructure, $this->parameterResolver->getEntityPrefix());
     }
 }

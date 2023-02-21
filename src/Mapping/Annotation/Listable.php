@@ -11,6 +11,8 @@ use Doctrine\Common\Annotations\Annotation;
  */
 final class Listable extends Annotation
 {
-    /** @var bool */
+    /**
+     * @var bool
+     */
     public $default = false;
 }

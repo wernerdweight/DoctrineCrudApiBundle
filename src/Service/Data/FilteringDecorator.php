@@ -11,23 +11,31 @@ use WernerDweight\Stringy\Stringy;
 
 class FilteringDecorator
 {
-    /** @var string */
+    /**
+     * @var string
+     */
     public const SQL_WILDCARD = '%';
-    /** @var string */
-    private const PARAM_NAME_SEPARATOR = '_';
-
-    /** @var ConditionGeneratorFactory */
-    private $conditionGeneratorFactory;
-
-    /** @var FilteringHelper */
-    private $filteringHelper;
-
-    /** @var RelationJoiner */
-    private $relationJoiner;
 
     /**
-     * FilteringDecorator constructor.
+     * @var string
      */
+    private const PARAM_NAME_SEPARATOR = '_';
+
+    /**
+     * @var ConditionGeneratorFactory
+     */
+    private $conditionGeneratorFactory;
+
+    /**
+     * @var FilteringHelper
+     */
+    private $filteringHelper;
+
+    /**
+     * @var RelationJoiner
+     */
+    private $relationJoiner;
+
     public function __construct(
         ConditionGeneratorFactory $conditionGeneratorFactory,
         FilteringHelper $filteringHelper,
@@ -38,6 +46,22 @@ class FilteringDecorator
         $this->relationJoiner = $relationJoiner;
     }
 
+    public function prepareFilteringConditions(QueryBuilder $queryBuilder, RA $conditions, int $filteringKey): RA
+    {
+        return $conditions->map(function (RA $conditionData, int $key) use ($queryBuilder, $filteringKey): string {
+            if (true === $conditionData->hasKey(ParameterEnum::FILTER_CONDITIONS)) {
+                $logic = $this->filteringHelper->getFilteringLogic($conditionData);
+                $conditions = $this->prepareFilteringConditions(
+                    $queryBuilder,
+                    $conditionData->getRA(ParameterEnum::FILTER_CONDITIONS),
+                    $key
+                );
+                return \Safe\sprintf('(%s)', $conditions->join(\Safe\sprintf(' %s ', $logic)));
+            }
+            return $this->getFilteringCondition($queryBuilder, $conditionData, $key, $filteringKey);
+        }, $conditions->keys());
+    }
+
     /**
      * @throws \Safe\Exceptions\PcreException
      * @throws \Safe\Exceptions\StringsException
@@ -45,7 +69,8 @@ class FilteringDecorator
     private function createCondition(Stringy $field, string $operator, string $parameterName): string
     {
         $field = (string)($this->filteringHelper->resolveFilteringConditionFieldName($field));
-        return $this->conditionGeneratorFactory->get($operator)->generate($field, $parameterName);
+        return $this->conditionGeneratorFactory->get($operator)
+            ->generate($field, $parameterName);
     }
 
     /**
@@ -90,21 +115,5 @@ class FilteringDecorator
         }
 
         return $condition;
-    }
-
-    public function prepareFilteringConditions(QueryBuilder $queryBuilder, RA $conditions, int $filteringKey): RA
-    {
-        return $conditions->map(function (RA $conditionData, int $key) use ($queryBuilder, $filteringKey): string {
-            if (true === $conditionData->hasKey(ParameterEnum::FILTER_CONDITIONS)) {
-                $logic = $this->filteringHelper->getFilteringLogic($conditionData);
-                $conditions = $this->prepareFilteringConditions(
-                    $queryBuilder,
-                    $conditionData->getRA(ParameterEnum::FILTER_CONDITIONS),
-                    $key
-                );
-                return \Safe\sprintf('(%s)', $conditions->join(\Safe\sprintf(' %s ', $logic)));
-            }
-            return $this->getFilteringCondition($queryBuilder, $conditionData, $key, $filteringKey);
-        }, $conditions->keys());
     }
 }

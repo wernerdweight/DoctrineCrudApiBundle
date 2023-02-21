@@ -11,14 +11,6 @@ use WernerDweight\Stringy\Stringy;
 abstract class AbstractType implements DoctrineCrudApiMappingTypeInterface
 {
     /**
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     */
-    protected function readExtraConfiguration(Stringy $propertyName, Annotation $annotation, RA $config): RA
-    {
-        return $config;
-    }
-
-    /**
      * @param Stringy    $propertyName
      * @param Annotation $annotation
      *
@@ -27,7 +19,16 @@ abstract class AbstractType implements DoctrineCrudApiMappingTypeInterface
     public function readConfiguration(object $propertyName, object $annotation, RA $config): RA
     {
         $mappingType = $this->getType();
-        $config->getRA($mappingType)->push((string)$propertyName);
+        $config->getRA($mappingType)
+            ->push((string)$propertyName);
         return $this->readExtraConfiguration($propertyName, $annotation, $config);
+    }
+
+    /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    protected function readExtraConfiguration(Stringy $propertyName, Annotation $annotation, RA $config): RA
+    {
+        return $config;
     }
 }

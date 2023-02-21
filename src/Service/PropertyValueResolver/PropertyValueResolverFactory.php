@@ -10,7 +10,9 @@ use WernerDweight\RA\RA;
 
 class PropertyValueResolverFactory
 {
-    /** @var RA */
+    /**
+     * @var RA
+     */
     private $propertyValueResolvers;
 
     /**
@@ -42,9 +44,10 @@ class PropertyValueResolverFactory
             throw new PropertyValueResolverFactoryException(
                 PropertyValueResolverFactoryException::INVALID_PROPERTY_TYPE,
                 [
-                $type,
-            
-            ]);
+                    $type,
+
+                ]
+            );
         }
         /** @var PropertyValueResolverInterface $propertyValueResolver */
         $propertyValueResolver = $this->propertyValueResolvers->get($type);

@@ -7,10 +7,14 @@ use WernerDweight\EnhancedException\Exception\AbstractEnhancedException;
 
 class DateTimeValueResolverException extends AbstractEnhancedException
 {
-    /** @var int */
+    /**
+     * @var int
+     */
     public const INVALID_VALUE = 1;
 
-    /** @var string[] */
+    /**
+     * @var string[]
+     */
     protected static $messages = [
         self::INVALID_VALUE => 'Invalid date or datetime value!',
     ];

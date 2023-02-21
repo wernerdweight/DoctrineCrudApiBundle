@@ -12,12 +12,11 @@ use WernerDweight\RA\RA;
 
 final class CollectionValueResolver implements PropertyValueResolverInterface
 {
-    /** @var EntityValueResolver */
+    /**
+     * @var EntityValueResolver
+     */
     private $entityValueResolver;
 
-    /**
-     * CollectionValueResolver constructor.
-     */
     public function __construct(EntityValueResolver $entityValueResolver)
     {
         $this->entityValueResolver = $entityValueResolver;

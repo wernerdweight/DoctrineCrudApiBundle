@@ -41,7 +41,7 @@ final class Article implements ApiEntityInterface
      *
      * @ORM\ManyToOne(targetEntity="Author")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="author_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
+     *     @ORM\JoinColumn(name="author_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
      * })
      * @WDS\Listable()
      * @WDS\Creatable()
@@ -54,7 +54,7 @@ final class Article implements ApiEntityInterface
      *
      * @ORM\ManyToOne(targetEntity="Category", inversedBy="articles")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="category_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
+     *     @ORM\JoinColumn(name="category_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
      * })
      * @WDS\Listable()
      * @WDS\Creatable()
@@ -62,9 +62,6 @@ final class Article implements ApiEntityInterface
      */
     private $category;
 
-    /**
-     * Article constructor.
-     */
     public function __construct(int $id, string $title, ?Author $author, ?Category $category)
     {
         $this->id = $id;

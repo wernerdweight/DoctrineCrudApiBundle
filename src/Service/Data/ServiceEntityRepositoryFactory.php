@@ -12,7 +12,9 @@ use WernerDweight\Stringy\Stringy;
 
 class ServiceEntityRepositoryFactory
 {
-    /** @var RA */
+    /**
+     * @var RA
+     */
     private $repositories;
 
     /**
@@ -48,9 +50,10 @@ class ServiceEntityRepositoryFactory
             throw new ServiceEntityRepositoryFactoryException(
                 ServiceEntityRepositoryFactoryException::INVALID_ENTITY_CLASS,
                 [
-                $className,
-            
-            ]);
+                    $className,
+
+                ]
+            );
         }
         /** @var ServiceEntityRepository $repository */
         $repository = $this->repositories->get($className);

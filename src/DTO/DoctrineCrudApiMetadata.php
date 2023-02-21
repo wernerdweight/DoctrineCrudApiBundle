@@ -13,18 +13,21 @@ use WernerDweight\Stringy\Stringy;
 
 class DoctrineCrudApiMetadata
 {
-    /** @var string */
+    /**
+     * @var string
+     */
     private $name;
 
-    /** @var ClassMetadata */
+    /**
+     * @var ClassMetadata
+     */
     private $doctrineMetadata;
 
-    /** @var RA */
+    /**
+     * @var RA
+     */
     private $apiMetadata;
 
-    /**
-     * DoctrineCrudApiMetadata constructor.
-     */
     public function __construct(string $name, ClassMetadata $doctrineMetadata, RA $apiMetadata)
     {
         $this->name = $name;
@@ -99,6 +102,43 @@ class DoctrineCrudApiMetadata
     /**
      * @throws \WernerDweight\RA\Exception\RAException
      */
+    public function getFieldMetadata(string $field): ?RA
+    {
+        $metadata = $this->apiMetadata->getRA(DoctrineCrudApiMappingTypeInterface::METADATA);
+        if (true === $metadata->hasKey($field)) {
+            return $this->extendFieldMetadata($field, $metadata->getRAOrNull($field));
+        }
+        return $this->extendFieldMetadata($field);
+    }
+
+    /**
+     * @throws \WernerDweight\RA\Exception\RAException
+     */
+    public function getFieldType(string $field): ?string
+    {
+        $metadata = $this->getFieldMetadata($field);
+        if (null !== $metadata) {
+            $type = $metadata->getStringOrNull(DoctrineCrudApiMappingTypeInterface::METADATA_TYPE);
+            if (null !== $type) {
+                return $type;
+            }
+        }
+        return null;
+    }
+
+    public function getInternalFieldType(string $field): ?string
+    {
+        $dotrineMetadata = $this->getDoctrineMetadata()
+->fieldMappings;
+        if (true !== array_key_exists($field, $dotrineMetadata)) {
+            return null;
+        }
+        return $dotrineMetadata[$field][DoctrineCrudApiMappingTypeInterface::METADATA_TYPE];
+    }
+
+    /**
+     * @throws \WernerDweight\RA\Exception\RAException
+     */
     private function patchMissingFieldMetadata(string $field, ?RA $metadata): RA
     {
         $extendedFieldMetadata = $metadata ?? new RA();
@@ -134,41 +174,5 @@ class DoctrineCrudApiMetadata
         }
 
         return null;
-    }
-
-    /**
-     * @throws \WernerDweight\RA\Exception\RAException
-     */
-    public function getFieldMetadata(string $field): ?RA
-    {
-        $metadata = $this->apiMetadata->getRA(DoctrineCrudApiMappingTypeInterface::METADATA);
-        if (true === $metadata->hasKey($field)) {
-            return $this->extendFieldMetadata($field, $metadata->getRAOrNull($field));
-        }
-        return $this->extendFieldMetadata($field);
-    }
-
-    /**
-     * @throws \WernerDweight\RA\Exception\RAException
-     */
-    public function getFieldType(string $field): ?string
-    {
-        $metadata = $this->getFieldMetadata($field);
-        if (null !== $metadata) {
-            $type = $metadata->getStringOrNull(DoctrineCrudApiMappingTypeInterface::METADATA_TYPE);
-            if (null !== $type) {
-                return $type;
-            }
-        }
-        return null;
-    }
-
-    public function getInternalFieldType(string $field): ?string
-    {
-        $dotrineMetadata = $this->getDoctrineMetadata()->fieldMappings;
-        if (true !== array_key_exists($field, $dotrineMetadata)) {
-            return null;
-        }
-        return $dotrineMetadata[$field][DoctrineCrudApiMappingTypeInterface::METADATA_TYPE];
     }
 }

@@ -42,9 +42,13 @@ class TestKernel extends Kernel
         $loader->load(__DIR__ . '/../vendor/doctrine/doctrine-bundle/Resources/config/dbal.xml');
         $loader->load(__DIR__ . '/../vendor/doctrine/doctrine-bundle/Resources/config/orm.xml');
         $loader->load(__DIR__ . '/../src/Resources/config/services.yaml');
+        $builder->setParameter('session.storage.options', []);
         $builder->loadFromExtension('framework', [
             'secret' => 'not-so-secret',
             'test' => true,
+            'session' => [
+                'enabled' => false,
+            ],
         ]);
         $builder->loadFromExtension('doctrine', [
             'dbal' => [
@@ -87,7 +91,7 @@ class TestKernel extends Kernel
             PassConfig::TYPE_BEFORE_OPTIMIZATION
         );
         // available in Symfony 5.1 and higher
-        if (!class_exists(PdoCacheAdapterDoctrineSchemaSubscriber::class)) {
+        if (! class_exists(PdoCacheAdapterDoctrineSchemaSubscriber::class)) {
             $builder->removeDefinition('doctrine.orm.listeners.pdo_cache_adapter_doctrine_schema_subscriber');
         }
     }

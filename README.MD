@@ -3,7 +3,7 @@ DoctrineCrudApiBundle
 
 CRUD API powered by Doctrine mapping for Symfony
 
-[![Build Status](https://travis-ci.org/wernerdweight/DoctrineCrudApiBundle.svg?branch=master)](https://travis-ci.org/wernerdweight/DoctrineCrudApiBundle)
+[![Build Status](https://app.travis-ci.com/wernerdweight/DoctrineCrudApiBundle.svg?branch=master)](https://app.travis-ci.com/wernerdweight/DoctrineCrudApiBundle)
 [![Latest Stable Version](https://poser.pugx.org/wernerdweight/doctrine-crud-api-bundle/v/stable)](https://packagist.org/packages/wernerdweight/doctrine-crud-api-bundle)
 [![Total Downloads](https://poser.pugx.org/wernerdweight/doctrine-crud-api-bundle/downloads)](https://packagist.org/packages/wernerdweight/doctrine-crud-api-bundle)
 [![License](https://poser.pugx.org/wernerdweight/doctrine-crud-api-bundle/license)](https://packagist.org/packages/wernerdweight/doctrine-crud-api-bundle)

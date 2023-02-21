@@ -10,10 +10,49 @@ use WernerDweight\Stringy\Stringy;
 
 class OutputVoter
 {
-    /** @var bool */
+    /**
+     * @var bool
+     */
     public const ALLOWED = true;
-    /** @var bool */
+
+    /**
+     * @var bool
+     */
     public const NOT_ALLOWED = false;
+
+    /**
+     * @throws \Safe\Exceptions\MbstringException
+     * @throws \Safe\Exceptions\PcreException
+     * @throws \Safe\Exceptions\StringsException
+     * @throws \WernerDweight\RA\Exception\RAException
+     */
+    public function vote(
+        Stringy $field,
+        DoctrineCrudApiMetadata $configuration,
+        ?RA $responseStructure
+    ): bool {
+        $root = new Stringy(ParameterEnum::EMPTY_VALUE);
+        $key = (clone $field);
+        $lastDotPosition = $field->getPositionOfLastSubstring(ParameterEnum::FIELD_SEPARATOR);
+        if (null !== $lastDotPosition) {
+            $root = (clone $field)->substring(0, $lastDotPosition);
+            $key = (clone $field)->substring($lastDotPosition + 1);
+        }
+
+        if (null !== $responseStructure) {
+            $responseStructure = $this->traverseResponseStructure($responseStructure, $root);
+        }
+        if (null === $responseStructure) {
+            $responseStructure = $configuration->getDefaultListableFields()
+                ->fillKeys(ParameterEnum::TRUE_VALUE);
+        }
+
+        if (true === $responseStructure->hasKey((string)$key)) {
+            $value = $responseStructure->get((string)$key);
+            return $this->isValueAllowed($field, $value);
+        }
+        return self::NOT_ALLOWED;
+    }
 
     /**
      * @param string|RA $value
@@ -54,7 +93,8 @@ class OutputVoter
                     $value = new Stringy($value);
                     $firstDotPosition = $path->getPositionOfSubstring(ParameterEnum::FIELD_SEPARATOR);
                     if (null !== $firstDotPosition) {
-                        $value = (clone $path)->substring(0, $firstDotPosition)->concat(\Safe\sprintf('.%s', $value));
+                        $value = (clone $path)->substring(0, $firstDotPosition)
+                            ->concat(\Safe\sprintf('.%s', $value));
                     }
                     return $this->traverseResponseStructure($responseStructure, $value) ?? new RA();
                 }
@@ -66,38 +106,5 @@ class OutputVoter
             return null;
         }
         return $reducedResponseStructure;
-    }
-
-    /**
-     * @throws \Safe\Exceptions\MbstringException
-     * @throws \Safe\Exceptions\PcreException
-     * @throws \Safe\Exceptions\StringsException
-     * @throws \WernerDweight\RA\Exception\RAException
-     */
-    public function vote(
-        Stringy $field,
-        DoctrineCrudApiMetadata $configuration,
-        ?RA $responseStructure
-    ): bool {
-        $root = new Stringy(ParameterEnum::EMPTY_VALUE);
-        $key = (clone $field);
-        $lastDotPosition = $field->getPositionOfLastSubstring(ParameterEnum::FIELD_SEPARATOR);
-        if (null !== $lastDotPosition) {
-            $root = (clone $field)->substring(0, $lastDotPosition);
-            $key = (clone $field)->substring($lastDotPosition + 1);
-        }
-
-        if (null !== $responseStructure) {
-            $responseStructure = $this->traverseResponseStructure($responseStructure, $root);
-        }
-        if (null === $responseStructure) {
-            $responseStructure = $configuration->getDefaultListableFields()->fillKeys(ParameterEnum::TRUE_VALUE);
-        }
-
-        if (true === $responseStructure->hasKey((string)$key)) {
-            $value = $responseStructure->get((string)$key);
-            return $this->isValueAllowed($field, $value);
-        }
-        return self::NOT_ALLOWED;
     }
 }

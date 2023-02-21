@@ -16,18 +16,21 @@ use WernerDweight\Stringy\Stringy;
 
 class ConfigurationManager
 {
-    /** @var string */
+    /**
+     * @var string
+     */
     private const PROXY_PREFIX = 'Proxies\\__CG__\\';
 
-    /** @var Cache|null */
+    /**
+     * @var Cache|null
+     */
     private $cacheDriver;
 
-    /** @var RA */
+    /**
+     * @var RA
+     */
     private $configuration;
 
-    /**
-     * ConfigurationManager constructor.
-     */
     public function __construct(EntityManagerInterface $entityManager)
     {
         /** @var ClassMetadataFactory $metadataFactory */
@@ -36,9 +39,6 @@ class ConfigurationManager
         $this->configuration = new RA();
     }
 
-    /**
-     * @return ConfigurationManager
-     */
     public function setConfiguration(string $class, DoctrineCrudApiMetadata $metadata): self
     {
         $this->configuration->set($class, $metadata);
@@ -65,9 +65,10 @@ class ConfigurationManager
             throw new ConfigurationManagerException(
                 ConfigurationManagerException::EXCEPTION_NO_CONFIGURATION_FOR_ENTITY,
                 [
-                $class,
-            
-            ]);
+                    $class,
+
+                ]
+            );
         }
 
         /** @var DoctrineCrudApiMetadata|null $configuration */
@@ -76,9 +77,10 @@ class ConfigurationManager
             throw new ConfigurationManagerException(
                 ConfigurationManagerException::EXCEPTION_INVALID_CONFIGURATION_FOR_ENTITY,
                 [
-                $class,
-            
-            ]);
+                    $class,
+
+                ]
+            );
         }
         return $configuration;
     }
@@ -103,6 +105,6 @@ class ConfigurationManager
             ->set(DoctrineCrudApiMappingTypeInterface::UPDATABLE, new RA())
             ->set(DoctrineCrudApiMappingTypeInterface::UPDATABLE_NESTED, new RA())
             ->set(DoctrineCrudApiMappingTypeInterface::METADATA, new RA())
-            ;
+        ;
     }
 }

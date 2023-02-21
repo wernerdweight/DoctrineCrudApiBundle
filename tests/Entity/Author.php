@@ -46,9 +46,6 @@ final class Author implements ApiEntityInterface
      */
     private $email;
 
-    /**
-     * Author constructor.
-     */
     public function __construct(int $id, string $name, string $email)
     {
         $this->id = $id;

@@ -11,22 +11,31 @@ use WernerDweight\Stringy\Stringy;
 
 class DataManager
 {
-    /** @var string */
-    private const NULL_GROUP = 'N/A';
-    /** @var string */
-    private const DQL_JOIN = 'join';
-    /** @var string */
+    /**
+     * @var string
+     */
     public const ROOT_ALIAS = 'this';
 
-    /** @var RepositoryManager */
-    private $repositoryManager;
-
-    /** @var QueryBuilderDecorator */
-    private $queryBuilderDecorator;
+    /**
+     * @var string
+     */
+    private const NULL_GROUP = 'N/A';
 
     /**
-     * DataManager constructor.
+     * @var string
      */
+    private const DQL_JOIN = 'join';
+
+    /**
+     * @var RepositoryManager
+     */
+    private $repositoryManager;
+
+    /**
+     * @var QueryBuilderDecorator
+     */
+    private $queryBuilderDecorator;
+
     public function __construct(RepositoryManager $repositoryManager, QueryBuilderDecorator $queryBuilderDecorator)
     {
         $this->repositoryManager = $repositoryManager;
@@ -39,7 +48,8 @@ class DataManager
      */
     public function getPortion(int $offset, int $limit, RA $orderBy, RA $filters): RA
     {
-        $queryBuilder = $this->repositoryManager->getCurrentRepository()->createQueryBuilder(self::ROOT_ALIAS);
+        $queryBuilder = $this->repositoryManager->getCurrentRepository()
+            ->createQueryBuilder(self::ROOT_ALIAS);
 
         $this->queryBuilderDecorator
             ->applyFiltering($queryBuilder, $filters)
@@ -140,7 +150,8 @@ class DataManager
     public function getItem(string $primaryKey): ApiEntityInterface
     {
         /** @var ApiEntityInterface|null $item */
-        $item = $this->repositoryManager->getCurrentRepository()->find($primaryKey);
+        $item = $this->repositoryManager->getCurrentRepository()
+            ->find($primaryKey);
         if (null === $item) {
             throw new DataManagerReturnableException(DataManagerReturnableException::UNKNOWN_ENTITY_REQUESTED);
         }

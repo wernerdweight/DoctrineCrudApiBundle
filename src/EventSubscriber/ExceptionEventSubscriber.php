@@ -15,20 +15,27 @@ use WernerDweight\RA\RA;
 
 final class ExceptionEventSubscriber implements EventSubscriberInterface
 {
-    /** @var string */
+    /**
+     * @var string
+     */
     private const MESSAGE_KEY = 'message';
-    /** @var string */
+
+    /**
+     * @var string
+     */
     private const ERROR_KEY = 'errors';
-    /** @var string */
+
+    /**
+     * @var string
+     */
     private const GENERIC_ERROR_MESSAGE =
         'Request is not supported! Configuration is not allowing this kind of request, or it is not correct.';
 
-    /** @var LoggerInterface */
+    /**
+     * @var LoggerInterface
+     */
     private $logger;
 
-    /**
-     * ExceptionEventSubscriber constructor.
-     */
     public function __construct(LoggerInterface $logger)
     {
         $this->logger = $logger;
@@ -51,7 +58,8 @@ final class ExceptionEventSubscriber implements EventSubscriberInterface
     {
         $exception = $event->getThrowable();
         if ($exception instanceof ReturnableExceptionInterface) {
-            $responseData = $exception->getResponseData()->toArray(RA::RECURSIVE);
+            $responseData = $exception->getResponseData()
+                ->toArray(RA::RECURSIVE);
             $event->setResponse(
                 new JsonResponse(
                     [
@@ -67,7 +75,9 @@ final class ExceptionEventSubscriber implements EventSubscriberInterface
         if ($exception instanceof HttpExceptionInterface) {
             $event->setResponse(
                 new JsonResponse(
-                    [self::MESSAGE_KEY => $exception->getMessage()],
+                    [
+                        self::MESSAGE_KEY => $exception->getMessage(),
+                    ],
                     $exception->getStatusCode()
                 )
             );
@@ -80,7 +90,9 @@ final class ExceptionEventSubscriber implements EventSubscriberInterface
         $exception = $event->getThrowable();
         $event->setResponse(
             new JsonResponse(
-                [self::MESSAGE_KEY => self::GENERIC_ERROR_MESSAGE],
+                [
+                    self::MESSAGE_KEY => self::GENERIC_ERROR_MESSAGE,
+                ],
                 Response::HTTP_BAD_REQUEST
             )
         );

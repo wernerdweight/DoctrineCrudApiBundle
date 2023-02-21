@@ -11,7 +11,9 @@ use WernerDweight\RA\RA;
 
 class ConditionGeneratorFactory
 {
-    /** @var RA */
+    /**
+     * @var RA
+     */
     private $conditionGenerators;
 
     /**

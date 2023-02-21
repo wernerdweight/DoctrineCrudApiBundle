@@ -12,21 +12,26 @@ use WernerDweight\Stringy\Stringy;
 
 class ParameterResolver
 {
-    /** @var RA */
+    /**
+     * @var RA
+     */
     private $parameters;
 
-    /** @var Request */
+    /**
+     * @var Request
+     */
     private $request;
 
-    /** @var ParameterValidator */
+    /**
+     * @var ParameterValidator
+     */
     private $parameterValidator;
 
-    /** @var CurrentEntityResolver */
+    /**
+     * @var CurrentEntityResolver
+     */
     private $currentEntityResolver;
 
-    /**
-     * ParameterResolver constructor.
-     */
     public function __construct(
         RequestStack $requestStack,
         ParameterValidator $parameterValidator,
@@ -226,31 +231,6 @@ class ParameterResolver
         );
     }
 
-    /**
-     * @return ParameterResolver
-     */
-    private function resolveCommon(): self
-    {
-        $this->parameters->set(ParameterEnum::ENTITY_NAME, $this->currentEntityResolver->getCurrentEntity());
-        return $this;
-    }
-
-    /**
-     * @param InputBag<mixed> $query
-     *
-     * @return mixed[]|null
-     */
-    private function getArrayValueFromQuery(InputBag $query, string $key): ?array
-    {
-        if (true !== $query->has($key)) {
-            return null;
-        }
-        return $query->all($key);
-    }
-
-    /**
-     * @return ParameterResolver
-     */
     public function resolveList(): self
     {
         $this->resolveCommon();
@@ -286,9 +266,6 @@ class ParameterResolver
         return $this;
     }
 
-    /**
-     * @return ParameterResolver
-     */
     public function resolveDetail(): self
     {
         $this->resolveCommon();
@@ -308,9 +285,6 @@ class ParameterResolver
         return $this;
     }
 
-    /**
-     * @return ParameterResolver
-     */
     public function resolveCreate(): self
     {
         $this->resolveCommon();
@@ -335,9 +309,6 @@ class ParameterResolver
         return $this;
     }
 
-    /**
-     * @return ParameterResolver
-     */
     public function resolveUpdate(): self
     {
         $this->resolveCommon();
@@ -363,9 +334,6 @@ class ParameterResolver
         return $this;
     }
 
-    /**
-     * @return ParameterResolver
-     */
     public function resolveDelete(): self
     {
         $this->resolveCommon();
@@ -375,5 +343,24 @@ class ParameterResolver
             ->set(ParameterEnum::PRIMARY_KEY, $attributes->get(ParameterEnum::PRIMARY_KEY))
         ;
         return $this;
+    }
+
+    private function resolveCommon(): self
+    {
+        $this->parameters->set(ParameterEnum::ENTITY_NAME, $this->currentEntityResolver->getCurrentEntity());
+        return $this;
+    }
+
+    /**
+     * @param InputBag<mixed> $query
+     *
+     * @return mixed[]|null
+     */
+    private function getArrayValueFromQuery(InputBag $query, string $key): ?array
+    {
+        if (true !== $query->has($key)) {
+            return null;
+        }
+        return $query->all($key);
     }
 }
