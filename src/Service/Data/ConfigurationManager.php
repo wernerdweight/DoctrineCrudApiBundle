@@ -24,7 +24,7 @@ class ConfigurationManager
     /**
      * @var Cache|null
      */
-    private $cacheDriver;
+    //private $cacheDriver;
 
     /**
      * @var RA
@@ -34,8 +34,8 @@ class ConfigurationManager
     public function __construct(EntityManagerInterface $entityManager)
     {
         /** @var ClassMetadataFactory $metadataFactory */
-        $metadataFactory = $entityManager->getMetadataFactory();
-        $this->cacheDriver = $metadataFactory->getCacheDriver();
+        //$metadataFactory = $entityManager->getMetadataFactory();
+        //$this->cacheDriver = $metadataFactory->getCacheDriver();
         $this->configuration = new RA();
     }
 
@@ -52,7 +52,7 @@ class ConfigurationManager
     public function getConfigurationForEntityClass(string $class): DoctrineCrudApiMetadata
     {
         if (true !== $this->configuration->hasKey($class)) {
-            if (null !== $this->cacheDriver) {
+            /*if (null !== $this->cacheDriver) {
                 $cached = $this->cacheDriver->fetch(
                     \Safe\sprintf('%s\\$%s', $class, MetadataFactory::CACHE_NAMESPACE)
                 );
@@ -61,7 +61,7 @@ class ConfigurationManager
                         ->setConfiguration($class, $cached)
                         ->getConfigurationForEntityClass($class);
                 }
-            }
+            }*/
             throw new ConfigurationManagerException(
                 ConfigurationManagerException::EXCEPTION_NO_CONFIGURATION_FOR_ENTITY,
                 [

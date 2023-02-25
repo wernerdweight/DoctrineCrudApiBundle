@@ -75,11 +75,11 @@ class MetadataFactory
         $isAccessible = $config->getBool(DoctrineCrudApiMappingTypeInterface::ACCESSIBLE);
         $configuration = new DoctrineCrudApiMetadata($metadata->name, $metadata, $config);
 
-        $cacheDriver = $metadataFactory->getCacheDriver();
-        if (null !== $cacheDriver) {
-            $cacheKey = \Safe\sprintf('%s\\$%s', $metadata->name, self::CACHE_NAMESPACE);
-            $cacheDriver->save($cacheKey, true === $isAccessible ? $configuration : null);
-        }
+        //$cacheDriver = $metadataFactory->getCacheDriver();
+        //if (null !== $cacheDriver) {
+        //    $cacheKey = \Safe\sprintf('%s\\$%s', $metadata->name, self::CACHE_NAMESPACE);
+        //    $cacheDriver->save($cacheKey, true === $isAccessible ? $configuration : null);
+        //}
 
         if (true === $isAccessible) {
             $this->configurationManager->setConfiguration($metadata->name, $configuration);

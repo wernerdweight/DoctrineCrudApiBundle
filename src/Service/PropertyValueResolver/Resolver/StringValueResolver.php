@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace WernerDweight\DoctrineCrudApiBundle\Service\PropertyValueResolver\Resolver;
 
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use WernerDweight\DoctrineCrudApiBundle\Service\Request\ParameterEnum;
 use WernerDweight\RA\RA;
 
@@ -23,11 +23,11 @@ final class StringValueResolver implements PropertyValueResolverInterface
     public function getPropertyTypes(): array
     {
         return [
-            Type::STRING,
-            Type::TEXT,
-            Type::BINARY,
-            Type::BLOB,
-            Type::GUID,
+            Types::STRING,
+            Types::TEXT,
+            Types::BINARY,
+            Types::BLOB,
+            Types::GUID,
         ];
     }
 }

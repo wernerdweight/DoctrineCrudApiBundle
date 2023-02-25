@@ -8,6 +8,7 @@ use Doctrine\ORM\Mapping\Driver\XmlDriver;
 use Doctrine\Persistence\Mapping\Driver\MappingDriver;
 use WernerDweight\DoctrineCrudApiBundle\Exception\MetadataFactoryException;
 use WernerDweight\DoctrineCrudApiBundle\Mapping\Driver\Annotation;
+use WernerDweight\DoctrineCrudApiBundle\Mapping\Driver\Attribute;
 use WernerDweight\DoctrineCrudApiBundle\Mapping\Driver\DoctrineCrudApiDriverInterface;
 use WernerDweight\DoctrineCrudApiBundle\Mapping\Driver\Xml;
 use WernerDweight\Stringy\Stringy;
@@ -53,6 +54,11 @@ class RegularDriverFactory
 
         if ($driver instanceof Annotation) {
             $driver->setAnnotationReader(new AnnotationReader());
+            return $driver;
+        }
+
+        if ($driver instanceof Attribute) {
+            // TODO: this driver is not currently supported
             return $driver;
         }
 
