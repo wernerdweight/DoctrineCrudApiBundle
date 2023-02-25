@@ -53,7 +53,7 @@ final class DateTimeValueResolver implements PropertyValueResolverInterface
             Types::DATETIMETZ_MUTABLE,
             Types::DATEINTERVAL,
             Types::TIME_IMMUTABLE,
-            Types::TIME_MUTABLE
+            Types::TIME_MUTABLE,
         ];
     }
 }

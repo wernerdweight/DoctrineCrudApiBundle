@@ -11,7 +11,7 @@ use WernerDweight\Stringy\Stringy;
 abstract class AbstractType implements DoctrineCrudApiMappingTypeInterface
 {
     /**
-     * @param Stringy    $propertyName
+     * @param Stringy          $propertyName
      * @param MappingAttribute $annotation
      *
      * @throws \WernerDweight\RA\Exception\RAException

@@ -19,7 +19,6 @@ use WernerDweight\Stringy\Stringy;
 
 final class Attribute extends AttributeDriver implements DoctrineCrudApiDriverInterface
 {
-
     /**
      * @var MappingDriver
      */
@@ -87,5 +86,4 @@ final class Attribute extends AttributeDriver implements DoctrineCrudApiDriverIn
         $accessibleAttributes = $reflectedEntity->getAttributes(Accessible::class);
         return count($accessibleAttributes) > 0;
     }
-
 }
