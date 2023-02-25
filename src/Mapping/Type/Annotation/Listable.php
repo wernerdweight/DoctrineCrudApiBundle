@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace WernerDweight\DoctrineCrudApiBundle\Mapping\Type\Annotation;
 
-use Doctrine\Common\Annotations\Annotation;
+use Doctrine\ORM\Mapping\MappingAttribute;
 use WernerDweight\DoctrineCrudApiBundle\Mapping\Annotation\Listable as ListableAnnotation;
 use WernerDweight\DoctrineCrudApiBundle\Mapping\Type\DoctrineCrudApiMappingTypeInterface;
 use WernerDweight\RA\RA;
@@ -19,7 +19,7 @@ final class Listable extends AbstractType implements DoctrineCrudApiMappingTypeI
     /**
      * @param ListableAnnotation $annotation
      */
-    protected function readExtraConfiguration(Stringy $propertyName, Annotation $annotation, RA $config): RA
+    protected function readExtraConfiguration(Stringy $propertyName, MappingAttribute $annotation, RA $config): RA
     {
         if (true === $annotation->default) {
             $config

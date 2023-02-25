@@ -67,7 +67,7 @@ class ValueGetterTest extends TestCase
     /**
      * @return mixed[]
      */
-    public function provideEntities(): array
+    public static function provideEntities(): array
     {
         return [
             [
@@ -152,7 +152,7 @@ class ValueGetterTest extends TestCase
     /**
      * @return mixed[]
      */
-    public function provideRelatedEntities(): array
+    public static function provideRelatedEntities(): array
     {
         return [
             [
@@ -171,7 +171,7 @@ class ValueGetterTest extends TestCase
     /**
      * @return mixed[]
      */
-    public function provideRelatedCollections(): array
+    public static function provideRelatedCollections(): array
     {
         return [
             [

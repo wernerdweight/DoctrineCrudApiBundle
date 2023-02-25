@@ -25,8 +25,9 @@ class FormatterTest extends DoctrineMetadataKernelTestCase
         string $prefix
     ): void {
         $this->prepareRequest($responseStructure, $prefix);
+        $container = static::getContainer();
         /** @var Formatter $formatter */
-        $formatter = self::$container->get(Formatter::class);
+        $formatter = $container->get(Formatter::class);
         $value = $formatter->format($item, $responseStructure, $prefix);
         $this->assertEquals($expected, $value);
     }
@@ -34,7 +35,7 @@ class FormatterTest extends DoctrineMetadataKernelTestCase
     /**
      * @return mixed[]
      */
-    public function provideValues(): array
+    public static function provideValues(): array
     {
         return [
             [
@@ -67,15 +68,14 @@ class FormatterTest extends DoctrineMetadataKernelTestCase
      */
     private function prepareRequest(?RA $responseStructure, string $prefix): void
     {
+        $container = static::getContainer();
         /** @var RequestStack $requestStack */
-        $requestStack = self::$container->get(RequestStack::class);
+        $requestStack = $container->get(RequestStack::class);
         $requestStack->push(
             new Request(
                 [
-                    'responseStructure' => null !== $responseStructure
-                        ? $responseStructure->getRA('article')
-                            ->toArray(RA::RECURSIVE)
-                        : null,
+                    'responseStructure' => $responseStructure?->getRA('article')
+                        ->toArray(RA::RECURSIVE),
                 ],
                 [],
                 [
@@ -85,7 +85,7 @@ class FormatterTest extends DoctrineMetadataKernelTestCase
         );
 
         /** @var ParameterResolver $parameterResolver */
-        $parameterResolver = self::$container->get(ParameterResolver::class);
+        $parameterResolver = $container->get(ParameterResolver::class);
         $parameterResolver->resolveList();
     }
 }

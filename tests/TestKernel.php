@@ -71,7 +71,7 @@ class TestKernel extends Kernel
                         'mappings' => [
                             'Test' => [
                                 'is_bundle' => false,
-                                'type' => 'annotation',
+                                'type' => 'attribute',
                                 'dir' => __DIR__ . '/Entity',
                                 'prefix' => 'WernerDweight\DoctrineCrudApiBundle\Tests\Entity',
                                 'alias' => 'Test',
