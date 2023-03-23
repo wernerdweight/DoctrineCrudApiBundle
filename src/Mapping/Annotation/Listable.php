@@ -11,6 +11,7 @@ use Doctrine\ORM\Mapping\MappingAttribute;
  * @Annotation
  * @NamedArgumentConstructor()
  * @Target("PROPERTY")
+ * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
  */
 #[Attribute(Attribute::TARGET_PROPERTY)]
 final class Listable implements MappingAttribute

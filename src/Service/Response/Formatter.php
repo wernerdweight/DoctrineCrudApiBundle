@@ -12,22 +12,16 @@ use WernerDweight\DoctrineCrudApiBundle\Service\Request\ParameterEnum;
 use WernerDweight\RA\RA;
 use WernerDweight\Stringy\Stringy;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class Formatter
 {
-    /**
-     * @var ConfigurationManager
-     */
-    private $configurationManager;
+    private ConfigurationManager $configurationManager;
 
-    /**
-     * @var OutputVoter
-     */
-    private $outputVoter;
+    private OutputVoter $outputVoter;
 
-    /**
-     * @var ValueGetter
-     */
-    private $valueGetter;
+    private ValueGetter $valueGetter;
 
     public function __construct(
         ConfigurationManager $configurationManager,
@@ -75,18 +69,13 @@ class Formatter
         return $result;
     }
 
-    /**
-     * @return mixed
-     *
-     * @throws \WernerDweight\RA\Exception\RAException
-     */
     private function getEntityPropertyValueBasedOnMetadata(
         ApiEntityInterface $item,
         Stringy $field,
         DoctrineCrudApiMetadata $configuration,
         string $prefix,
         ?RA $responseStructure
-    ) {
+    ): mixed {
         $type = $configuration->getFieldType((string)$field);
         if (null === $type) {
             return $this->valueGetter->getEntityPropertyValue($item, $field);
