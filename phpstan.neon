@@ -3,5 +3,10 @@ includes:
     - vendor/wernerdweight/cs/src/Rules/phpstan-rules.neon
 
 parameters:
+    checkGenericClassInNonGenericObjectType: false
     ignoreErrors:
         - '#Static call to instance method Doctrine\\Inflector\\Inflector::singularize\(\).#'
+        - '#Do not use chained method calls\. Put each on separated lines\.#'
+        - '#Use explicit names over dynamic ones#'
+        - '#Method call return value that should be used, but is not#'
+        - '#Use separate function calls with readable variable names#'

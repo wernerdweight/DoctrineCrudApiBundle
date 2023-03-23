@@ -20,8 +20,9 @@ class ManyFormatterTest extends DoctrineMetadataKernelTestCase
         ?RA $responseStructure,
         string $prefix
     ): void {
+        $container = static::getContainer();
         /** @var ManyFormatter $formatter */
-        $formatter = self::$container->get(ManyFormatter::class);
+        $formatter = $container->get(ManyFormatter::class);
         $value = $formatter->format($items, $responseStructure, $prefix);
         $this->assertEquals($expected, $value);
     }
@@ -29,7 +30,7 @@ class ManyFormatterTest extends DoctrineMetadataKernelTestCase
     /**
      * @return mixed[]
      */
-    public function provideValues(): array
+    public static function provideValues(): array
     {
         return [
             [

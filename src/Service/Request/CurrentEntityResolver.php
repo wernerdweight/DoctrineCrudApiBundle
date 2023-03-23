@@ -12,21 +12,26 @@ use WernerDweight\Stringy\Stringy;
 
 class CurrentEntityResolver
 {
-    /** @var Stringy */
+    /**
+     * @var Stringy
+     */
     private $currentEntity;
 
-    /** @var Stringy */
+    /**
+     * @var Stringy
+     */
     private $currentEntityFQCN;
 
-    /** @var Request */
+    /**
+     * @var Request
+     */
     private $request;
 
-    /** @var EntityManagerInterface */
+    /**
+     * @var EntityManagerInterface
+     */
     private $entityManager;
 
-    /**
-     * CurrentEntityResolver constructor.
-     */
     public function __construct(RequestStack $requestStack, EntityManagerInterface $entityManager)
     {
         $request = $requestStack->getCurrentRequest();
@@ -57,7 +62,8 @@ class CurrentEntityResolver
     {
         if (null === $this->currentEntityFQCN) {
             $entityName = $this->getCurrentEntity();
-            $registeredNamespaces = $this->entityManager->getConfiguration()->getEntityNamespaces();
+            $registeredNamespaces = $this->entityManager->getConfiguration()
+                ->getEntityNamespaces();
             foreach ($registeredNamespaces as $namespace) {
                 $fqcn = \Safe\sprintf('%s\\%s', $namespace, $entityName);
                 if (class_exists($fqcn) && in_array(ApiEntityInterface::class, \Safe\class_implements($fqcn), true)) {

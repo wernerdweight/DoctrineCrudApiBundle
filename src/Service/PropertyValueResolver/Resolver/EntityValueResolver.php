@@ -14,12 +14,11 @@ use WernerDweight\RA\RA;
 
 final class EntityValueResolver implements PropertyValueResolverInterface
 {
-    /** @var EntityManagerInterface */
+    /**
+     * @var EntityManagerInterface
+     */
     private $entityManager;
 
-    /**
-     * EntityValueResolver constructor.
-     */
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
@@ -43,6 +42,34 @@ final class EntityValueResolver implements PropertyValueResolverInterface
     }
 
     /**
+     * @param RA|string|int $value
+     */
+    public function getPropertyValue($value, RA $configuration): ?ApiEntityInterface
+    {
+        $className = $this->getPropertyValueTargetEntity($configuration);
+
+        if ($value instanceof RA) {
+            return $this->resolve($value, $className);
+        }
+        return $this->resolve(new RA([
+            FilteringHelper::IDENTIFIER_FIELD_NAME => $value,
+        ]), $className);
+    }
+
+    /**
+     * @return (int|string)[]
+     */
+    public function getPropertyTypes(): array
+    {
+        return [
+            DoctrineCrudApiMappingTypeInterface::METADATA_TYPE_ENTITY,
+            ClassMetadataInfo::TO_ONE,
+            ClassMetadataInfo::ONE_TO_ONE,
+            ClassMetadataInfo::MANY_TO_ONE,
+        ];
+    }
+
+    /**
      * @return class-string
      */
     private function getPropertyValueTargetEntity(RA $configuration): string
@@ -60,31 +87,5 @@ final class EntityValueResolver implements PropertyValueResolverInterface
         /** @var class-string $className */
         $className = $configuration->getString(DoctrineCrudApiMappingTypeInterface::METADATA_CLASS);
         return $className;
-    }
-
-    /**
-     * @param RA|string|int $value
-     */
-    public function getPropertyValue($value, RA $configuration): ?ApiEntityInterface
-    {
-        $className = $this->getPropertyValueTargetEntity($configuration);
-
-        if ($value instanceof RA) {
-            return $this->resolve($value, $className);
-        }
-        return $this->resolve(new RA([FilteringHelper::IDENTIFIER_FIELD_NAME => $value]), $className);
-    }
-
-    /**
-     * @return (int|string)[]
-     */
-    public function getPropertyTypes(): array
-    {
-        return [
-            DoctrineCrudApiMappingTypeInterface::METADATA_TYPE_ENTITY,
-            ClassMetadataInfo::TO_ONE,
-            ClassMetadataInfo::ONE_TO_ONE,
-            ClassMetadataInfo::MANY_TO_ONE,
-        ];
     }
 }

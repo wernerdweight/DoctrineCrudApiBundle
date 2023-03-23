@@ -7,16 +7,29 @@ use WernerDweight\EnhancedException\Exception\AbstractEnhancedException;
 
 class MappingResolverException extends AbstractEnhancedException
 {
-    /** @var int */
+    /**
+     * @var int
+     */
     public const EXCEPTION_UNKNOWN_MAPPING_TYPE = 1;
-    /** @var int */
+
+    /**
+     * @var int
+     */
     public const EXCEPTION_MISSING_MAPPING_TYPE = 2;
-    /** @var int */
+
+    /**
+     * @var int
+     */
     public const EXCEPTION_MISSING_TARGET_ENTITY = 3;
-    /** @var int */
+
+    /**
+     * @var int
+     */
     public const EXCEPTION_UNKNOWN_RELATED_ENTITY = 4;
 
-    /** @var string[] */
+    /**
+     * @var string[]
+     */
     protected static $messages = [
         self::EXCEPTION_UNKNOWN_MAPPING_TYPE => '%s is not a valid mapping type!',
         self::EXCEPTION_MISSING_MAPPING_TYPE => 'Mapping type is missing from entity mapping!',

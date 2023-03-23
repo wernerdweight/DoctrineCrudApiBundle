@@ -12,7 +12,9 @@ use WernerDweight\Stringy\Stringy;
 
 class DriverFactory
 {
-    /** @var RA */
+    /**
+     * @var RA
+     */
     private $drivers;
 
     /**

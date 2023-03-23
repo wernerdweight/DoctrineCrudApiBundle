@@ -3,7 +3,7 @@ DoctrineCrudApiBundle
 
 CRUD API powered by Doctrine mapping for Symfony
 
-[![Build Status](https://travis-ci.org/wernerdweight/DoctrineCrudApiBundle.svg?branch=master)](https://travis-ci.org/wernerdweight/DoctrineCrudApiBundle)
+[![Build Status](https://app.travis-ci.com/wernerdweight/DoctrineCrudApiBundle.svg?branch=master)](https://app.travis-ci.com/wernerdweight/DoctrineCrudApiBundle)
 [![Latest Stable Version](https://poser.pugx.org/wernerdweight/doctrine-crud-api-bundle/v/stable)](https://packagist.org/packages/wernerdweight/doctrine-crud-api-bundle)
 [![Total Downloads](https://poser.pugx.org/wernerdweight/doctrine-crud-api-bundle/downloads)](https://packagist.org/packages/wernerdweight/doctrine-crud-api-bundle)
 [![License](https://poser.pugx.org/wernerdweight/doctrine-crud-api-bundle/license)](https://packagist.org/packages/wernerdweight/doctrine-crud-api-bundle)
@@ -61,47 +61,36 @@ If used with `payload=["argument1", "argument2"]`, the arguments provided will b
 
 **Warning: Entity must implement ApiEntityInterface to be available to the API!**
 
-#### Example using annotations:
+#### Example using attributes:
 
 ```php
 use Doctrine\ORM\Mapping as ORM;
 use WernerDweight\DoctrineCrudApiBundle\Entity\ApiEntityInterface;
 use WernerDweight\DoctrineCrudApiBundle\Mapping\Annotation as WDS;
 
-/**
-* @ORM\Table(name="app_artist")
-* @ORM\Entity(repositoryClass="App\Repository\ArtistRepository")
-* @WDS\Accessible()
-*/
+#[ORM\Table(name: "app_artist")]
+#[ORM\Entity(repositoryClass: "App\Repository\ArtistRepository")]
+#[WDS\Accessible()]
 class Artist implements ApiEntityInterface
 {
-   /**
-    * @var string
-    *
-    * @ORM\Column(name="id", type="guid")
-    * @ORM\Id
-    * @ORM\GeneratedValue(strategy="UUID")
-    */
-   private $id;
+   #[ORM\Column(name: "id", type: "guid")]
+   #[ORM\Id]
+   #[ORM\GeneratedValue(strategy: "UUID")]
+   private string $id;
 
-   /**
-    * @var string
-    *
-    * @ORM\Column(name="name", type="string", nullable=false)
-    * @WDS\Listable(default=true)
-    * @WDS\Creatable()
-    * @WDS\Updatable()
-    */
-   private $name;
+   #[ORM\Column(name: "name", type: "string", nullable: false)]
+   #[WDS\Listable(default: true)]
+   #[WDS\Creatable()]
+   #[WDS\Updatable()]
+   private string $name;
 
    /**
     * @var ArrayCollection|PersistentCollection
-    *
-    * @ORM\OneToMany(targetEntity="App\Entity\Track", mappedBy="artist")
-    * @WDS\Listable(default=true)
-    * @WDS\Creatable(nested=true)
-    * @WDS\Updatable(nested=true)
     */
+   #[ORM\OneToMany(targetEntity: "App\Entity\Track", mappedBy: "artist")]
+   #[WDS\Listable(default: true)]
+   #[WDS\Creatable(nested: true)]
+   #[WDS\Updatable(nested: true)]
    private $tracks;
 
    ...

@@ -8,12 +8,11 @@ use WernerDweight\RA\RA;
 
 class ManyFormatter
 {
-    /** @var Formatter */
+    /**
+     * @var Formatter
+     */
     private $formatter;
 
-    /**
-     * ManyFormatter constructor.
-     */
     public function __construct(Formatter $formatter)
     {
         $this->formatter = $formatter;

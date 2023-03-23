@@ -11,25 +11,36 @@ use WernerDweight\Stringy\Stringy;
 
 class QueryBuilderDecorator
 {
-    /** @var string */
+    /**
+     * @var string
+     */
     public const DOCTRINE_TARGET_ENTITY = 'targetEntity';
-    /** @var string */
-    public const AGGREGATE_PREFIX = '_aggregate';
-    /** @var string */
-    public const AGGREGATE_FUNCTION_SEPARATOR = '_';
-
-    /** @var FilteringDecorator */
-    private $filteringDecorator;
-
-    /** @var FilteringHelper */
-    private $filteringHelper;
-
-    /** @var RelationJoiner */
-    private $relationJoiner;
 
     /**
-     * QueryBuilderDecorator constructor.
+     * @var string
      */
+    public const AGGREGATE_PREFIX = '_aggregate';
+
+    /**
+     * @var string
+     */
+    public const AGGREGATE_FUNCTION_SEPARATOR = '_';
+
+    /**
+     * @var FilteringDecorator
+     */
+    private $filteringDecorator;
+
+    /**
+     * @var FilteringHelper
+     */
+    private $filteringHelper;
+
+    /**
+     * @var RelationJoiner
+     */
+    private $relationJoiner;
+
     public function __construct(
         FilteringDecorator $filteringDecorator,
         FilteringHelper $filteringHelper,
@@ -40,9 +51,6 @@ class QueryBuilderDecorator
         $this->relationJoiner = $relationJoiner;
     }
 
-    /**
-     * @return QueryBuilderDecorator
-     */
     public function applyFiltering(QueryBuilder $queryBuilder, RA $filterData): self
     {
         if (true === $filterData->hasKey(ParameterEnum::FILTER_CONDITIONS)) {
@@ -59,9 +67,6 @@ class QueryBuilderDecorator
         return $this;
     }
 
-    /**
-     * @return QueryBuilderDecorator
-     */
     public function applyOrdering(QueryBuilder $queryBuilder, RA $orderings): self
     {
         $orderings->walk(function (RA $orderData) use ($queryBuilder): void {
@@ -87,9 +92,6 @@ class QueryBuilderDecorator
         return $this;
     }
 
-    /**
-     * @return QueryBuilderDecorator
-     */
     public function applyPagination(QueryBuilder $queryBuilder, int $offset, int $limit): self
     {
         $queryBuilder
@@ -99,8 +101,6 @@ class QueryBuilderDecorator
     }
 
     /**
-     * @return QueryBuilderDecorator
-     *
      * @throws \Safe\Exceptions\PcreException
      * @throws \Safe\Exceptions\StringsException
      */
@@ -115,9 +115,6 @@ class QueryBuilderDecorator
         return $this;
     }
 
-    /**
-     * @return QueryBuilderDecorator
-     */
     public function applyAggregates(QueryBuilder $queryBuilder, RA $aggregates): self
     {
         $aggregates->walk(function (RA $aggregateData) use ($queryBuilder): void {

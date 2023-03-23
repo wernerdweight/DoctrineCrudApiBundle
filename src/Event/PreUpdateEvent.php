@@ -8,15 +8,16 @@ use WernerDweight\DoctrineCrudApiBundle\Entity\ApiEntityInterface;
 
 class PreUpdateEvent extends Event
 {
-    /** @var string */
+    /**
+     * @var string
+     */
     public const NAME = 'wds.doctrine_crud_api_bundle.item.pre_update';
 
-    /** @var ApiEntityInterface */
+    /**
+     * @var ApiEntityInterface
+     */
     private $item;
 
-    /**
-     * PreUpdateEvent constructor.
-     */
     public function __construct(ApiEntityInterface $item)
     {
         $this->item = $item;

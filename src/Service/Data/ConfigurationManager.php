@@ -3,42 +3,32 @@ declare(strict_types=1);
 
 namespace WernerDweight\DoctrineCrudApiBundle\Service\Data;
 
-use Doctrine\Common\Cache\Cache;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadataFactory;
 use WernerDweight\DoctrineCrudApiBundle\DTO\DoctrineCrudApiMetadata;
 use WernerDweight\DoctrineCrudApiBundle\Entity\ApiEntityInterface;
 use WernerDweight\DoctrineCrudApiBundle\Exception\ConfigurationManagerException;
-use WernerDweight\DoctrineCrudApiBundle\Mapping\MetadataFactory;
 use WernerDweight\DoctrineCrudApiBundle\Mapping\Type\DoctrineCrudApiMappingTypeInterface;
 use WernerDweight\RA\RA;
 use WernerDweight\Stringy\Stringy;
 
 class ConfigurationManager
 {
-    /** @var string */
+    /**
+     * @var string
+     */
     private const PROXY_PREFIX = 'Proxies\\__CG__\\';
 
-    /** @var Cache|null */
-    private $cacheDriver;
-
-    /** @var RA */
+    /**
+     * @var RA
+     */
     private $configuration;
 
-    /**
-     * ConfigurationManager constructor.
-     */
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct()
     {
         /** @var ClassMetadataFactory $metadataFactory */
-        $metadataFactory = $entityManager->getMetadataFactory();
-        $this->cacheDriver = $metadataFactory->getCacheDriver();
         $this->configuration = new RA();
     }
 
-    /**
-     * @return ConfigurationManager
-     */
     public function setConfiguration(string $class, DoctrineCrudApiMetadata $metadata): self
     {
         $this->configuration->set($class, $metadata);
@@ -52,22 +42,13 @@ class ConfigurationManager
     public function getConfigurationForEntityClass(string $class): DoctrineCrudApiMetadata
     {
         if (true !== $this->configuration->hasKey($class)) {
-            if (null !== $this->cacheDriver) {
-                $cached = $this->cacheDriver->fetch(
-                    \Safe\sprintf('%s\\$%s', $class, MetadataFactory::CACHE_NAMESPACE)
-                );
-                if ($cached instanceof DoctrineCrudApiMetadata) {
-                    return $this
-                        ->setConfiguration($class, $cached)
-                        ->getConfigurationForEntityClass($class);
-                }
-            }
             throw new ConfigurationManagerException(
                 ConfigurationManagerException::EXCEPTION_NO_CONFIGURATION_FOR_ENTITY,
                 [
-                $class,
-            
-            ]);
+                    $class,
+
+                ]
+            );
         }
 
         /** @var DoctrineCrudApiMetadata|null $configuration */
@@ -76,9 +57,10 @@ class ConfigurationManager
             throw new ConfigurationManagerException(
                 ConfigurationManagerException::EXCEPTION_INVALID_CONFIGURATION_FOR_ENTITY,
                 [
-                $class,
-            
-            ]);
+                    $class,
+
+                ]
+            );
         }
         return $configuration;
     }
@@ -103,6 +85,6 @@ class ConfigurationManager
             ->set(DoctrineCrudApiMappingTypeInterface::UPDATABLE, new RA())
             ->set(DoctrineCrudApiMappingTypeInterface::UPDATABLE_NESTED, new RA())
             ->set(DoctrineCrudApiMappingTypeInterface::METADATA, new RA())
-            ;
+        ;
     }
 }

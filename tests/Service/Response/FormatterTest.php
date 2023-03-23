@@ -16,32 +16,6 @@ use WernerDweight\RA\RA;
 class FormatterTest extends DoctrineMetadataKernelTestCase
 {
     /**
-     * @throws \WernerDweight\RA\Exception\RAException
-     */
-    private function prepareRequest(?RA $responseStructure, string $prefix): void
-    {
-        /** @var RequestStack $requestStack */
-        $requestStack = self::$container->get(RequestStack::class);
-        $requestStack->push(
-            new Request(
-                [
-                    'responseStructure' => null !== $responseStructure
-                        ? $responseStructure->getRA('article')->toArray(RA::RECURSIVE)
-                        : null,
-                ],
-                [],
-                [
-                    'entityName' => trim($prefix, '.'),
-                ]
-            )
-        );
-
-        /** @var ParameterResolver $parameterResolver */
-        $parameterResolver = self::$container->get(ParameterResolver::class);
-        $parameterResolver->resolveList();
-    }
-
-    /**
      * @dataProvider provideValues
      */
     public function testFormat(
@@ -51,8 +25,9 @@ class FormatterTest extends DoctrineMetadataKernelTestCase
         string $prefix
     ): void {
         $this->prepareRequest($responseStructure, $prefix);
+        $container = static::getContainer();
         /** @var Formatter $formatter */
-        $formatter = self::$container->get(Formatter::class);
+        $formatter = $container->get(Formatter::class);
         $value = $formatter->format($item, $responseStructure, $prefix);
         $this->assertEquals($expected, $value);
     }
@@ -60,7 +35,7 @@ class FormatterTest extends DoctrineMetadataKernelTestCase
     /**
      * @return mixed[]
      */
-    public function provideValues(): array
+    public static function provideValues(): array
     {
         return [
             [
@@ -86,5 +61,31 @@ class FormatterTest extends DoctrineMetadataKernelTestCase
                 'article.',
             ],
         ];
+    }
+
+    /**
+     * @throws \WernerDweight\RA\Exception\RAException
+     */
+    private function prepareRequest(?RA $responseStructure, string $prefix): void
+    {
+        $container = static::getContainer();
+        /** @var RequestStack $requestStack */
+        $requestStack = $container->get(RequestStack::class);
+        $requestStack->push(
+            new Request(
+                [
+                    'responseStructure' => $responseStructure?->getRA('article')
+                        ->toArray(RA::RECURSIVE),
+                ],
+                [],
+                [
+                    'entityName' => trim($prefix, '.'),
+                ]
+            )
+        );
+
+        /** @var ParameterResolver $parameterResolver */
+        $parameterResolver = $container->get(ParameterResolver::class);
+        $parameterResolver->resolveList();
     }
 }

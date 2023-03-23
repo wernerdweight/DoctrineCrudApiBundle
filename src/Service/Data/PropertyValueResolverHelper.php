@@ -17,20 +17,26 @@ use WernerDweight\RA\RA;
 
 class PropertyValueResolverHelper
 {
-    /** @var string */
+    /**
+     * @var string
+     */
     private const ROUTE_KEY = '_route';
-    /** @var string */
-    private const UPDATE_ROUTE_NAME = 'wds_doctrine_crud_api_update';
-
-    /** @var DoctrineCrudApiEventDispatcher */
-    private $eventDispatcher;
-
-    /** @var Request */
-    private $request;
 
     /**
-     * PropertyValueResolverHelper constructor.
+     * @var string
      */
+    private const UPDATE_ROUTE_NAME = 'wds_doctrine_crud_api_update';
+
+    /**
+     * @var DoctrineCrudApiEventDispatcher
+     */
+    private $eventDispatcher;
+
+    /**
+     * @var Request
+     */
+    private $request;
+
     public function __construct(DoctrineCrudApiEventDispatcher $eventDispatcher, RequestStack $requestStack)
     {
         $this->eventDispatcher = $eventDispatcher;

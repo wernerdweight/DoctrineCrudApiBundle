@@ -5,7 +5,7 @@ namespace WernerDweight\DoctrineCrudApiBundle\Service\Response;
 
 class JsonSerializableDateTime extends \DateTime implements \JsonSerializable
 {
-    public function jsonSerialize()
+    public function jsonSerialize(): string
     {
         return $this->format('c');
     }

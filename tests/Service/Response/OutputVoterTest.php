@@ -32,7 +32,7 @@ class OutputVoterTest extends TestCase
     /**
      * @return mixed[]
      */
-    public function provideValues(): array
+    public static function provideValues(): array
     {
         $metadata = DoctrineCrudApiMetadataFixtures::createArticleMetadata();
         $responseStructure = DoctrineCrudApiResponseStructureFixtures::createArticleResponseStructure();

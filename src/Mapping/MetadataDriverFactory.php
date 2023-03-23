@@ -17,21 +17,26 @@ use WernerDweight\Stringy\Stringy;
  */
 class MetadataDriverFactory
 {
-    /** @var EntityManagerInterface */
+    /**
+     * @var EntityManagerInterface
+     */
     private $entityManager;
 
-    /** @var DriverFactory */
+    /**
+     * @var DriverFactory
+     */
     private $driverFactory;
 
-    /** @var RegularDriverFactory */
+    /**
+     * @var RegularDriverFactory
+     */
     private $regularDriverFactory;
 
-    /** @var DoctrineCrudApiDriverInterface|null */
+    /**
+     * @var DoctrineCrudApiDriverInterface|null
+     */
     private $driver;
 
-    /**
-     * MetadataDriverFactory constructor.
-     */
     public function __construct(
         EntityManagerInterface $entityManager,
         DriverFactory $driverFactory,
@@ -40,6 +45,24 @@ class MetadataDriverFactory
         $this->entityManager = $entityManager;
         $this->driverFactory = $driverFactory;
         $this->regularDriverFactory = $regularDriverFactory;
+    }
+
+    /**
+     * @throws \Doctrine\Common\Annotations\AnnotationException
+     * @throws \Doctrine\ORM\ORMException
+     * @throws \WernerDweight\RA\Exception\RAException
+     */
+    public function getDriver(): DoctrineCrudApiDriverInterface
+    {
+        if (null === $this->driver) {
+            $implementation = $this->entityManager->getConfiguration()
+                ->getMetadataDriverImpl();
+            if (null === $implementation) {
+                throw new MetadataFactoryException(MetadataFactoryException::UNKNOWN_DEFAULT_DRIVER_IMPLEMENTATION);
+            }
+            $this->driver = $this->getCustomDriver($implementation);
+        }
+        return $this->driver;
     }
 
     /**
@@ -76,22 +99,5 @@ class MetadataDriverFactory
         }
 
         return $this->regularDriverFactory->getRegularDriver($mappingDriver, $shortDriverName);
-    }
-
-    /**
-     * @throws \Doctrine\Common\Annotations\AnnotationException
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \WernerDweight\RA\Exception\RAException
-     */
-    public function getDriver(): DoctrineCrudApiDriverInterface
-    {
-        if (null === $this->driver) {
-            $implementation = $this->entityManager->getConfiguration()->getMetadataDriverImpl();
-            if (null === $implementation) {
-                throw new MetadataFactoryException(MetadataFactoryException::UNKNOWN_DEFAULT_DRIVER_IMPLEMENTATION);
-            }
-            $this->driver = $this->getCustomDriver($implementation);
-        }
-        return $this->driver;
     }
 }

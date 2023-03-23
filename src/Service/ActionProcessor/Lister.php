@@ -11,18 +11,21 @@ use WernerDweight\RA\RA;
 
 class Lister
 {
-    /** @var ParameterResolver */
+    /**
+     * @var ParameterResolver
+     */
     private $parameterResolver;
 
-    /** @var DataManager */
+    /**
+     * @var DataManager
+     */
     private $dataManager;
 
-    /** @var ListingFormatter */
+    /**
+     * @var ListingFormatter
+     */
     private $formatter;
 
-    /**
-     * Lister constructor.
-     */
     public function __construct(
         ParameterResolver $parameterResolver,
         DataManager $dataManager,
@@ -31,6 +34,30 @@ class Lister
         $this->parameterResolver = $parameterResolver;
         $this->dataManager = $dataManager;
         $this->formatter = $formatter;
+    }
+
+    /**
+     * @throws \Safe\Exceptions\PcreException
+     * @throws \Safe\Exceptions\StringsException
+     * @throws \WernerDweight\RA\Exception\RAException
+     */
+    public function getItems(): RA
+    {
+        $this->parameterResolver->resolveList();
+        $items = $this->fetch();
+        return $this->formatter->formatListing($items);
+    }
+
+    /**
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     * @throws \Safe\Exceptions\PcreException
+     * @throws \Safe\Exceptions\StringsException
+     * @throws \WernerDweight\RA\Exception\RAException
+     */
+    public function getItemCount(): int
+    {
+        $this->parameterResolver->resolveList();
+        return $this->fetchCount();
     }
 
     /**
@@ -55,18 +82,6 @@ class Lister
     }
 
     /**
-     * @throws \Safe\Exceptions\PcreException
-     * @throws \Safe\Exceptions\StringsException
-     * @throws \WernerDweight\RA\Exception\RAException
-     */
-    public function getItems(): RA
-    {
-        $this->parameterResolver->resolveList();
-        $items = $this->fetch();
-        return $this->formatter->formatListing($items);
-    }
-
-    /**
      * @throws \Doctrine\ORM\NonUniqueResultException
      * @throws \Safe\Exceptions\PcreException
      * @throws \Safe\Exceptions\StringsException
@@ -77,17 +92,5 @@ class Lister
         $filter = $this->parameterResolver->getRA(ParameterEnum::FILTER);
         $groupBy = $this->parameterResolver->getRAOrNull(ParameterEnum::GROUP_BY);
         return $this->dataManager->getCount($filter, $groupBy);
-    }
-
-    /**
-     * @throws \Doctrine\ORM\NonUniqueResultException
-     * @throws \Safe\Exceptions\PcreException
-     * @throws \Safe\Exceptions\StringsException
-     * @throws \WernerDweight\RA\Exception\RAException
-     */
-    public function getItemCount(): int
-    {
-        $this->parameterResolver->resolveList();
-        return $this->fetchCount();
     }
 }

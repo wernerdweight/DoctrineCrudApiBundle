@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace WernerDweight\DoctrineCrudApiBundle\Service\PropertyValueResolver\Resolver;
 
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Safe\DateTime;
 use WernerDweight\DoctrineCrudApiBundle\Exception\DateTimeValueResolverException;
 use WernerDweight\DoctrineCrudApiBundle\Service\Request\ParameterEnum;
@@ -45,11 +45,15 @@ final class DateTimeValueResolver implements PropertyValueResolverInterface
     public function getPropertyTypes(): array
     {
         return [
-            Type::DATE,
-            Type::DATETIME,
-            Type::DATETIMETZ,
-            Type::DATEINTERVAL,
-            Type::TIME,
+            Types::DATE_IMMUTABLE,
+            Types::DATE_MUTABLE,
+            Types::DATETIME_IMMUTABLE,
+            Types::DATETIME_MUTABLE,
+            Types::DATETIMETZ_IMMUTABLE,
+            Types::DATETIMETZ_MUTABLE,
+            Types::DATEINTERVAL,
+            Types::TIME_IMMUTABLE,
+            Types::TIME_MUTABLE,
         ];
     }
 }

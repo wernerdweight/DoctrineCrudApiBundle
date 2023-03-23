@@ -8,15 +8,16 @@ use WernerDweight\DoctrineCrudApiBundle\Entity\ApiEntityInterface;
 
 class PreValidateEvent extends Event
 {
-    /** @var string */
+    /**
+     * @var string
+     */
     public const NAME = 'wds.doctrine_crud_api_bundle.item.pre_validate';
 
-    /** @var ApiEntityInterface */
+    /**
+     * @var ApiEntityInterface
+     */
     private $item;
 
-    /**
-     * PrePersistEvent constructor.
-     */
     public function __construct(ApiEntityInterface $item)
     {
         $this->item = $item;

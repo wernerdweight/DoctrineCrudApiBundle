@@ -11,27 +11,36 @@ use WernerDweight\RA\RA;
 
 class ModifyHelper
 {
-    /** @var CurrentEntityResolver */
+    /**
+     * @var CurrentEntityResolver
+     */
     private $currentEntityResolver;
 
-    /** @var ConfigurationManager */
+    /**
+     * @var ConfigurationManager
+     */
     private $configurationManager;
 
-    /** @var PropertyValueResolverHelper */
+    /**
+     * @var PropertyValueResolverHelper
+     */
     private $propertyValueResolverHelper;
 
-    /** @var MappingResolver */
+    /**
+     * @var MappingResolver
+     */
     private $mappingResolver;
 
-    /** @var DataManager */
+    /**
+     * @var DataManager
+     */
     private $dataManager;
 
-    /** @var RA */
+    /**
+     * @var RA
+     */
     private $nestedItems;
 
-    /**
-     * CreateHelper constructor.
-     */
     public function __construct(
         CurrentEntityResolver $currentEntityResolver,
         ConfigurationManager $configurationManager,
@@ -46,40 +55,6 @@ class ModifyHelper
         $this->dataManager = $dataManager;
 
         $this->nestedItems = new RA();
-    }
-
-    /**
-     * @param mixed $value
-     *
-     * @throws \Safe\Exceptions\StringsException
-     * @throws \WernerDweight\RA\Exception\RAException
-     */
-    private function createNewEntity(
-        string $field,
-        $value,
-        DoctrineCrudApiMetadata $metadata,
-        RA $fieldMetadata
-    ): ApiEntityInterface {
-        $nestedClassName = $this->mappingResolver
-            ->getNestedCreatableClassName($field, $value, $metadata, $fieldMetadata);
-        $nestedItem = $this->create($value, $nestedClassName);
-        $this->nestedItems->push($nestedItem);
-        return $nestedItem;
-    }
-
-    /**
-     * @param mixed $value
-     *
-     * @throws \WernerDweight\RA\Exception\RAException
-     */
-    private function updateExistingEntity(
-        ApiEntityInterface $item,
-        $value,
-        DoctrineCrudApiMetadata $metadata,
-        string $field
-    ): ApiEntityInterface {
-        $nestedEntity = $this->mappingResolver->getNestedUpdatable($item, $metadata, $field, $value);
-        return $this->update($nestedEntity, $value);
     }
 
     /**
@@ -132,24 +107,6 @@ class ModifyHelper
      * @throws \Safe\Exceptions\StringsException
      * @throws \WernerDweight\RA\Exception\RAException
      */
-    private function setProperty(
-        ApiEntityInterface $item,
-        string $field,
-        RA $fieldValues,
-        DoctrineCrudApiMetadata $configuration
-    ): ApiEntityInterface {
-        if (true !== $fieldValues->hasKey($field)) {
-            return $item;
-        }
-        $value = $this->propertyValueResolverHelper->getPreSetValue($item, $field, $fieldValues->get($field));
-        $resolvedValue = $this->resolveValue($field, $value, $configuration);
-        return $this->propertyValueResolverHelper->setResolvedValue($field, $resolvedValue, $item);
-    }
-
-    /**
-     * @throws \Safe\Exceptions\StringsException
-     * @throws \WernerDweight\RA\Exception\RAException
-     */
     public function create(RA $values, ?string $itemClassName = null): ApiEntityInterface
     {
         if (null === $itemClassName) {
@@ -157,9 +114,10 @@ class ModifyHelper
         }
         $item = new $itemClassName();
         $metadata = $this->configurationManager->getConfigurationForEntityClass($itemClassName);
-        $metadata->getCreatableFields()->walk(function (string $field) use ($item, $values, $metadata): void {
-            $this->setProperty($item, $field, $values, $metadata);
-        });
+        $metadata->getCreatableFields()
+            ->walk(function (string $field) use ($item, $values, $metadata): void {
+                $this->setProperty($item, $field, $values, $metadata);
+            });
 
         return $item;
     }
@@ -170,9 +128,10 @@ class ModifyHelper
     public function update(ApiEntityInterface $item, RA $values): ApiEntityInterface
     {
         $metadata = $this->configurationManager->getConfigurationForEntity($item);
-        $metadata->getUpdatableFields()->walk(function (string $field) use ($item, $values, $metadata): void {
-            $this->setProperty($item, $field, $values, $metadata);
-        });
+        $metadata->getUpdatableFields()
+            ->walk(function (string $field) use ($item, $values, $metadata): void {
+                $this->setProperty($item, $field, $values, $metadata);
+            });
 
         return $item;
     }
@@ -185,5 +144,57 @@ class ModifyHelper
     public function getNestedItems(): RA
     {
         return $this->nestedItems;
+    }
+
+    /**
+     * @param mixed $value
+     *
+     * @throws \Safe\Exceptions\StringsException
+     * @throws \WernerDweight\RA\Exception\RAException
+     */
+    private function createNewEntity(
+        string $field,
+        $value,
+        DoctrineCrudApiMetadata $metadata,
+        RA $fieldMetadata
+    ): ApiEntityInterface {
+        $nestedClassName = $this->mappingResolver
+            ->getNestedCreatableClassName($field, $value, $metadata, $fieldMetadata);
+        $nestedItem = $this->create($value, $nestedClassName);
+        $this->nestedItems->push($nestedItem);
+        return $nestedItem;
+    }
+
+    /**
+     * @param mixed $value
+     *
+     * @throws \WernerDweight\RA\Exception\RAException
+     */
+    private function updateExistingEntity(
+        ApiEntityInterface $item,
+        $value,
+        DoctrineCrudApiMetadata $metadata,
+        string $field
+    ): ApiEntityInterface {
+        $nestedEntity = $this->mappingResolver->getNestedUpdatable($item, $metadata, $field, $value);
+        return $this->update($nestedEntity, $value);
+    }
+
+    /**
+     * @throws \Safe\Exceptions\StringsException
+     * @throws \WernerDweight\RA\Exception\RAException
+     */
+    private function setProperty(
+        ApiEntityInterface $item,
+        string $field,
+        RA $fieldValues,
+        DoctrineCrudApiMetadata $configuration
+    ): ApiEntityInterface {
+        if (true !== $fieldValues->hasKey($field)) {
+            return $item;
+        }
+        $value = $this->propertyValueResolverHelper->getPreSetValue($item, $field, $fieldValues->get($field));
+        $resolvedValue = $this->resolveValue($field, $value, $configuration);
+        return $this->propertyValueResolverHelper->setResolvedValue($field, $resolvedValue, $item);
     }
 }

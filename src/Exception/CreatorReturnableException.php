@@ -5,10 +5,14 @@ namespace WernerDweight\DoctrineCrudApiBundle\Exception;
 
 class CreatorReturnableException extends AbstractReturnableException
 {
-    /** @var int */
+    /**
+     * @var int
+     */
     public const INVALID_NESTING = 1;
 
-    /** @var string[] */
+    /**
+     * @var string[]
+     */
     protected static $messages = [
         self::INVALID_NESTING => 'Can\'t create nested entity!',
     ];

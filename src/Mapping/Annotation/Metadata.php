@@ -3,13 +3,17 @@ declare(strict_types=1);
 
 namespace WernerDweight\DoctrineCrudApiBundle\Mapping\Annotation;
 
+use Attribute;
 use Doctrine\Common\Annotations\Annotation;
+use Doctrine\ORM\Mapping\MappingAttribute;
 
 /**
  * @Annotation
+ * @NamedArgumentConstructor()
  * @Target("PROPERTY")
  */
-final class Metadata extends Annotation
+#[Attribute(Attribute::TARGET_PROPERTY)]
+final class Metadata implements MappingAttribute
 {
     /**
      * @Enum({"entity", "collection"})
@@ -18,9 +22,20 @@ final class Metadata extends Annotation
      */
     public $type;
 
-    /** @var string */
+    /**
+     * @var string
+     */
     public $class;
 
-    /** @var mixed[] */
+    /**
+     * @var mixed[]
+     */
     public $payload = [];
+
+    public function __construct(string $type, string $class, array $payload = [])
+    {
+        $this->type = $type;
+        $this->class = $class;
+        $this->payload = $payload;
+    }
 }

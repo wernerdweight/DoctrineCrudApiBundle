@@ -9,20 +9,17 @@ use WernerDweight\Stringy\Stringy;
 
 class RelationJoiner
 {
-    /** @var FilteringHelper */
+    /**
+     * @var FilteringHelper
+     */
     private $filteringHelper;
 
-    /**
-     * RelationJoiner constructor.
-     */
     public function __construct(FilteringHelper $filteringHelper)
     {
         $this->filteringHelper = $filteringHelper;
     }
 
     /**
-     * @return RelationJoiner
-     *
      * @throws \Safe\Exceptions\PcreException
      * @throws \Safe\Exceptions\StringsException
      */

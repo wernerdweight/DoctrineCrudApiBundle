@@ -14,21 +14,6 @@ use WernerDweight\Stringy\Stringy;
 
 class ParameterValidatorTest extends DoctrineMetadataKernelTestCase
 {
-    private function prepareRequest(string $prefix = 'article'): void
-    {
-        /** @var RequestStack $requestStack */
-        $requestStack = self::$container->get(RequestStack::class);
-        $requestStack->push(
-            new Request(
-                [],
-                [],
-                [
-                    'entityName' => $prefix,
-                ]
-            )
-        );
-    }
-
     /**
      * @param mixed[]|null $filter
      *
@@ -37,8 +22,9 @@ class ParameterValidatorTest extends DoctrineMetadataKernelTestCase
     public function testValidateFilter(RA $expected, ?array $filter): void
     {
         $this->prepareRequest();
+        $container = static::getContainer();
         /** @var ParameterValidator $parameterValidator */
-        $parameterValidator = self::$container->get(ParameterValidator::class);
+        $parameterValidator = $container->get(ParameterValidator::class);
         $value = $parameterValidator->validateFilter($filter);
         $this->assertEquals($expected, $value);
     }
@@ -51,8 +37,9 @@ class ParameterValidatorTest extends DoctrineMetadataKernelTestCase
     public function testValidateOrderBy(RA $expected, ?array $orderBy): void
     {
         $this->prepareRequest();
+        $container = static::getContainer();
         /** @var ParameterValidator $parameterValidator */
-        $parameterValidator = self::$container->get(ParameterValidator::class);
+        $parameterValidator = $container->get(ParameterValidator::class);
         $value = $parameterValidator->validateOrderBy($orderBy);
         $this->assertEquals($expected, $value);
     }
@@ -65,8 +52,9 @@ class ParameterValidatorTest extends DoctrineMetadataKernelTestCase
     public function testValidateGroupBy(?RA $expected, ?array $groupBy): void
     {
         $this->prepareRequest();
+        $container = static::getContainer();
         /** @var ParameterValidator $parameterValidator */
-        $parameterValidator = self::$container->get(ParameterValidator::class);
+        $parameterValidator = $container->get(ParameterValidator::class);
         $value = $parameterValidator->validateGroupBy($groupBy);
         $this->assertEquals($expected, $value);
     }
@@ -79,8 +67,9 @@ class ParameterValidatorTest extends DoctrineMetadataKernelTestCase
     public function testValidateResponseStructure(?RA $expected, ?array $responseStructure, Stringy $entityName): void
     {
         $this->prepareRequest();
+        $container = static::getContainer();
         /** @var ParameterValidator $parameterValidator */
-        $parameterValidator = self::$container->get(ParameterValidator::class);
+        $parameterValidator = $container->get(ParameterValidator::class);
         $value = $parameterValidator->validateResponseStructure($responseStructure, $entityName);
         $this->assertEquals($expected, $value);
     }
@@ -93,8 +82,9 @@ class ParameterValidatorTest extends DoctrineMetadataKernelTestCase
     public function testValidateFields(RA $expected, ?array $fields): void
     {
         $this->prepareRequest();
+        $container = static::getContainer();
         /** @var ParameterValidator $parameterValidator */
-        $parameterValidator = self::$container->get(ParameterValidator::class);
+        $parameterValidator = $container->get(ParameterValidator::class);
         $value = $parameterValidator->validateFields($fields);
         $this->assertEquals($expected, $value);
     }
@@ -102,15 +92,20 @@ class ParameterValidatorTest extends DoctrineMetadataKernelTestCase
     /**
      * @return mixed[]
      */
-    public function provideFilterValues(): array
+    public static function provideFilterValues(): array
     {
         return [
             [new RA(), null],
             [new RA(), []],
-            [new RA(), ['unexpected' => 'value']],
+            [
+                new RA(), [
+                    'unexpected' => 'value',
+                ]],
             [
                 new RA(),
-                [ParameterEnum::FILTER_LOGIC => ParameterEnum::FILTER_LOGIC_OR],
+                [
+                    ParameterEnum::FILTER_LOGIC => ParameterEnum::FILTER_LOGIC_OR,
+                ],
             ],
             [
                 new RA([
@@ -161,7 +156,7 @@ class ParameterValidatorTest extends DoctrineMetadataKernelTestCase
     /**
      * @return mixed[]
      */
-    public function provideOrderByValues(): array
+    public static function provideOrderByValues(): array
     {
         return [
             [new RA(), null],
@@ -186,7 +181,7 @@ class ParameterValidatorTest extends DoctrineMetadataKernelTestCase
     /**
      * @return mixed[]
      */
-    public function provideGroupByValues(): array
+    public static function provideGroupByValues(): array
     {
         return [
             [null, null],
@@ -238,7 +233,7 @@ class ParameterValidatorTest extends DoctrineMetadataKernelTestCase
     /**
      * @return mixed[]
      */
-    public function provideResponseStructureValues(): array
+    public static function provideResponseStructureValues(): array
     {
         return [
             [null, null, new Stringy('')],
@@ -266,7 +261,7 @@ class ParameterValidatorTest extends DoctrineMetadataKernelTestCase
     /**
      * @return mixed[]
      */
-    public function provideFieldsValues(): array
+    public static function provideFieldsValues(): array
     {
         return [
             [new RA(), null],
@@ -286,5 +281,21 @@ class ParameterValidatorTest extends DoctrineMetadataKernelTestCase
                 ],
             ],
         ];
+    }
+
+    private function prepareRequest(string $prefix = 'article'): void
+    {
+        $container = static::getContainer();
+        /** @var RequestStack $requestStack */
+        $requestStack = $container->get(RequestStack::class);
+        $requestStack->push(
+            new Request(
+                [],
+                [],
+                [
+                    'entityName' => $prefix,
+                ]
+            )
+        );
     }
 }

@@ -10,63 +10,15 @@ use WernerDweight\Stringy\Stringy;
 
 class OutputVoter
 {
-    /** @var bool */
+    /**
+     * @var bool
+     */
     public const ALLOWED = true;
-    /** @var bool */
+
+    /**
+     * @var bool
+     */
     public const NOT_ALLOWED = false;
-
-    /**
-     * @param string|RA $value
-     */
-    private function isRegularValue($value): bool
-    {
-        return true === is_string($value) &&
-            ParameterEnum::FALSE_VALUE !== $value &&
-            ParameterEnum::TRUE_VALUE !== $value;
-    }
-
-    /**
-     * @param mixed $value
-     *
-     * @throws \Safe\Exceptions\PcreException
-     * @throws \Safe\Exceptions\StringsException
-     */
-    private function isValueAllowed(Stringy $field, $value): bool
-    {
-        return ParameterEnum::TRUE_VALUE === $value || $value instanceof RA || (
-            true === is_string($value) && $field->pregMatch(\Safe\sprintf('/\b%s\b/i', $value))
-        );
-    }
-
-    private function traverseResponseStructure(RA $responseStructure, Stringy $path): ?RA
-    {
-        $segments = new RA($path->explode(ParameterEnum::FIELD_SEPARATOR));
-        $reducedResponseStructure = $segments->reduce(
-            function (RA $carry, string $segment) use ($path, $responseStructure): RA {
-                if (true !== $carry->hasKey($segment)) {
-                    return new RA();
-                }
-                $value = $carry->get($segment);
-                if ($value instanceof RA) {
-                    return $value;
-                }
-                if (true === $this->isRegularValue($value)) {
-                    $value = new Stringy($value);
-                    $firstDotPosition = $path->getPositionOfSubstring(ParameterEnum::FIELD_SEPARATOR);
-                    if (null !== $firstDotPosition) {
-                        $value = (clone $path)->substring(0, $firstDotPosition)->concat(\Safe\sprintf('.%s', $value));
-                    }
-                    return $this->traverseResponseStructure($responseStructure, $value) ?? new RA();
-                }
-                return new RA();
-            },
-            $responseStructure
-        );
-        if (0 === $reducedResponseStructure->length()) {
-            return null;
-        }
-        return $reducedResponseStructure;
-    }
 
     /**
      * @throws \Safe\Exceptions\MbstringException
@@ -91,7 +43,8 @@ class OutputVoter
             $responseStructure = $this->traverseResponseStructure($responseStructure, $root);
         }
         if (null === $responseStructure) {
-            $responseStructure = $configuration->getDefaultListableFields()->fillKeys(ParameterEnum::TRUE_VALUE);
+            $responseStructure = $configuration->getDefaultListableFields()
+                ->fillKeys(ParameterEnum::TRUE_VALUE);
         }
 
         if (true === $responseStructure->hasKey((string)$key)) {
@@ -99,5 +52,59 @@ class OutputVoter
             return $this->isValueAllowed($field, $value);
         }
         return self::NOT_ALLOWED;
+    }
+
+    /**
+     * @param string|RA $value
+     */
+    private function isRegularValue($value): bool
+    {
+        return true === is_string($value) &&
+            ParameterEnum::FALSE_VALUE !== $value &&
+            ParameterEnum::TRUE_VALUE !== $value;
+    }
+
+    /**
+     * @param mixed $value
+     *
+     * @throws \Safe\Exceptions\PcreException
+     * @throws \Safe\Exceptions\StringsException
+     */
+    private function isValueAllowed(Stringy $field, $value): bool
+    {
+        return true === $value || ParameterEnum::TRUE_VALUE === $value || $value instanceof RA || (
+            true === is_string($value) && $field->pregMatch(\Safe\sprintf('/\b%s\b/i', $value))
+        );
+    }
+
+    private function traverseResponseStructure(RA $responseStructure, Stringy $path): ?RA
+    {
+        $segments = new RA($path->explode(ParameterEnum::FIELD_SEPARATOR));
+        $reducedResponseStructure = $segments->reduce(
+            function (RA $carry, string $segment) use ($path, $responseStructure): RA {
+                if (true !== $carry->hasKey($segment)) {
+                    return new RA();
+                }
+                $value = $carry->get($segment);
+                if ($value instanceof RA) {
+                    return $value;
+                }
+                if (true === $this->isRegularValue($value)) {
+                    $value = new Stringy($value);
+                    $firstDotPosition = $path->getPositionOfSubstring(ParameterEnum::FIELD_SEPARATOR);
+                    if (null !== $firstDotPosition) {
+                        $value = (clone $path)->substring(0, $firstDotPosition)
+                            ->concat(\Safe\sprintf('.%s', $value));
+                    }
+                    return $this->traverseResponseStructure($responseStructure, $value) ?? new RA();
+                }
+                return new RA();
+            },
+            $responseStructure
+        );
+        if (0 === $reducedResponseStructure->length()) {
+            return null;
+        }
+        return $reducedResponseStructure;
     }
 }

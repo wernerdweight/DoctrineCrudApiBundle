@@ -9,17 +9,6 @@ use WernerDweight\RA\RA;
 abstract class AbstractType implements DoctrineCrudApiMappingTypeInterface
 {
     /**
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     */
-    protected function readExtraConfiguration(
-        \SimpleXMLElement $propertyMapping,
-        \SimpleXMLElement $filteredMapping,
-        RA $config
-    ): RA {
-        return $config;
-    }
-
-    /**
      * @param \SimpleXMLElement $propertyMapping
      * @param \SimpleXMLElement $filteredMapping
      *
@@ -28,12 +17,24 @@ abstract class AbstractType implements DoctrineCrudApiMappingTypeInterface
     public function readConfiguration(object $propertyMapping, object $filteredMapping, RA $config): RA
     {
         $mappingType = $this->getType();
-        if (true === isset($filteredMapping->$mappingType)) {
+        if (true === isset($filteredMapping->{$mappingType})) {
             /** @var \SimpleXMLElement $attributes */
             $attributes = $propertyMapping->attributes();
-            $config->getRA($mappingType)->push((string)($attributes['name'] ?: $attributes['field']));
-            $config = $this->readExtraConfiguration($propertyMapping, $filteredMapping->$mappingType, $config);
+            $config->getRA($mappingType)
+                ->push((string)($attributes['name'] ?: $attributes['field']));
+            $config = $this->readExtraConfiguration($propertyMapping, $filteredMapping->{$mappingType}, $config);
         }
+        return $config;
+    }
+
+    /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    protected function readExtraConfiguration(
+        \SimpleXMLElement $propertyMapping,
+        \SimpleXMLElement $filteredMapping,
+        RA $config
+    ): RA {
         return $config;
     }
 }

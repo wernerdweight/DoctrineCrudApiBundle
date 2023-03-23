@@ -32,7 +32,7 @@ class ValueGetter
             return $item->{$field}(...$args);
         }
         if (true === property_exists($item, $field)) {
-            return $item->$field;
+            return $item->{$field};
         }
         throw new FormatterException(FormatterException::EXCEPTION_NO_PROPERTY_GETTER, [$field, get_class($item)]);
     }

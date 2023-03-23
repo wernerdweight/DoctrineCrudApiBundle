@@ -15,27 +15,36 @@ use WernerDweight\RA\RA;
 
 class Updater
 {
-    /** @var ParameterResolver */
+    /**
+     * @var ParameterResolver
+     */
     private $parameterResolver;
 
-    /** @var Formatter */
+    /**
+     * @var Formatter
+     */
     private $formatter;
 
-    /** @var DoctrineCrudApiEventDispatcher */
+    /**
+     * @var DoctrineCrudApiEventDispatcher
+     */
     private $eventDispatcher;
 
-    /** @var EntityManagerInterface */
+    /**
+     * @var EntityManagerInterface
+     */
     private $entityManager;
 
-    /** @var ItemValidator */
+    /**
+     * @var ItemValidator
+     */
     private $itemValidator;
 
-    /** @var ModifyHelper */
+    /**
+     * @var ModifyHelper
+     */
     private $modifyHelper;
 
-    /**
-     * Updater constructor.
-     */
     public function __construct(
         ParameterResolver $parameterResolver,
         Formatter $formatter,
@@ -71,9 +80,10 @@ class Updater
         $this->itemValidator->validate($item);
 
         $this->eventDispatcher->dispatchPreUpdate($item);
-        $this->modifyHelper->getNestedItems()->walk(function (ApiEntityInterface $nestedItem): void {
-            $this->entityManager->persist($nestedItem);
-        });
+        $this->modifyHelper->getNestedItems()
+            ->walk(function (ApiEntityInterface $nestedItem): void {
+                $this->entityManager->persist($nestedItem);
+            });
         $this->entityManager->flush();
 
         $this->eventDispatcher->dispatchPostUpdate($item);

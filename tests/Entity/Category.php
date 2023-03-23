@@ -10,44 +10,31 @@ use Doctrine\ORM\PersistentCollection;
 use WernerDweight\DoctrineCrudApiBundle\Entity\ApiEntityInterface;
 use WernerDweight\DoctrineCrudApiBundle\Mapping\Annotation as WDS;
 
-/**
- * Category.
- *
- * @ORM\Table(name="test_category")
- * @ORM\Entity()
- * @WDS\Accessible()
- */
+#[ORM\Table(name: 'test_category')]
+#[ORM\Entity()]
+#[WDS\Accessible()]
 final class Category implements ApiEntityInterface
 {
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue()
-     * @WDS\Listable(default=true)
-     */
-    private $id;
+    #[ORM\Column(name: 'id', type: 'integer')]
+    #[ORM\Id]
+    #[ORM\GeneratedValue()]
+    #[WDS\Listable(default: true)]
+    private int $id;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="title", type="string", nullable=false)
-     * @WDS\Listable(default=true)
-     * @WDS\Creatable()
-     * @WDS\Updatable()
-     */
-    private $title;
+    #[ORM\Column(name: 'title', type: 'string', nullable: false)]
+    #[WDS\Listable(default: true)]
+    #[WDS\Creatable()]
+    #[WDS\Updatable()]
+    private string $title;
 
     /**
      * @var ArrayCollection<int, Article>|PersistentCollection<int, Article>
-     *
-     * @ORM\OneToMany(targetEntity="Article", mappedBy="category")
-     * @WDS\Listable()
-     * @WDS\Creatable(nested=true)
-     * @WDS\Updatable(nested=true)
      */
-    private $articles;
+    #[ORM\OneToMany(targetEntity: Article::class, mappedBy: 'category')]
+    #[WDS\Listable()]
+    #[WDS\Creatable(nested: true)]
+    #[WDS\Updatable(nested: true)]
+    private Collection $articles;
 
     /**
      * Category constructor.

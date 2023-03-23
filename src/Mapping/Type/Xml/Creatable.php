@@ -8,10 +8,20 @@ use WernerDweight\RA\RA;
 
 final class Creatable extends AbstractType implements DoctrineCrudApiMappingTypeInterface
 {
-    /** @var string */
+    /**
+     * @var string
+     */
     private const ATTRIBUTE_NESTED = 'nested';
-    /** @var stirng[] */
+
+    /**
+     * @var stirng[]
+     */
     private const NESTED_TRUE_VALUES = ['true', '1'];
+
+    public function getType(): string
+    {
+        return DoctrineCrudApiMappingTypeInterface::CREATABLE;
+    }
 
     /**
      * @throws \WernerDweight\RA\Exception\RAException
@@ -32,10 +42,5 @@ final class Creatable extends AbstractType implements DoctrineCrudApiMappingType
                 ->push((string)($attributes['name'] ?: $attributes['field']));
         }
         return $config;
-    }
-
-    public function getType(): string
-    {
-        return DoctrineCrudApiMappingTypeInterface::CREATABLE;
     }
 }

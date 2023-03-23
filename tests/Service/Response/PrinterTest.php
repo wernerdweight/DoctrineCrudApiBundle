@@ -29,7 +29,7 @@ class PrinterTest extends TestCase
      *
      * @throws \Exception
      */
-    public function provideValues(): array
+    public static function provideValues(): array
     {
         return [
             ['null', null],

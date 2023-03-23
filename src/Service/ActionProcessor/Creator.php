@@ -15,27 +15,36 @@ use WernerDweight\RA\RA;
 
 class Creator
 {
-    /** @var ParameterResolver */
+    /**
+     * @var ParameterResolver
+     */
     private $parameterResolver;
 
-    /** @var Formatter */
+    /**
+     * @var Formatter
+     */
     private $formatter;
 
-    /** @var DoctrineCrudApiEventDispatcher */
+    /**
+     * @var DoctrineCrudApiEventDispatcher
+     */
     private $eventDispatcher;
 
-    /** @var EntityManagerInterface */
+    /**
+     * @var EntityManagerInterface
+     */
     private $entityManager;
 
-    /** @var ItemValidator */
+    /**
+     * @var ItemValidator
+     */
     private $itemValidator;
 
-    /** @var ModifyHelper */
+    /**
+     * @var ModifyHelper
+     */
     private $modifyHelper;
 
-    /**
-     * Creator constructor.
-     */
     public function __construct(
         ParameterResolver $parameterResolver,
         Formatter $formatter,
@@ -67,9 +76,10 @@ class Creator
 
         $this->eventDispatcher->dispatchPrePersist($item);
         $this->entityManager->persist($item);
-        $this->modifyHelper->getNestedItems()->walk(function (ApiEntityInterface $nestedItem): void {
-            $this->entityManager->persist($nestedItem);
-        });
+        $this->modifyHelper->getNestedItems()
+            ->walk(function (ApiEntityInterface $nestedItem): void {
+                $this->entityManager->persist($nestedItem);
+            });
         $this->entityManager->flush();
 
         $this->eventDispatcher->dispatchPostCreate($item);

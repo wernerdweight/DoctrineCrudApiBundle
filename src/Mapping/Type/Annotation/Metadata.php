@@ -19,13 +19,14 @@ final class Metadata extends AbstractType implements DoctrineCrudApiMappingTypeI
     public function readConfiguration(object $propertyName, object $annotation, RA $config): RA
     {
         $mappingType = $this->getType();
-        $config->getRA($mappingType)->set(
-            (string)$propertyName,
-            (new RA())
-                ->set(DoctrineCrudApiMappingTypeInterface::METADATA_TYPE, $annotation->type)
-                ->set(DoctrineCrudApiMappingTypeInterface::METADATA_CLASS, $annotation->class)
-                ->set(DoctrineCrudApiMappingTypeInterface::METADATA_PAYLOAD, $annotation->payload)
-        );
+        $config->getRA($mappingType)
+            ->set(
+                (string)$propertyName,
+                (new RA())
+                    ->set(DoctrineCrudApiMappingTypeInterface::METADATA_TYPE, $annotation->type)
+                    ->set(DoctrineCrudApiMappingTypeInterface::METADATA_CLASS, $annotation->class)
+                    ->set(DoctrineCrudApiMappingTypeInterface::METADATA_PAYLOAD, $annotation->payload)
+            );
         return $config;
     }
 

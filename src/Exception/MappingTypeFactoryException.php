@@ -7,10 +7,14 @@ use WernerDweight\EnhancedException\Exception\AbstractEnhancedException;
 
 class MappingTypeFactoryException extends AbstractEnhancedException
 {
-    /** @var int */
+    /**
+     * @var int
+     */
     public const INVALID_MAPPING_TYPE = 1;
 
-    /** @var string[] */
+    /**
+     * @var string[]
+     */
     protected static $messages = [
         self::INVALID_MAPPING_TYPE => 'No mapping processor for type %s found!',
     ];

@@ -13,19 +13,123 @@ use WernerDweight\Stringy\Stringy;
 
 class ParameterValidator
 {
-    /** @var RepositoryManager */
+    /**
+     * @var RepositoryManager
+     */
     private $repositoryManager;
 
-    /** @var MappingResolver */
+    /**
+     * @var MappingResolver
+     */
     private $mappingResolver;
 
-    /**
-     * ParameterValidator constructor.
-     */
     public function __construct(RepositoryManager $repositoryManager, MappingResolver $mappingResolver)
     {
         $this->repositoryManager = $repositoryManager;
         $this->mappingResolver = $mappingResolver;
+    }
+
+    /**
+     * @param mixed[]|null $filter
+     */
+    public function validateFilter(?array $filter): RA
+    {
+        if (null === $filter || true !== isset($filter[ParameterEnum::FILTER_CONDITIONS])) {
+            return new RA();
+        }
+
+        $conditions = $this->validateFilteringConditions(
+            new RA($filter[ParameterEnum::FILTER_CONDITIONS], RA::RECURSIVE)
+        );
+
+        if (0 === $conditions->length()) {
+            return new RA();
+        }
+
+        return new RA([
+            ParameterEnum::FILTER_LOGIC => $this->validateFilteringLogic(
+                $filter[ParameterEnum::FILTER_LOGIC] ?? ParameterEnum::FILTER_LOGIC_AND
+            ),
+            ParameterEnum::FILTER_CONDITIONS => $conditions,
+        ]);
+    }
+
+    /**
+     * @param string[]|null $orderBy
+     */
+    public function validateOrderBy(?array $orderBy): RA
+    {
+        if (null === $orderBy) {
+            return new RA();
+        }
+
+        $orderBy = new RA($orderBy, RA::RECURSIVE);
+        return $orderBy->map(function (RA $entry): RA {
+            $direction = $this->validateDirection(
+                (
+                    true === $entry->hasKey(ParameterEnum::ORDER_BY_DIRECTION)
+                        ? $entry->getStringOrNull(ParameterEnum::ORDER_BY_DIRECTION)
+                        : null
+                ) ?? ParameterEnum::ORDER_BY_DIRECTION_ASC
+            );
+            $field = new Stringy($entry->getString(ParameterEnum::ORDER_BY_FIELD));
+            if (null === $field->getPositionOfSubstring(ParameterEnum::FIELD_SEPARATOR)) {
+                $field = new Stringy(
+                    \Safe\sprintf('%s%s%s', DataManager::ROOT_ALIAS, ParameterEnum::FIELD_SEPARATOR, $field)
+                );
+            }
+            return new RA(compact('field', 'direction'));
+        });
+    }
+
+    /**
+     * @param string[]|null $groupBy
+     */
+    public function validateGroupBy(?array $groupBy): ?RA
+    {
+        if (null === $groupBy) {
+            return null;
+        }
+
+        $groupBy = new RA($groupBy, RA::RECURSIVE);
+        return $groupBy->map(function (RA $entry): RA {
+            $direction = $this->validateDirection(
+                $entry->getStringOrNull(ParameterEnum::GROUP_BY_DIRECTION) ?? ParameterEnum::GROUP_BY_DIRECTION_ASC
+            );
+            $field = new Stringy($entry->getString(ParameterEnum::GROUP_BY_FIELD));
+            if (null === $field->getPositionOfSubstring(ParameterEnum::FIELD_SEPARATOR)) {
+                $field = new Stringy(
+                    \Safe\sprintf('%s%s%s', DataManager::ROOT_ALIAS, ParameterEnum::FIELD_SEPARATOR, $field)
+                );
+            }
+            $aggregates = (
+                $entry->hasKey(ParameterEnum::GROUP_BY_AGGREGATES)
+                    ? $this->validateAggregates($entry->getRAOrNull(ParameterEnum::GROUP_BY_AGGREGATES))
+                    : null
+            ) ?? new RA();
+            return new RA(compact('field', 'direction', 'aggregates'));
+        });
+    }
+
+    /**
+     * @param mixed[]|null $responseStructure
+     */
+    public function validateResponseStructure(?array $responseStructure, Stringy $entityName): ?RA
+    {
+        if (null === $responseStructure) {
+            return null;
+        }
+        return new RA([
+            (string)$entityName => $responseStructure,
+        ], RA::RECURSIVE);
+    }
+
+    /**
+     * @param string[]|null $fields
+     */
+    public function validateFields(?array $fields): RA
+    {
+        return new RA($fields ?? [], RA::RECURSIVE);
     }
 
     private function validateFilteringOperator(string $operator): string
@@ -106,7 +210,7 @@ class ParameterValidator
     private function validateFilteringConditions(RA $conditions): RA
     {
         return $conditions->map(function ($condition): RA {
-            if (!$condition instanceof RA) {
+            if (! $condition instanceof RA) {
                 throw new FilteringException(FilteringException::EXCEPTION_INVALID_CONDITION);
             }
             if (true === $condition->hasKey(ParameterEnum::FILTER_CONDITIONS)) {
@@ -155,59 +259,6 @@ class ParameterValidator
         return $logic;
     }
 
-    /**
-     * @param mixed[]|null $filter
-     */
-    public function validateFilter(?array $filter): RA
-    {
-        if (null === $filter || true !== isset($filter[ParameterEnum::FILTER_CONDITIONS])) {
-            return new RA();
-        }
-
-        $conditions = $this->validateFilteringConditions(
-            new RA($filter[ParameterEnum::FILTER_CONDITIONS], RA::RECURSIVE)
-        );
-
-        if (0 === $conditions->length()) {
-            return new RA();
-        }
-
-        return new RA([
-            ParameterEnum::FILTER_LOGIC => $this->validateFilteringLogic(
-                $filter[ParameterEnum::FILTER_LOGIC] ?? ParameterEnum::FILTER_LOGIC_AND
-            ),
-            ParameterEnum::FILTER_CONDITIONS => $conditions,
-        ]);
-    }
-
-    /**
-     * @param string[]|null $orderBy
-     */
-    public function validateOrderBy(?array $orderBy): RA
-    {
-        if (null === $orderBy) {
-            return new RA();
-        }
-
-        $orderBy = new RA($orderBy, RA::RECURSIVE);
-        return $orderBy->map(function (RA $entry): RA {
-            $direction = $this->validateDirection(
-                (
-                    true === $entry->hasKey(ParameterEnum::ORDER_BY_DIRECTION)
-                        ? $entry->getStringOrNull(ParameterEnum::ORDER_BY_DIRECTION)
-                        : null
-                ) ?? ParameterEnum::ORDER_BY_DIRECTION_ASC
-            );
-            $field = new Stringy($entry->getString(ParameterEnum::ORDER_BY_FIELD));
-            if (null === $field->getPositionOfSubstring(ParameterEnum::FIELD_SEPARATOR)) {
-                $field = new Stringy(
-                    \Safe\sprintf('%s%s%s', DataManager::ROOT_ALIAS, ParameterEnum::FIELD_SEPARATOR, $field)
-                );
-            }
-            return new RA(compact('field', 'direction'));
-        });
-    }
-
     private function validateAggregates(?RA $aggregates): ?RA
     {
         if (null === $aggregates) {
@@ -225,53 +276,5 @@ class ParameterValidator
         });
 
         return $aggregates;
-    }
-
-    /**
-     * @param string[]|null $groupBy
-     */
-    public function validateGroupBy(?array $groupBy): ?RA
-    {
-        if (null === $groupBy) {
-            return null;
-        }
-
-        $groupBy = new RA($groupBy, RA::RECURSIVE);
-        return $groupBy->map(function (RA $entry): RA {
-            $direction = $this->validateDirection(
-                $entry->getStringOrNull(ParameterEnum::GROUP_BY_DIRECTION) ?? ParameterEnum::GROUP_BY_DIRECTION_ASC
-            );
-            $field = new Stringy($entry->getString(ParameterEnum::GROUP_BY_FIELD));
-            if (null === $field->getPositionOfSubstring(ParameterEnum::FIELD_SEPARATOR)) {
-                $field = new Stringy(
-                    \Safe\sprintf('%s%s%s', DataManager::ROOT_ALIAS, ParameterEnum::FIELD_SEPARATOR, $field)
-                );
-            }
-            $aggregates = (
-                $entry->hasKey(ParameterEnum::GROUP_BY_AGGREGATES)
-                    ? $this->validateAggregates($entry->getRAOrNull(ParameterEnum::GROUP_BY_AGGREGATES))
-                    : null
-            ) ?? new RA();
-            return new RA(compact('field', 'direction', 'aggregates'));
-        });
-    }
-
-    /**
-     * @param mixed[]|null $responseStructure
-     */
-    public function validateResponseStructure(?array $responseStructure, Stringy $entityName): ?RA
-    {
-        if (null === $responseStructure) {
-            return null;
-        }
-        return new RA([(string)$entityName => $responseStructure], RA::RECURSIVE);
-    }
-
-    /**
-     * @param string[]|null $fields
-     */
-    public function validateFields(?array $fields): RA
-    {
-        return new RA($fields ?? [], RA::RECURSIVE);
     }
 }

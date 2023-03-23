@@ -11,7 +11,19 @@ use WernerDweight\Stringy\Stringy;
 
 class FilteringHelper
 {
-    /** @var string[] */
+    /**
+     * @var string
+     */
+    public const DOCTRINE_ASSOCIATION_TYPE = 'type';
+
+    /**
+     * @var string
+     */
+    public const IDENTIFIER_FIELD_NAME = 'id';
+
+    /**
+     * @var string[]
+     */
     private const BINARY_OPERATORS = [
         ParameterEnum::FILTER_OPERATOR_EQUAL,
         ParameterEnum::FILTER_OPERATOR_NOT_EQUAL,
@@ -28,17 +40,12 @@ class FilteringHelper
         ParameterEnum::FILTER_OPERATOR_IS_NOT_EMPTY,
         ParameterEnum::FILTER_OPERATOR_IN,
     ];
-    /** @var string */
-    public const DOCTRINE_ASSOCIATION_TYPE = 'type';
-    /** @var string */
-    public const IDENTIFIER_FIELD_NAME = 'id';
-
-    /** @var RepositoryManager */
-    private $repositoryManager;
 
     /**
-     * FilteringHelper constructor.
+     * @var RepositoryManager
      */
+    private $repositoryManager;
+
     public function __construct(RepositoryManager $repositoryManager)
     {
         $this->repositoryManager = $repositoryManager;
@@ -112,7 +119,8 @@ class FilteringHelper
      */
     public function isManyToManyField(Stringy $field): bool
     {
-        $associations = $this->repositoryManager->getCurrentMetadata()->associationMappings;
+        $associations = $this->repositoryManager->getCurrentMetadata()
+->associationMappings;
         $clonedField = (string)((clone $field)->replace(\Safe\sprintf('%s.', DataManager::ROOT_ALIAS), ''));
         return true === array_key_exists($clonedField, $associations) &&
             $associations[$clonedField][self::DOCTRINE_ASSOCIATION_TYPE] & ClassMetadataInfo::TO_MANY;
@@ -151,7 +159,8 @@ class FilteringHelper
     public function isEmbed(Stringy $field): bool
     {
         if (null !== $field->getPositionOfSubstring(ParameterEnum::FIELD_SEPARATOR)) {
-            $embeddedEntities = $this->repositoryManager->getCurrentMetadata()->embeddedClasses;
+            $embeddedEntities = $this->repositoryManager->getCurrentMetadata()
+->embeddedClasses;
             return array_key_exists($field->explode(ParameterEnum::FIELD_SEPARATOR)[0], $embeddedEntities);
         }
         return false;

@@ -14,12 +14,11 @@ use WernerDweight\RA\RA;
 
 class MappingResolver
 {
-    /** @var PropertyValueResolverFactory */
+    /**
+     * @var PropertyValueResolverFactory
+     */
     private $propertyValueResolverFactory;
 
-    /**
-     * MappingResolver constructor.
-     */
     public function __construct(PropertyValueResolverFactory $propertyValueResolverFactory)
     {
         $this->propertyValueResolverFactory = $propertyValueResolverFactory;
@@ -36,7 +35,8 @@ class MappingResolver
             throw new MappingResolverException(MappingResolverException::EXCEPTION_MISSING_MAPPING_TYPE);
         }
         $type = (string)$configuration->get(FilteringHelper::DOCTRINE_ASSOCIATION_TYPE);
-        return $this->propertyValueResolverFactory->get($type)->getPropertyValue($value, $configuration);
+        return $this->propertyValueResolverFactory->get($type)
+            ->getPropertyValue($value, $configuration);
     }
 
     /**
@@ -51,9 +51,13 @@ class MappingResolver
         $value
     ): ApiEntityInterface {
         if (true !== $metadata->getUpdatableNested()->contains($field)) {
-            throw new UpdaterReturnableException(UpdaterReturnableException::INVALID_NESTING, ['root' => $metadata->getShortName(), 'nested' => $field, 'value' => $value instanceof RA ? $value->toArray(
-                RA::RECURSIVE
-            ) : $value]);
+            throw new UpdaterReturnableException(UpdaterReturnableException::INVALID_NESTING, [
+                'root' => $metadata->getShortName(),
+                'nested' => $field,
+                'value' => $value instanceof RA ? $value->toArray(
+                    RA::RECURSIVE
+                ) : $value,
+            ]);
         }
         return $item;
     }
@@ -70,9 +74,13 @@ class MappingResolver
         RA $fieldMetadata
     ): string {
         if (true !== $metadata->getCreatableNested()->contains($field)) {
-            throw new CreatorReturnableException(CreatorReturnableException::INVALID_NESTING, ['root' => $metadata->getShortName(), 'nested' => $field, 'value' => $value instanceof RA ? $value->toArray(
-                RA::RECURSIVE
-            ) : $value]);
+            throw new CreatorReturnableException(CreatorReturnableException::INVALID_NESTING, [
+                'root' => $metadata->getShortName(),
+                'nested' => $field,
+                'value' => $value instanceof RA ? $value->toArray(
+                    RA::RECURSIVE
+                ) : $value,
+            ]);
         }
         return $fieldMetadata->getString(DoctrineCrudApiMappingTypeInterface::METADATA_CLASS);
     }

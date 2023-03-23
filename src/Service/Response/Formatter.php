@@ -12,20 +12,17 @@ use WernerDweight\DoctrineCrudApiBundle\Service\Request\ParameterEnum;
 use WernerDweight\RA\RA;
 use WernerDweight\Stringy\Stringy;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class Formatter
 {
-    /** @var ConfigurationManager */
-    private $configurationManager;
+    private ConfigurationManager $configurationManager;
 
-    /** @var OutputVoter */
-    private $outputVoter;
+    private OutputVoter $outputVoter;
 
-    /** @var ValueGetter */
-    private $valueGetter;
+    private ValueGetter $valueGetter;
 
-    /**
-     * Formatter constructor.
-     */
     public function __construct(
         ConfigurationManager $configurationManager,
         OutputVoter $outputVoter,
@@ -34,37 +31,6 @@ class Formatter
         $this->configurationManager = $configurationManager;
         $this->outputVoter = $outputVoter;
         $this->valueGetter = $valueGetter;
-    }
-
-    /**
-     * @return mixed
-     *
-     * @throws \WernerDweight\RA\Exception\RAException
-     */
-    private function getEntityPropertyValueBasedOnMetadata(
-        ApiEntityInterface $item,
-        Stringy $field,
-        DoctrineCrudApiMetadata $configuration,
-        string $prefix,
-        ?RA $responseStructure
-    ) {
-        $type = $configuration->getFieldType((string)$field);
-        if (null === $type) {
-            return $this->valueGetter->getEntityPropertyValue($item, $field);
-        }
-        $prefix = \Safe\sprintf('%s%s%s', $prefix, $field, ParameterEnum::FIELD_SEPARATOR);
-        if (DoctrineCrudApiMappingTypeInterface::METADATA_TYPE_ENTITY === $type) {
-            $value = $this->valueGetter->getRelatedEntityValue($item, $field);
-            return null !== $value ? $this->format($value, $responseStructure, $prefix) : null;
-        }
-        if (DoctrineCrudApiMappingTypeInterface::METADATA_TYPE_COLLECTION === $type) {
-            return $this->valueGetter
-                ->getRelatedCollectionValue($item, $field, $configuration)
-                ->map(function (ApiEntityInterface $entry) use ($prefix, $responseStructure) {
-                    return $this->format($entry, $responseStructure, $prefix);
-                });
-        }
-        throw new FormatterException(FormatterException::EXCEPTION_INVALID_METADATA_TYPE, [$type]);
     }
 
     public function format(
@@ -101,5 +67,31 @@ class Formatter
                 $result->set($field, $value);
             });
         return $result;
+    }
+
+    private function getEntityPropertyValueBasedOnMetadata(
+        ApiEntityInterface $item,
+        Stringy $field,
+        DoctrineCrudApiMetadata $configuration,
+        string $prefix,
+        ?RA $responseStructure
+    ): mixed {
+        $type = $configuration->getFieldType((string)$field);
+        if (null === $type) {
+            return $this->valueGetter->getEntityPropertyValue($item, $field);
+        }
+        $prefix = \Safe\sprintf('%s%s%s', $prefix, $field, ParameterEnum::FIELD_SEPARATOR);
+        if (DoctrineCrudApiMappingTypeInterface::METADATA_TYPE_ENTITY === $type) {
+            $value = $this->valueGetter->getRelatedEntityValue($item, $field);
+            return null !== $value ? $this->format($value, $responseStructure, $prefix) : null;
+        }
+        if (DoctrineCrudApiMappingTypeInterface::METADATA_TYPE_COLLECTION === $type) {
+            return $this->valueGetter
+                ->getRelatedCollectionValue($item, $field, $configuration)
+                ->map(function (ApiEntityInterface $entry) use ($prefix, $responseStructure) {
+                    return $this->format($entry, $responseStructure, $prefix);
+                });
+        }
+        throw new FormatterException(FormatterException::EXCEPTION_INVALID_METADATA_TYPE, [$type]);
     }
 }

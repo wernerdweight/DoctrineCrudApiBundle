@@ -15,20 +15,26 @@ use WernerDweight\RA\RA;
 
 final class Xml extends AbstractDriver implements DoctrineCrudApiDriverInterface
 {
-    /** @var string */
+    /**
+     * @var string
+     */
     public const WDS_NAMESPACE_URI = 'http://schemas.wds.blue/orm/doctrine-crud-api-bundle-mapping';
-    /** @var string */
-    private const DOCTRINE_NAMESPACE_URI = 'http://doctrine-project.org/schemas/orm/doctrine-mapping';
-
-    /** @var FileLocator */
-    private $locator;
-
-    /** @var XmlMappingTypeFactory */
-    private $mappingTypeFactory;
 
     /**
-     * Xml constructor.
+     * @var string
      */
+    private const DOCTRINE_NAMESPACE_URI = 'http://doctrine-project.org/schemas/orm/doctrine-mapping';
+
+    /**
+     * @var FileLocator
+     */
+    private $locator;
+
+    /**
+     * @var XmlMappingTypeFactory
+     */
+    private $mappingTypeFactory;
+
     public function __construct(XmlMappingTypeFactory $mappingTypeFactory)
     {
         $this->mappingTypeFactory = $mappingTypeFactory;
@@ -52,6 +58,43 @@ final class Xml extends AbstractDriver implements DoctrineCrudApiDriverInterface
     }
 
     /**
+     * @throws \Doctrine\Persistence\Mapping\MappingException
+     * @throws \Safe\Exceptions\SimplexmlException
+     * @throws \WernerDweight\RA\Exception\RAException
+     */
+    public function readMetadata(ClassMetadata $metadata, RA $config): RA
+    {
+        /** @var \SimpleXMLElement $mapping */
+        $mapping = $this->getXmlMapping($metadata->name);
+
+        if (true !== $this->isAccessible($mapping)) {
+            return $config;
+        }
+
+        $config->set(DoctrineCrudApiMappingTypeInterface::ACCESSIBLE, true);
+
+        $mapping = $this->extendXmlMappingWithWdsElements($mapping);
+
+        foreach (DoctrineCrudApiDriverInterface::INSPECTABLE_PROPERTIES as $property) {
+            if (true === isset($mapping[$property])) {
+                $mappingProperties = is_array($mapping[$property]) ? $mapping[$property] : [$mapping[$property]];
+                /** @var \SimpleXMLElement $propertyMapping */
+                foreach ($mappingProperties as $propertyMapping) {
+                    $filteredMapping = $propertyMapping->children(self::WDS_NAMESPACE_URI);
+                    foreach (DoctrineCrudApiMappingTypeInterface::MAPPING_TYPES as $mappingType) {
+                        $config = $this->mappingTypeFactory->get($mappingType)
+                            ->readConfiguration($propertyMapping, $filteredMapping, $config);
+                    }
+                }
+            }
+        }
+
+        $config = $this->readAttributeOverrides($config, $mapping);
+
+        return $config;
+    }
+
+    /**
      * @return mixed[]
      *
      * @throws \Safe\Exceptions\SimplexmlException
@@ -59,7 +102,8 @@ final class Xml extends AbstractDriver implements DoctrineCrudApiDriverInterface
     private function getXmlMappingFromFile(string $fileName): array
     {
         $mapping = [];
-        $xmlElement = (\Safe\simplexml_load_file($fileName))->children(self::DOCTRINE_NAMESPACE_URI);
+        $xmlElement = (\Safe\simplexml_load_file($fileName))
+            ->children(self::DOCTRINE_NAMESPACE_URI);
 
         if (true === isset($xmlElement->entity)) {
             foreach ($xmlElement->entity as $entity) {
@@ -142,43 +186,6 @@ final class Xml extends AbstractDriver implements DoctrineCrudApiDriverInterface
                     ->readConfiguration($override, $filteredMapping, $config);
             }
         }
-
-        return $config;
-    }
-
-    /**
-     * @throws \Doctrine\Persistence\Mapping\MappingException
-     * @throws \Safe\Exceptions\SimplexmlException
-     * @throws \WernerDweight\RA\Exception\RAException
-     */
-    public function readMetadata(ClassMetadata $metadata, RA $config): RA
-    {
-        /** @var \SimpleXMLElement $mapping */
-        $mapping = $this->getXmlMapping($metadata->name);
-
-        if (true !== $this->isAccessible($mapping)) {
-            return $config;
-        }
-
-        $config->set(DoctrineCrudApiMappingTypeInterface::ACCESSIBLE, true);
-
-        $mapping = $this->extendXmlMappingWithWdsElements($mapping);
-
-        foreach (DoctrineCrudApiDriverInterface::INSPECTABLE_PROPERTIES as $property) {
-            if (true === isset($mapping[$property])) {
-                $mappingProperties = is_array($mapping[$property]) ? $mapping[$property] : [$mapping[$property]];
-                /** @var \SimpleXMLElement $propertyMapping */
-                foreach ($mappingProperties as $propertyMapping) {
-                    $filteredMapping = $propertyMapping->children(self::WDS_NAMESPACE_URI);
-                    foreach (DoctrineCrudApiMappingTypeInterface::MAPPING_TYPES as $mappingType) {
-                        $config = $this->mappingTypeFactory->get($mappingType)
-                            ->readConfiguration($propertyMapping, $filteredMapping, $config);
-                    }
-                }
-            }
-        }
-
-        $config = $this->readAttributeOverrides($config, $mapping);
 
         return $config;
     }

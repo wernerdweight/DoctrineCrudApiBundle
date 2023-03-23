@@ -16,12 +16,11 @@ use WernerDweight\DoctrineCrudApiBundle\Event\PreValidateEvent;
 
 class DoctrineCrudApiEventDispatcher
 {
-    /** @var EventDispatcherInterface */
+    /**
+     * @var EventDispatcherInterface
+     */
     private $eventDispatcher;
 
-    /**
-     * DoctrineCrudApiEventDispatcher constructor.
-     */
     public function __construct(EventDispatcherInterface $eventDispatcher)
     {
         $this->eventDispatcher = $eventDispatcher;

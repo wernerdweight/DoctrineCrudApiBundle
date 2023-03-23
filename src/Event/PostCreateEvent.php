@@ -8,15 +8,16 @@ use WernerDweight\DoctrineCrudApiBundle\Entity\ApiEntityInterface;
 
 class PostCreateEvent extends Event
 {
-    /** @var string */
+    /**
+     * @var string
+     */
     public const NAME = 'wds.doctrine_crud_api_bundle.item.post_create';
 
-    /** @var ApiEntityInterface */
+    /**
+     * @var ApiEntityInterface
+     */
     private $item;
 
-    /**
-     * PostCreateEvent constructor.
-     */
     public function __construct(ApiEntityInterface $item)
     {
         $this->item = $item;

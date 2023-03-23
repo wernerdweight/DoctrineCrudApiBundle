@@ -11,7 +11,9 @@ use WernerDweight\RA\RA;
 
 abstract class AbstractMappingTypeFactory
 {
-    /** @var RA */
+    /**
+     * @var RA
+     */
     private $types;
 
     /**

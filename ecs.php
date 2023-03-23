@@ -1,7 +1,9 @@
 <?php
 
-use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
+declare(strict_types=1);
 
-return static function (ContainerConfigurator $containerConfigurator): void {
-    $containerConfigurator->import('vendor/wernerdweight/cs/src/ecs.php');
+use Symplify\EasyCodingStandard\Config\ECSConfig;
+
+return function (ECSConfig $ecsConfig): void {
+    $ecsConfig->import('vendor/wernerdweight/cs/src/ecs.php');
 };

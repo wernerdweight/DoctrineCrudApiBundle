@@ -9,12 +9,11 @@ use Doctrine\ORM\Events;
 
 final class MappingEventSubscriber implements EventSubscriber
 {
-    /** @var MetadataFactory */
+    /**
+     * @var MetadataFactory
+     */
     private $metadataFactory;
 
-    /**
-     * EventSubscriber constructor.
-     */
     public function __construct(MetadataFactory $metadataFactory)
     {
         $this->metadataFactory = $metadataFactory;

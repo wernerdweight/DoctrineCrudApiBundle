@@ -7,48 +7,29 @@ use Doctrine\ORM\Mapping as ORM;
 use WernerDweight\DoctrineCrudApiBundle\Entity\ApiEntityInterface;
 use WernerDweight\DoctrineCrudApiBundle\Mapping\Annotation as WDS;
 
-/**
- * Author.
- *
- * @ORM\Table(name="test_author")
- * @ORM\Entity()
- * @WDS\Accessible()
- */
+#[ORM\Table(name: 'test_author')]
+#[ORM\Entity()]
+#[WDS\Accessible()]
 final class Author implements ApiEntityInterface
 {
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue()
-     * @WDS\Listable(default=true)
-     */
-    private $id;
+    #[ORM\Column(name: 'id', type: 'integer')]
+    #[ORM\Id]
+    #[ORM\GeneratedValue()]
+    #[WDS\Listable(default: true)]
+    private int $id;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="name", type="string", nullable=false)
-     * @WDS\Listable(default=true)
-     * @WDS\Creatable()
-     * @WDS\Updatable()
-     */
-    private $name;
+    #[ORM\Column(name: 'name', type: 'string', nullable: false)]
+    #[WDS\Listable(default: true)]
+    #[WDS\Creatable()]
+    #[WDS\Updatable()]
+    private string $name;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="email", type="string", nullable=false)
-     * @WDS\Listable()
-     * @WDS\Creatable()
-     * @WDS\Updatable()
-     */
-    private $email;
+    #[ORM\Column(name: 'email', type: 'string', nullable: false)]
+    #[WDS\Listable()]
+    #[WDS\Creatable()]
+    #[WDS\Updatable()]
+    private string $email;
 
-    /**
-     * Author constructor.
-     */
     public function __construct(int $id, string $name, string $email)
     {
         $this->id = $id;
