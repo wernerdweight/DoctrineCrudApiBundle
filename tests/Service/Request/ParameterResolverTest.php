@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use WernerDweight\DoctrineCrudApiBundle\Service\Request\ParameterEnum;
 use WernerDweight\DoctrineCrudApiBundle\Service\Request\ParameterResolver;
 use WernerDweight\DoctrineCrudApiBundle\Tests\DoctrineMetadataKernelTestCase;
+use WernerDweight\RA\RA;
 
 class ParameterResolverTest extends DoctrineMetadataKernelTestCase
 {
@@ -20,9 +21,16 @@ class ParameterResolverTest extends DoctrineMetadataKernelTestCase
         /** @var ParameterResolver $parameterResolver */
         $parameterResolver = $container->get(ParameterResolver::class);
         $parameterResolver->resolveCreate();
-        $this->assertEquals('article', $parameterResolver->getParameter(ParameterEnum::ENTITY_NAME));
-        dump($parameterResolver->getParameter(ParameterEnum::RESPONSE_STRUCTURE));
-        dump($parameterResolver->getParameter(ParameterEnum::FIELDS));
+        $this->assertEquals('Article', (string)$parameterResolver->getStringy(ParameterEnum::ENTITY_NAME));
+        $this->assertEquals([
+            'article' => [
+                'id' => true,
+                'title' => true,
+            ],
+        ], $parameterResolver->getRA(ParameterEnum::RESPONSE_STRUCTURE)->toArray(RA::RECURSIVE));
+        $this->assertEquals([
+            'title' => 'Test Title',
+        ], $parameterResolver->getRA(ParameterEnum::FIELDS)->toArray(RA::RECURSIVE));
     }
 
     private function prepareRequest(?array $responseStructure, ?array $fields): void
@@ -39,9 +47,11 @@ class ParameterResolverTest extends DoctrineMetadataKernelTestCase
                 ],
                 [],
                 [],
-                [],
+                [
+                    'CONTENT_TYPE' => 'application/json',
+                ],
                 json_encode([
-                    'responseStructure' => $responseStructure,
+                    'responseStructure' => array_fill_keys($responseStructure, true),
                     'fields' => $fields,
                 ])
             )
