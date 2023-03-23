@@ -7,7 +7,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
-class DoctrineMetadataKernelTestCase extends KernelTestCase
+abstract class DoctrineMetadataKernelTestCase extends KernelTestCase
 {
     /**
      * Reads all mapping information for entities (incl. API config).
