@@ -26,7 +26,7 @@ wds_doctrine_crud_api_delete_with_slash:
 
 wds_doctrine_crud_api_detail:
     path:     /{entityName}/detail/{id}
-    methods:  [ OPTIONS, GET ]
+    methods:  [ OPTIONS, GET, POST ]
     controller: WernerDweight\DoctrineCrudApiBundle\Controller\DetailController::index
     defaults:
         _format: json
@@ -40,7 +40,7 @@ wds_doctrine_crud_api_length:
 
 wds_doctrine_crud_api_list:
     path:     /{entityName}/list/
-    methods:  [ OPTIONS, GET ]
+    methods:  [ OPTIONS, GET, POST ]
     controller: WernerDweight\DoctrineCrudApiBundle\Controller\ListController::index
     defaults:
         _format: json

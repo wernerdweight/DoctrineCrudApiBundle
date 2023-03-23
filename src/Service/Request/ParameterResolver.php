@@ -231,34 +231,87 @@ class ParameterResolver
         );
     }
 
+    private function enhanceParametersFromJson(RA $parameters): RA
+    {
+        $data = new RA($this->request->toArray());
+        if ($data->hasKey(ParameterEnum::FIELDS)) {
+            $parameters->set(ParameterEnum::FIELDS, $data->getArrayOrNull(ParameterEnum::FIELDS));
+        }
+        if ($data->hasKey(ParameterEnum::RESPONSE_STRUCTURE)) {
+            $parameters->set(ParameterEnum::RESPONSE_STRUCTURE, $data->getArrayOrNull(ParameterEnum::RESPONSE_STRUCTURE));
+        }
+        if ($data->hasKey(ParameterEnum::OFFSET)) {
+            $parameters->set(ParameterEnum::OFFSET, $data->getIntOrNull(ParameterEnum::OFFSET) ?? 0);
+        }
+        if ($data->hasKey(ParameterEnum::LIMIT)) {
+            $parameters->set(ParameterEnum::LIMIT, $data->getIntOrNull(ParameterEnum::LIMIT) ?? PHP_INT_MAX);
+        }
+        if ($data->hasKey(ParameterEnum::FILTER)) {
+            $parameters->set(ParameterEnum::FILTER, $data->getArrayOrNull(ParameterEnum::FILTER));
+        }
+        if ($data->hasKey(ParameterEnum::ORDER_BY)) {
+            $parameters->set(ParameterEnum::ORDER_BY, $data->getArrayOrNull(ParameterEnum::ORDER_BY));
+        }
+        if ($data->hasKey(ParameterEnum::GROUP_BY)) {
+            $parameters->set(ParameterEnum::GROUP_BY, $data->getArrayOrNull(ParameterEnum::GROUP_BY));
+        }
+        return $parameters;
+    }
+
+    private function resolveParameters(): RA
+    {
+        $query = $this->request->query;
+        $request = $this->request->request;
+        $attributes = $this->request->attributes;
+        $parameters = new RA();
+
+        $parameters
+            ->set(ParameterEnum::PRIMARY_KEY, $attributes->get(ParameterEnum::PRIMARY_KEY))
+            ->set(ParameterEnum::FIELDS, $request->all(ParameterEnum::FIELDS))
+            ->set(ParameterEnum::RESPONSE_STRUCTURE, $this->getArrayValueFromQuery($query, ParameterEnum::RESPONSE_STRUCTURE))
+            ->set(ParameterEnum::OFFSET, $query->getInt(ParameterEnum::OFFSET, 0))
+            ->set(ParameterEnum::LIMIT, $query->getInt(ParameterEnum::LIMIT, PHP_INT_MAX))
+            ->set(ParameterEnum::FILTER, $this->getArrayValueFromQuery($query, ParameterEnum::FILTER))
+            ->set(ParameterEnum::ORDER_BY, $this->getArrayValueFromQuery($query, ParameterEnum::ORDER_BY))
+            ->set(ParameterEnum::GROUP_BY, $this->getArrayValueFromQuery($query, ParameterEnum::GROUP_BY))
+        ;
+
+        $contentType = $this->request->getContentTypeFormat();
+        if ($contentType === 'json') {
+            return $this->enhanceParametersFromJson($parameters);
+        }
+        return $parameters;
+    }
+
     public function resolveList(): self
     {
         $this->resolveCommon();
+        $requestParameters = $this->resolveParameters();
 
-        $query = $this->request->query;
         $this->parameters
-            ->set(ParameterEnum::OFFSET, $query->getInt(ParameterEnum::OFFSET, 0))
-            ->set(ParameterEnum::LIMIT, $query->getInt(ParameterEnum::LIMIT, PHP_INT_MAX))
-            ->set(
-                ParameterEnum::FILTER,
-                $this->parameterValidator->validateFilter($this->getArrayValueFromQuery($query, ParameterEnum::FILTER))
+            ->set(ParameterEnum::OFFSET, $requestParameters->getInt(ParameterEnum::OFFSET))
+            ->set(ParameterEnum::LIMIT, $requestParameters->getInt(ParameterEnum::LIMIT))
+            ->set(ParameterEnum::FILTER,
+                $this->parameterValidator->validateFilter(
+                    $requestParameters->getArrayOrNull(ParameterEnum::FILTER)
+                )
             )
             ->set(
                 ParameterEnum::ORDER_BY,
                 $this->parameterValidator->validateOrderBy(
-                    $this->getArrayValueFromQuery($query, ParameterEnum::ORDER_BY)
+                    $requestParameters->getArrayOrNull(ParameterEnum::ORDER_BY)
                 )
             )
             ->set(
                 ParameterEnum::GROUP_BY,
                 $this->parameterValidator->validateGroupBy(
-                    $this->getArrayValueFromQuery($query, ParameterEnum::GROUP_BY)
+                    $requestParameters->getArrayOrNull(ParameterEnum::GROUP_BY)
                 )
             )
             ->set(
                 ParameterEnum::RESPONSE_STRUCTURE,
                 $this->parameterValidator->validateResponseStructure(
-                    $this->getArrayValueFromQuery($query, ParameterEnum::RESPONSE_STRUCTURE),
+                    $requestParameters->getArrayOrNull(ParameterEnum::RESPONSE_STRUCTURE),
                     (clone $this->getStringy(ParameterEnum::ENTITY_NAME))->lowercaseFirst()
                 )
             )
@@ -269,15 +322,14 @@ class ParameterResolver
     public function resolveDetail(): self
     {
         $this->resolveCommon();
+        $requestParameters = $this->resolveParameters();
 
-        $query = $this->request->query;
-        $attributes = $this->request->attributes;
         $this->parameters
-            ->set(ParameterEnum::PRIMARY_KEY, $attributes->get(ParameterEnum::PRIMARY_KEY))
+            ->set(ParameterEnum::PRIMARY_KEY, $requestParameters->getString(ParameterEnum::PRIMARY_KEY))
             ->set(
                 ParameterEnum::RESPONSE_STRUCTURE,
                 $this->parameterValidator->validateResponseStructure(
-                    $this->getArrayValueFromQuery($query, ParameterEnum::RESPONSE_STRUCTURE),
+                    $requestParameters->getArrayOrNull(ParameterEnum::RESPONSE_STRUCTURE),
                     (clone $this->getStringy(ParameterEnum::ENTITY_NAME))->lowercaseFirst()
                 )
             )
@@ -288,20 +340,19 @@ class ParameterResolver
     public function resolveCreate(): self
     {
         $this->resolveCommon();
+        $requestParameters = $this->resolveParameters();
 
-        $query = $this->request->query;
-        $request = $this->request->request;
         $this->parameters
             ->set(
                 ParameterEnum::FIELDS,
                 $this->parameterValidator->validateFields(
-                    $request->all(ParameterEnum::FIELDS)
+                    $requestParameters->getArray(ParameterEnum::FIELDS)
                 )
             )
             ->set(
                 ParameterEnum::RESPONSE_STRUCTURE,
                 $this->parameterValidator->validateResponseStructure(
-                    $this->getArrayValueFromQuery($query, ParameterEnum::RESPONSE_STRUCTURE),
+                    $requestParameters->getArrayOrNull(ParameterEnum::RESPONSE_STRUCTURE),
                     (clone $this->getStringy(ParameterEnum::ENTITY_NAME))->lowercaseFirst()
                 )
             )
@@ -312,21 +363,20 @@ class ParameterResolver
     public function resolveUpdate(): self
     {
         $this->resolveCommon();
+        $requestParameters = $this->resolveParameters();
 
-        $request = $this->request->request;
-        $attributes = $this->request->attributes;
         $this->parameters
-            ->set(ParameterEnum::PRIMARY_KEY, $attributes->get(ParameterEnum::PRIMARY_KEY))
+            ->set(ParameterEnum::PRIMARY_KEY, $requestParameters->getString(ParameterEnum::PRIMARY_KEY))
             ->set(
                 ParameterEnum::FIELDS,
                 $this->parameterValidator->validateFields(
-                    $request->all(ParameterEnum::FIELDS)
+                    $requestParameters->getArray(ParameterEnum::FIELDS)
                 )
             )
             ->set(
                 ParameterEnum::RESPONSE_STRUCTURE,
                 $this->parameterValidator->validateResponseStructure(
-                    $this->request->get(ParameterEnum::RESPONSE_STRUCTURE),
+                    $requestParameters->getArrayOrNull(ParameterEnum::RESPONSE_STRUCTURE),
                     (clone $this->getStringy(ParameterEnum::ENTITY_NAME))->lowercaseFirst()
                 )
             )
