@@ -13,43 +13,26 @@ use WernerDweight\RA\RA;
 
 class MetadataFactory
 {
-    /**
-     * @var string
-     */
-    public const CACHE_NAMESPACE = 'DOCTRINE_CRUD_API_CLASSMETADATA';
+    private EntityManagerInterface $entityManager;
 
-    /**
-     * @var EntityManagerInterface
-     */
-    private $entityManager;
+    private ConfigurationManager $configurationManager;
 
-    /**
-     * @var ConfigurationManager
-     */
-    private $configurationManager;
+    private MetadataDriverFactory $driverFactory;
 
-    /**
-     * @var MetadataDriverFactory
-     */
-    private $driverFactory;
+    private MetadataFactoryCacheProvider $cacheProvider;
 
     public function __construct(
         EntityManagerInterface $entityManager,
         ConfigurationManager $configurationManager,
-        MetadataDriverFactory $driverFactory
+        MetadataDriverFactory $driverFactory,
+        MetadataFactoryCacheProvider $cacheProvider
     ) {
         $this->entityManager = $entityManager;
         $this->configurationManager = $configurationManager;
         $this->driverFactory = $driverFactory;
+        $this->cacheProvider = $cacheProvider;
     }
 
-    /**
-     * @throws \Doctrine\Common\Annotations\AnnotationException
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \Safe\Exceptions\StringsException
-     * @throws \WernerDweight\RA\Exception\RAException
-     * @throws \Safe\Exceptions\SplException
-     */
     public function extendClassMetadata(ClassMetadata $metadata): self
     {
         /** @var ClassMetadataFactory $metadataFactory */
@@ -75,11 +58,7 @@ class MetadataFactory
         $isAccessible = $config->getBool(DoctrineCrudApiMappingTypeInterface::ACCESSIBLE);
         $configuration = new DoctrineCrudApiMetadata($metadata->name, $metadata, $config);
 
-        //$cacheDriver = $metadataFactory->getCacheDriver();
-        //if (null !== $cacheDriver) {
-        //    $cacheKey = \Safe\sprintf('%s\\$%s', $metadata->name, self::CACHE_NAMESPACE);
-        //    $cacheDriver->save($cacheKey, true === $isAccessible ? $configuration : null);
-        //}
+        $this->cacheProvider->store($metadata, true === $isAccessible ? $configuration : null);
 
         if (true === $isAccessible) {
             $this->configurationManager->setConfiguration($metadata->name, $configuration);

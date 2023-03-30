@@ -3,10 +3,10 @@ declare(strict_types=1);
 
 namespace WernerDweight\DoctrineCrudApiBundle\Service\Data;
 
-use Doctrine\ORM\Mapping\ClassMetadataFactory;
 use WernerDweight\DoctrineCrudApiBundle\DTO\DoctrineCrudApiMetadata;
 use WernerDweight\DoctrineCrudApiBundle\Entity\ApiEntityInterface;
 use WernerDweight\DoctrineCrudApiBundle\Exception\ConfigurationManagerException;
+use WernerDweight\DoctrineCrudApiBundle\Mapping\MetadataFactoryCacheProvider;
 use WernerDweight\DoctrineCrudApiBundle\Mapping\Type\DoctrineCrudApiMappingTypeInterface;
 use WernerDweight\RA\RA;
 use WernerDweight\Stringy\Stringy;
@@ -18,15 +18,14 @@ class ConfigurationManager
      */
     private const PROXY_PREFIX = 'Proxies\\__CG__\\';
 
-    /**
-     * @var RA
-     */
-    private $configuration;
+    private MetadataFactoryCacheProvider $cacheProvider;
 
-    public function __construct()
+    private RA $configuration;
+
+    public function __construct(MetadataFactoryCacheProvider $cacheProvider)
     {
-        /** @var ClassMetadataFactory $metadataFactory */
         $this->configuration = new RA();
+        $this->cacheProvider = $cacheProvider;
     }
 
     public function setConfiguration(string $class, DoctrineCrudApiMetadata $metadata): self
@@ -42,6 +41,12 @@ class ConfigurationManager
     public function getConfigurationForEntityClass(string $class): DoctrineCrudApiMetadata
     {
         if (true !== $this->configuration->hasKey($class)) {
+            $cached = $this->cacheProvider->recall($class);
+            if (null !== $cached) {
+                return $this
+                    ->setConfiguration($class, $cached)
+                    ->getConfigurationForEntityClass($class);
+            }
             throw new ConfigurationManagerException(
                 ConfigurationManagerException::EXCEPTION_NO_CONFIGURATION_FOR_ENTITY,
                 [
