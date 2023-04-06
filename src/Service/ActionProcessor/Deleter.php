@@ -66,7 +66,11 @@ class Deleter
         $this->entityManager->flush();
         $this->eventDispatcher->dispatchPostDelete($item);
 
-        return $this->formatter->format($item, null, $this->parameterResolver->getEntityPrefix());
+        return $this->formatter->format(
+            $item,
+            $this->parameterResolver->getRAOrNull(ParameterEnum::RESPONSE_STRUCTURE),
+            $this->parameterResolver->getEntityPrefix()
+        );
     }
 
     /**

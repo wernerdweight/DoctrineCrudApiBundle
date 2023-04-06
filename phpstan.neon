@@ -10,3 +10,4 @@ parameters:
         - '#Use explicit names over dynamic ones#'
         - '#Method call return value that should be used, but is not#'
         - '#Use separate function calls with readable variable names#'
+        - '#On passing a constant, the method should have an enum type\.#'

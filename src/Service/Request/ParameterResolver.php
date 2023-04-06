@@ -337,9 +337,16 @@ class ParameterResolver
     {
         $this->resolveCommon();
 
-        $attributes = $this->request->attributes;
+        $requestParameters = $this->resolveParameters();
         $this->parameters
-            ->set(ParameterEnum::PRIMARY_KEY, $attributes->get(ParameterEnum::PRIMARY_KEY))
+            ->set(ParameterEnum::PRIMARY_KEY, $requestParameters->getString(ParameterEnum::PRIMARY_KEY))
+            ->set(
+                ParameterEnum::RESPONSE_STRUCTURE,
+                $this->parameterValidator->validateResponseStructure(
+                    $requestParameters->getArrayOrNull(ParameterEnum::RESPONSE_STRUCTURE),
+                    (clone $this->getStringy(ParameterEnum::ENTITY_NAME))->lowercaseFirst()
+                )
+            )
         ;
         return $this;
     }
