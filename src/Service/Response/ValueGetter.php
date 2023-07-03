@@ -15,7 +15,9 @@ class ValueGetter
 {
     public function getEntityPropertyValue(ApiEntityInterface $item, Stringy $field, ?RA $fieldMetadata)
     {
-        $payload = null !== $fieldMetadata && $fieldMetadata->hasKey(DoctrineCrudApiMappingTypeInterface::METADATA_PAYLOAD)
+        $payload = null !== $fieldMetadata && $fieldMetadata->hasKey(
+            DoctrineCrudApiMappingTypeInterface::METADATA_PAYLOAD
+        )
             ? $fieldMetadata->getRA(DoctrineCrudApiMappingTypeInterface::METADATA_PAYLOAD)->toArray()
             : [];
 

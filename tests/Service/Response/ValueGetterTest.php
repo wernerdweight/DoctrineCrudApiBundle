@@ -18,8 +18,7 @@ use WernerDweight\Stringy\Stringy;
 class ValueGetterTest extends TestCase
 {
     /**
-     * @param mixed   $expected
-     * @param mixed[] $args
+     * @param mixed $expected
      *
      * @dataProvider provideEntities
      */

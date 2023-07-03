@@ -166,7 +166,8 @@ class DoctrineCrudApiMetadata
             (
                 null !== $metadata->getStringOrNull(DoctrineCrudApiMappingTypeInterface::METADATA_TYPE) &&
                 null !== $metadata->getStringOrNull(DoctrineCrudApiMappingTypeInterface::METADATA_CLASS)
-            ) || null !== $metadata->getRAOrNull(DoctrineCrudApiMappingTypeInterface::METADATA_PAYLOAD))
+            ) || null !== $metadata->getRAOrNull(DoctrineCrudApiMappingTypeInterface::METADATA_PAYLOAD)
+        )
         ) {
             return $metadata;
         }
