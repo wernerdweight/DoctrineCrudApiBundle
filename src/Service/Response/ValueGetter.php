@@ -23,6 +23,15 @@ class ValueGetter
 
         // TODO: enhance payload from request etc.
         // TODO: create payload resolver object that supports '@request' etc.
+        // TODO: try to support "@[service.name]" notation (without "@", treat payload as a string)
+        //  (e.g. "@service_name.method_name" or "@service_name.attr" etc.)
+        //  resolve like this:
+        //  $service = $this->container->get($serviceName);
+        //  $service->{$attrName}();
+        //  $service->get{$attrName}();
+        //  $service->is{$attrName}();
+        //  $service->$attrName;
+        //  $service->get($attrName);
         $args = $payload;
 
         $propertyName = (clone $field)->uppercaseFirst();
