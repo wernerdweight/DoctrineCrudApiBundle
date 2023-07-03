@@ -13,13 +13,16 @@ use WernerDweight\Stringy\Stringy;
 
 class ValueGetter
 {
-    /**
-     * @param mixed[] $args
-     *
-     * @return mixed
-     */
-    public function getEntityPropertyValue(ApiEntityInterface $item, Stringy $field, array $args = [])
+    public function getEntityPropertyValue(ApiEntityInterface $item, Stringy $field, ?RA $fieldMetadata)
     {
+        $payload = null !== $fieldMetadata && $fieldMetadata->hasKey(DoctrineCrudApiMappingTypeInterface::METADATA_PAYLOAD)
+            ? $fieldMetadata->getRA(DoctrineCrudApiMappingTypeInterface::METADATA_PAYLOAD)->toArray()
+            : [];
+
+        // TODO: enhance payload from request etc.
+        // TODO: create payload resolver object that supports '@request' etc.
+        $args = $payload;
+
         $propertyName = (clone $field)->uppercaseFirst();
         $field = (string)$field;
         if (true === method_exists($item, 'get' . $propertyName)) {
@@ -44,7 +47,7 @@ class ValueGetter
      */
     public function getRelatedEntityValue(ApiEntityInterface $item, Stringy $field)
     {
-        return $this->getEntityPropertyValue($item, $field);
+        return $this->getEntityPropertyValue($item, $field, null);
     }
 
     /**
@@ -56,11 +59,8 @@ class ValueGetter
         DoctrineCrudApiMetadata $configuration
     ): RA {
         $fieldMetadata = $configuration->getFieldMetadata((string)$field);
-        $payload = $fieldMetadata && $fieldMetadata->hasKey(DoctrineCrudApiMappingTypeInterface::METADATA_PAYLOAD)
-            ? $fieldMetadata->getRA(DoctrineCrudApiMappingTypeInterface::METADATA_PAYLOAD)->toArray()
-            : [];
         /** @var Collection<int, ApiEntityInterface> $fieldValue */
-        $fieldValue = $this->getEntityPropertyValue($item, $field, $payload);
+        $fieldValue = $this->getEntityPropertyValue($item, $field, $fieldMetadata);
         return new RA($fieldValue->getValues());
     }
 }

@@ -162,9 +162,11 @@ class DoctrineCrudApiMetadata
 
     private function extendFieldMetadata(string $field, ?RA $metadata = null): ?RA
     {
-        if (null !== $metadata &&
-            null !== $metadata->getStringOrNull(DoctrineCrudApiMappingTypeInterface::METADATA_TYPE) &&
-            null !== $metadata->getStringOrNull(DoctrineCrudApiMappingTypeInterface::METADATA_CLASS)
+        if (null !== $metadata && (
+            (
+                null !== $metadata->getStringOrNull(DoctrineCrudApiMappingTypeInterface::METADATA_TYPE) &&
+                null !== $metadata->getStringOrNull(DoctrineCrudApiMappingTypeInterface::METADATA_CLASS)
+            ) || null !== $metadata->getRAOrNull(DoctrineCrudApiMappingTypeInterface::METADATA_PAYLOAD))
         ) {
             return $metadata;
         }

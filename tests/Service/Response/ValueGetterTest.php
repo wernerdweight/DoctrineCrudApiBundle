@@ -6,6 +6,7 @@ namespace WernerDweight\DoctrineCrudApiBundle\Tests\Service\Response;
 use PHPUnit\Framework\TestCase;
 use WernerDweight\DoctrineCrudApiBundle\DTO\DoctrineCrudApiMetadata;
 use WernerDweight\DoctrineCrudApiBundle\Entity\ApiEntityInterface;
+use WernerDweight\DoctrineCrudApiBundle\Mapping\Type\DoctrineCrudApiMappingTypeInterface;
 use WernerDweight\DoctrineCrudApiBundle\Service\Response\ValueGetter;
 use WernerDweight\DoctrineCrudApiBundle\Tests\Fixtures\ArticleFixtures;
 use WernerDweight\DoctrineCrudApiBundle\Tests\Fixtures\AuthorFixtures;
@@ -26,10 +27,10 @@ class ValueGetterTest extends TestCase
         $expected,
         ApiEntityInterface $entity,
         Stringy $field,
-        array $args = []
+        ?RA $fieldMetadata
     ): void {
         $valueGetter = new ValueGetter();
-        $value = $valueGetter->getEntityPropertyValue($entity, $field, $args);
+        $value = $valueGetter->getEntityPropertyValue($entity, $field, $fieldMetadata);
         $this->assertEquals($expected, $value);
     }
 
@@ -84,7 +85,9 @@ class ValueGetterTest extends TestCase
                     }
                 },
                 new Stringy('kitten'),
-                ['123'],
+                new RA([
+                    DoctrineCrudApiMappingTypeInterface::METADATA_PAYLOAD => ['123'],
+                ], RA::RECURSIVE),
             ],
             [
                 'kitten',
@@ -94,12 +97,16 @@ class ValueGetterTest extends TestCase
                         return 1;
                     }
 
-                    public function getKitten(): string
+                    public function getKitten(?string $suffix = null): string
                     {
-                        return 'kitten';
+                        return 'kitten' . $suffix ?? '';
                     }
                 },
                 new Stringy('kitten'),
+                new RA([
+                    DoctrineCrudApiMappingTypeInterface::METADATA_TYPE => DoctrineCrudApiMappingTypeInterface::METADATA_TYPE_ENTITY,
+                    DoctrineCrudApiMappingTypeInterface::METADATA_CLASS => 'no-class',
+                ], RA::RECURSIVE),
             ],
             [
                 true,
@@ -115,6 +122,7 @@ class ValueGetterTest extends TestCase
                     }
                 },
                 new Stringy('kitten'),
+                null,
             ],
             [
                 'kitten',
@@ -130,6 +138,7 @@ class ValueGetterTest extends TestCase
                     }
                 },
                 new Stringy('kitten'),
+                null,
             ],
             [
                 'kitten',
@@ -145,6 +154,7 @@ class ValueGetterTest extends TestCase
                     }
                 },
                 new Stringy('kitten'),
+                null,
             ],
         ];
     }
