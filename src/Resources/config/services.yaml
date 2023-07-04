@@ -68,3 +68,5 @@ services:
         exclude: '../../Service/PropertyValueResolver/Resolver/Abstract*'
         tags:
             - { name: 'crud_api.property_value_resolver' }
+
+    Symfony\Component\DependencyInjection\Container: '@service_container'

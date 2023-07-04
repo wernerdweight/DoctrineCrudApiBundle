@@ -13,37 +13,32 @@ use WernerDweight\Stringy\Stringy;
 
 class ValueGetter
 {
+    private PayloadResolver $payloadResolver;
+
+    public function __construct(PayloadResolver $payloadResolver)
+    {
+        $this->payloadResolver = $payloadResolver;
+    }
+
     public function getEntityPropertyValue(ApiEntityInterface $item, Stringy $field, ?RA $fieldMetadata)
     {
-        $payload = null !== $fieldMetadata && $fieldMetadata->hasKey(
-            DoctrineCrudApiMappingTypeInterface::METADATA_PAYLOAD
-        )
-            ? $fieldMetadata->getRA(DoctrineCrudApiMappingTypeInterface::METADATA_PAYLOAD)->toArray()
-            : [];
-
-        // TODO: enhance payload from request etc.
-        // TODO: create payload resolver object that supports '@request' etc.
-        // TODO: try to support "@[service.name]" notation (without "@", treat payload as a string)
-        //  (e.g. "@service_name.method_name" or "@service_name.attr" etc.)
-        //  resolve like this:
-        //  $service = $this->container->get($serviceName);
-        //  $service->{$attrName}();
-        //  $service->get{$attrName}();
-        //  $service->is{$attrName}();
-        //  $service->$attrName;
-        //  $service->get($attrName);
-        $args = $payload;
+        $payload = [];
+        if (null !== $fieldMetadata && $fieldMetadata->hasKey(DoctrineCrudApiMappingTypeInterface::METADATA_PAYLOAD)) {
+            $metadataPayload = $fieldMetadata->getRA(DoctrineCrudApiMappingTypeInterface::METADATA_PAYLOAD);
+            $resolvedPayload = $this->payloadResolver->resolve($metadataPayload);
+            $payload = $resolvedPayload->toArray();
+        }
 
         $propertyName = (clone $field)->uppercaseFirst();
         $field = (string)$field;
         if (true === method_exists($item, 'get' . $propertyName)) {
-            return $item->{'get' . $propertyName}(...$args);
+            return $item->{'get' . $propertyName}(...$payload);
         }
         if (true === method_exists($item, 'is' . $propertyName)) {
-            return $item->{'is' . $propertyName}(...$args);
+            return $item->{'is' . $propertyName}(...$payload);
         }
         if (true === method_exists($item, $field)) {
-            return $item->{$field}(...$args);
+            return $item->{$field}(...$payload);
         }
         if (true === property_exists($item, $field)) {
             return $item->{$field};
