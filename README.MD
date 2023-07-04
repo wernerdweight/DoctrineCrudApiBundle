@@ -57,7 +57,12 @@ If used with `nested=true`, the properties of marked property (if property is an
 Allows to specify additional parameters of the property. \
 If used with `type=entity|collection`, the respective type will be expected by the API (default type is deducted from ORM mapping). \
 If used with `class=App\Some\Entity`, the respective class will be expected by the API (default class is deducted from ORM mapping). \
-If used with `payload=["argument1", "argument2"]`, the arguments provided will be passed to the getter when retrieving the property.
+If used with `payload=["argument1", "argument2"]`, the arguments provided will be passed to the getter when retrieving the property. \
+Payload arguments can reference public services by using `@` prefix (e.g. `@request_stack.currentRequest.query.tagThreshold`).
+
+##### Unmapped
+Allows to specify additional fields that are not mapped to the database. \
+This way, you can add custom fields to the API response (e.g. to synthetise data from multiple other fields).
 
 **Warning: Entity must implement ApiEntityInterface to be available to the API!**
 
@@ -92,15 +97,40 @@ class Artist implements ApiEntityInterface
    #[WDS\Creatable(nested: true)]
    #[WDS\Updatable(nested: true)]
    private $tracks;
+   
+   #[ORM\Column(name: "tags", type: "json", nullable: false, options: ["jsonb" => true])]
+   #[WDS\Listable(default: true)]
+   #[WDS\Metadata(payload: ["@request_stack.currentRequest.query.tagThreshold"])]
+   private array $tags;
+   
+   #[WDS\Listable(default: true)]
+   private string $primaryTag;  // this is unmapped, it doesn't have to be populated
 
    ...
 
-   /**
-    * @return string
-    */
    public function getId(): string
    {
        return $this->id;
+   }
+   
+   ...
+   
+   public function getTags(?string $tagThreshold = null): array
+   {
+       // only return tags with score higher than the provided threshold
+       if (null !== $tagThreshold) {
+           return array_filter(
+               $this->tags,
+               fn (string $tag): bool => $tag['score'] >= (float)$tagThreshold
+           );
+       }
+       return $this->tags;
+   }
+   
+   public function getPrimaryTag(): string
+   {
+       // return the first tag (for simplicity, any logic can be here)
+       return $this->tags[0]['value'] ?? '';
    }
 
    ...
@@ -132,6 +162,21 @@ class Artist implements ApiEntityInterface
             <wds:creatable nested="true"/>
             <wds:updatable nested="true"/>
         </one-to-many>
+        <field name="tags" type="json" nullable="false">
+            <options>
+                <option name="jsonb">true</option>
+                <option name="default">[]</option>
+            </options>
+            <wds:listable default="true" />
+            <wds:metadata>
+                <wds:payload>
+                    <wds:argument>@request_stack.currentRequest.query.tagThreshold</wds:argument>
+                </wds:payload>
+            </wds:metadata>
+        </field>
+        <wds:unmapped name="primaryTag">
+            <wds:listable default="true" />
+        </wds:unmapped>
         ...
     </entity>
 </doctrine-mapping>
@@ -142,9 +187,9 @@ Usage
 
 ### Endpoints
 
-* **[GET] `/{entity-name}/list/`** - lists entities of type *EntityName* (see below for filtering, ordering etc.);
+* **[GET | POST] `/{entity-name}/list/`** - lists entities of type *EntityName* (see below for filtering, ordering etc.);
 * **[GET] `/{entity-name}/length/`** - returns the count of entities of type *EntityName* that would be listed for given criteria;
-* **[GET] `/{entity-name}/detail/{id}/`** - returns entity of type *EntityName* with primary key *id*
+* **[GET | POST] `/{entity-name}/detail/{id}/`** - returns entity of type *EntityName* with primary key *id*
 * **[POST] `/{entity-name}/create/`** - creates entity of type *EntityName* (validation is executed on submitted data - **you need to add "api" validation group to your validation constraints**)
 * **[POST] `/{entity-name}/update/{id}/`** - updates entity of type *EntityName* with primary key *id* (validation is executed on submitted data - **you need to add "api" validation group to your validation constraints**)
 * **[DELETE] `/{entity-name}/delete/{id}/`** - deletes entity of type *EntityName* with primary key *id*
@@ -162,6 +207,25 @@ Pass response structure with your request as query parameter like this:
 ```http request
 GET /artist/list/?responseStructure%5Bname%5D=true&responseStructure%5Btracks%5D%5Btitle%5D=true&responseStructure%5Btracks%5D%5Bdifficulty%5D=true&responseStructure%5Btracks%5D%5Bgenre%5D%5Btitle%5D=true HTTP/1.1
 Host: your-api-host.com
+...
+```
+
+of like this:
+
+```http request
+POST /artist/list/ HTTP/1.1
+Content-Type: application/json
+Host: your-api-host.com
+...
+{
+	"responseStructure": {
+		"name": true,
+		"tracks": {
+			"title": true,
+			"difficulty: true
+		}
+	}
+}
 ```
 
 For clarity, the structure parameter is as follows:
@@ -265,6 +329,27 @@ Pass filter settings with your request as query parameter like this:
 ```http request
 GET /artist/list/?filter%5Blogic%5D=or&filter%5Bconditions%5D%5B0%5D%5Blogic%5D=and&filter%5Bconditions%5D%5B0%5D%5Bconditions%5D%5B0%5D%5Bfield%5D=this.name&filter%5Bconditions%5D%5B0%5D%5Bconditions%5D%5B0%5D%5Boperator%5D=contains&filter%5Bconditions%5D%5B0%5D%5Bconditions%5D%5B0%5D%5Bvalue%5D=radio&filter%5Bconditions%5D%5B0%5D%5Bconditions%5D%5B1%5D%5Bfield%5D=this.tracks.title&filter%5Bconditions%5D%5B0%5D%5Bconditions%5D%5B1%5D%5Boperator%5D=contains&filter%5Bconditions%5D%5B0%5D%5Bconditions%5D%5B1%5D%5Bvalue%5D=creep&filter%5Bconditions%5D%5B1%5D%5Blogic%5D=and&filter%5Bconditions%5D%5B1%5D%5Bconditions%5D%5B0%5D%5Bfield%5D=this.name&filter%5Bconditions%5D%5B1%5D%5Bconditions%5D%5B0%5D%5Boperator%5D=contains&filter%5Bconditions%5D%5B1%5D%5Bconditions%5D%5B0%5D%5Bvalue%5D=pink&filter%5Bconditions%5D%5B1%5D%5Bconditions%5D%5B1%5D%5Bfield%5D=this.tracks.title&filter%5Bconditions%5D%5B1%5D%5Bconditions%5D%5B1%5D%5Boperator%5D=contains&filter%5Bconditions%5D%5B1%5D%5Bconditions%5D%5B1%5D%5Bvalue%5D=wish HTTP/1.1
 Host: your-api-host.com
+```
+
+or like this:
+
+```http request
+POST /artist/list/ HTTP/1.1
+Content-Type: application/json
+Host: your-api-host.com
+...
+{
+  "filter": {
+    "logic": "and",
+    "conditions": [
+      {
+        "field": "this.name",
+        "operator": "contains",
+        "value": "radio"
+      }
+    ]
+  }
+}
 ```
 
 For clarity, the filter parameter is as follows:

@@ -50,7 +50,7 @@ class Formatter
                 $metadata = $configuration->getFieldMetadata($field);
                 $fieldObject = new Stringy($field);
                 if (null === $metadata) {
-                    $value = $this->valueGetter->getEntityPropertyValue($item, $fieldObject);
+                    $value = $this->valueGetter->getEntityPropertyValue($item, $fieldObject, null);
                     if ($value instanceof \DateTime) {
                         $value = new JsonSerializableDateTime($value->format('c'));
                     }
@@ -62,7 +62,8 @@ class Formatter
                     $fieldObject,
                     $configuration,
                     $prefix,
-                    $responseStructure
+                    $responseStructure,
+                    $metadata
                 );
                 $result->set($field, $value);
             });
@@ -74,11 +75,12 @@ class Formatter
         Stringy $field,
         DoctrineCrudApiMetadata $configuration,
         string $prefix,
-        ?RA $responseStructure
+        ?RA $responseStructure,
+        ?RA $fieldMetadata
     ): mixed {
         $type = $configuration->getFieldType((string)$field);
         if (null === $type) {
-            return $this->valueGetter->getEntityPropertyValue($item, $field);
+            return $this->valueGetter->getEntityPropertyValue($item, $field, $fieldMetadata);
         }
         $prefix = \Safe\sprintf('%s%s%s', $prefix, $field, ParameterEnum::FIELD_SEPARATOR);
         if (DoctrineCrudApiMappingTypeInterface::METADATA_TYPE_ENTITY === $type) {

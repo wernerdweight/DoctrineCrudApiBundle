@@ -13,23 +13,32 @@ use WernerDweight\Stringy\Stringy;
 
 class ValueGetter
 {
-    /**
-     * @param mixed[] $args
-     *
-     * @return mixed
-     */
-    public function getEntityPropertyValue(ApiEntityInterface $item, Stringy $field, array $args = [])
+    private PayloadResolver $payloadResolver;
+
+    public function __construct(PayloadResolver $payloadResolver)
     {
+        $this->payloadResolver = $payloadResolver;
+    }
+
+    public function getEntityPropertyValue(ApiEntityInterface $item, Stringy $field, ?RA $fieldMetadata): mixed
+    {
+        $payload = [];
+        if (null !== $fieldMetadata && $fieldMetadata->hasKey(DoctrineCrudApiMappingTypeInterface::METADATA_PAYLOAD)) {
+            $metadataPayload = $fieldMetadata->getRA(DoctrineCrudApiMappingTypeInterface::METADATA_PAYLOAD);
+            $resolvedPayload = $this->payloadResolver->resolve($metadataPayload);
+            $payload = $resolvedPayload->toArray();
+        }
+
         $propertyName = (clone $field)->uppercaseFirst();
         $field = (string)$field;
         if (true === method_exists($item, 'get' . $propertyName)) {
-            return $item->{'get' . $propertyName}(...$args);
+            return $item->{'get' . $propertyName}(...$payload);
         }
         if (true === method_exists($item, 'is' . $propertyName)) {
-            return $item->{'is' . $propertyName}(...$args);
+            return $item->{'is' . $propertyName}(...$payload);
         }
         if (true === method_exists($item, $field)) {
-            return $item->{$field}(...$args);
+            return $item->{$field}(...$payload);
         }
         if (true === property_exists($item, $field)) {
             return $item->{$field};
@@ -44,7 +53,7 @@ class ValueGetter
      */
     public function getRelatedEntityValue(ApiEntityInterface $item, Stringy $field)
     {
-        return $this->getEntityPropertyValue($item, $field);
+        return $this->getEntityPropertyValue($item, $field, null);
     }
 
     /**
@@ -56,11 +65,8 @@ class ValueGetter
         DoctrineCrudApiMetadata $configuration
     ): RA {
         $fieldMetadata = $configuration->getFieldMetadata((string)$field);
-        $payload = $fieldMetadata && $fieldMetadata->hasKey(DoctrineCrudApiMappingTypeInterface::METADATA_PAYLOAD)
-            ? $fieldMetadata->getRA(DoctrineCrudApiMappingTypeInterface::METADATA_PAYLOAD)->toArray()
-            : [];
         /** @var Collection<int, ApiEntityInterface> $fieldValue */
-        $fieldValue = $this->getEntityPropertyValue($item, $field, $payload);
+        $fieldValue = $this->getEntityPropertyValue($item, $field, $fieldMetadata);
         return new RA($fieldValue->getValues());
     }
 }
