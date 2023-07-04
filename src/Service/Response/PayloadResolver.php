@@ -24,7 +24,7 @@ class PayloadResolver
             if (0 === $stringyItem->getPositionOfSubstring('@')) {
                 $stringyItem->substring(1);
                 $parts = new RA($stringyItem->explode('.'));
-                $service = $this->container->get($parts->shift());
+                $service = $this->container->get((string)$parts->shift());
                 return $this->resolvePayloadFromService($service, $parts);
             }
             return $item;
@@ -55,7 +55,10 @@ class PayloadResolver
                 $item = $item->get($field);
                 return;
             }
-            throw throw new FormatterException(FormatterException::EXCEPTION_NO_PROPERTY_GETTER, [$field, get_class($item)]);
+            throw throw new FormatterException(FormatterException::EXCEPTION_NO_PROPERTY_GETTER, [
+                $field,
+                get_class($item),
+            ]);
         });
         return $item;
     }

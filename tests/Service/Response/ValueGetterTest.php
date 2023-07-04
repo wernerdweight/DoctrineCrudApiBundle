@@ -3,11 +3,11 @@ declare(strict_types=1);
 
 namespace WernerDweight\DoctrineCrudApiBundle\Tests\Service\Response;
 
-use PHPUnit\Framework\TestCase;
 use WernerDweight\DoctrineCrudApiBundle\DTO\DoctrineCrudApiMetadata;
 use WernerDweight\DoctrineCrudApiBundle\Entity\ApiEntityInterface;
 use WernerDweight\DoctrineCrudApiBundle\Mapping\Type\DoctrineCrudApiMappingTypeInterface;
 use WernerDweight\DoctrineCrudApiBundle\Service\Response\ValueGetter;
+use WernerDweight\DoctrineCrudApiBundle\Tests\DoctrineMetadataKernelTestCase;
 use WernerDweight\DoctrineCrudApiBundle\Tests\Fixtures\ArticleFixtures;
 use WernerDweight\DoctrineCrudApiBundle\Tests\Fixtures\AuthorFixtures;
 use WernerDweight\DoctrineCrudApiBundle\Tests\Fixtures\CategoryFixtures;
@@ -15,7 +15,7 @@ use WernerDweight\DoctrineCrudApiBundle\Tests\Fixtures\DoctrineCrudApiMetadataFi
 use WernerDweight\RA\RA;
 use WernerDweight\Stringy\Stringy;
 
-class ValueGetterTest extends TestCase
+class ValueGetterTest extends DoctrineMetadataKernelTestCase
 {
     /**
      * @param mixed $expected
@@ -28,7 +28,9 @@ class ValueGetterTest extends TestCase
         Stringy $field,
         ?RA $fieldMetadata
     ): void {
-        $valueGetter = new ValueGetter();
+        $container = static::getContainer();
+        /** @var ValueGetter $valueGetter */
+        $valueGetter = $container->get(ValueGetter::class);
         $value = $valueGetter->getEntityPropertyValue($entity, $field, $fieldMetadata);
         $this->assertEquals($expected, $value);
     }
@@ -43,7 +45,9 @@ class ValueGetterTest extends TestCase
         ApiEntityInterface $entity,
         Stringy $field
     ): void {
-        $valueGetter = new ValueGetter();
+        $container = static::getContainer();
+        /** @var ValueGetter $valueGetter */
+        $valueGetter = $container->get(ValueGetter::class);
         $value = $valueGetter->getRelatedEntityValue($entity, $field);
         $this->assertEquals($expected, $value);
     }
@@ -59,7 +63,9 @@ class ValueGetterTest extends TestCase
         Stringy $field,
         DoctrineCrudApiMetadata $metadata
     ): void {
-        $valueGetter = new ValueGetter();
+        $container = static::getContainer();
+        /** @var ValueGetter $valueGetter */
+        $valueGetter = $container->get(ValueGetter::class);
         $value = $valueGetter->getRelatedCollectionValue($entity, $field, $metadata);
         $this->assertEquals($expected, $value);
     }
@@ -98,7 +104,7 @@ class ValueGetterTest extends TestCase
 
                     public function getKitten(?string $suffix = null): string
                     {
-                        return 'kitten' . $suffix ?? '';
+                        return 'kitten' . ($suffix ?? '');
                     }
                 },
                 new Stringy('kitten'),

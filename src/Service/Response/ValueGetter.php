@@ -20,7 +20,7 @@ class ValueGetter
         $this->payloadResolver = $payloadResolver;
     }
 
-    public function getEntityPropertyValue(ApiEntityInterface $item, Stringy $field, ?RA $fieldMetadata)
+    public function getEntityPropertyValue(ApiEntityInterface $item, Stringy $field, ?RA $fieldMetadata): mixed
     {
         $payload = [];
         if (null !== $fieldMetadata && $fieldMetadata->hasKey(DoctrineCrudApiMappingTypeInterface::METADATA_PAYLOAD)) {
