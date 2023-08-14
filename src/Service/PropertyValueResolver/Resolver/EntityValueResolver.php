@@ -27,9 +27,12 @@ final class EntityValueResolver implements PropertyValueResolverInterface
     /**
      * @param class-string $className
      */
-    public function resolve(RA $itemData, string $className): ApiEntityInterface
+    public function resolve(RA $itemData, string $className): ?ApiEntityInterface
     {
         $id = $itemData->get(FilteringHelper::IDENTIFIER_FIELD_NAME);
+        if (null === $id) {
+            return null;
+        }
         /** @var ApiEntityInterface|null $item */
         $item = $this->entityManager->find($className, $id);
         if (null === $item) {
