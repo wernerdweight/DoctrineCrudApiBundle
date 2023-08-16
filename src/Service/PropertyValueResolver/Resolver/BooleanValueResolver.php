@@ -14,7 +14,7 @@ final class BooleanValueResolver implements PropertyValueResolverInterface
      */
     public function getPropertyValue($value, RA $configuration): ?bool
     {
-        return ParameterEnum::TRUE_VALUE === $value;
+        return $value === true || ParameterEnum::TRUE_VALUE === $value;
     }
 
     /**
