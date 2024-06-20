@@ -14,7 +14,13 @@ final class StringValueResolver implements PropertyValueResolverInterface
      */
     public function getPropertyValue($value, RA $configuration): ?string
     {
-        return ParameterEnum::EMPTY_VALUE !== $value ? (string)$value : null;
+        if (ParameterEnum::EMPTY_VALUE === $value) {
+            return null;
+        }
+        if ($value instanceof RA) {
+            return $value->join(',');
+        }
+        return (string)$value;
     }
 
     /**
